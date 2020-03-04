@@ -5,4 +5,4 @@ TODO
 - fix domain name 1 hours
 - try another static blog solution (hugo) 2 hours
 
-1-2 week
+1-2 weeks
