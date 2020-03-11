@@ -8,6 +8,44 @@
   <meta content="登录" property="og:title">
   <meta content="width=device-width, initial-scale=1" name="viewport">
   <meta content="Webflow" name="generator">
+
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="/__/firebase/7.10.0/firebase-app.js"></script>
+    <script src="/__/firebase/7.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.js"></script>
+    <script src="/__/firebase/init.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.css" />
+  
+    <script type="text/javascript">
+      // FirebaseUI config.
+      var uiConfig = {
+        signInSuccessUrl: 'pricing.html',
+        signInOptions: [
+          // Leave the lines as is for the providers you want to offer your users.
+          // firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+          // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+          // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+          // firebase.auth.GithubAuthProvider.PROVIDER_ID,
+          firebase.auth.EmailAuthProvider.PROVIDER_ID,
+          // firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+          // firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
+        ],
+        // tosUrl and privacyPolicyUrl accept either url string or a callback
+        // function.
+        // Terms of service url/callback.
+        tosUrl: '<your-tos-url>',
+        // Privacy policy url/callback.
+        privacyPolicyUrl: function() {
+          window.location.assign('<your-privacy-policy-url>');
+        }
+      };
+  
+      // Initialize the FirebaseUI Widget using Firebase.
+      var ui = new firebaseui.auth.AuthUI(firebase.auth());
+      // The start method will wait until the DOM is loaded.
+      ui.start('#firebaseui-auth-container', uiConfig);
+    </script>
+  
   <link href="../css/normalize.css" rel="stylesheet" type="text/css">
   <link href="../css/webflow.css" rel="stylesheet" type="text/css">
   <link href="../css/circling-china.webflow.css" rel="stylesheet" type="text/css">
@@ -101,6 +139,7 @@
     <div class="section">
       <div class="container w-container">
         <div>
+          <div id="firebaseui-auth-container">Signup</div>
           <div class="form-block-2 w-form">
             <form id="wf-form-Register-Form" name="wf-form-Register-Form" data-name="Register Form" redirect="/pricing" data-redirect="/pricing">
               <div class="div-block-7"><label for="Email-4" class="field-label">Email</label><input type="email" class="text-field-form w-input" maxlength="256" name="Email-3" data-name="Email 3" placeholder="请输入邮箱地址" id="Email-3"></div>
