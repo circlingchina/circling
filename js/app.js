@@ -33,14 +33,51 @@ var uiConfig = {
   }
 };
 
-
-// Initialize Firebase
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
+function init() {
+  // Initialize Firebase
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
 }
 // firebase.analytics();
 
-// Initialize the FirebaseUI Widget using Firebase.
-var ui = new firebaseui.auth.AuthUI(firebase.auth());
-// The start method will wait until the DOM is loaded.
-ui.start('#firebaseui-auth-container', uiConfig);
+export function insertLoginForm() {
+  init()
+  // Initialize the FirebaseUI Widget using Firebase.
+  var ui = new firebaseui.auth.AuthUI(firebase.auth());
+  // The start method will wait until the DOM is loaded.
+  ui.start('#firebaseui-auth-container', uiConfig);
+}
+
+export function loadUser() {
+  
+  init()
+
+  firebase.auth().onAuthStateChanged(function(user) {
+    console.log("On Auth Changed")
+    if (user) {
+      grabUserInfo(user)
+    } else {
+      // No user is signed in.
+    }
+  });
+
+
+}
+
+function grabUserInfo(user) {
+  var name, email, photoUrl, uid, emailVerified;
+
+  if (user != null) {
+    name = user.displayName;
+    email = user.email;
+    photoUrl = user.photoURL;
+    emailVerified = user.emailVerified;
+    uid = user.uid;  // The user's ID, unique to the Firebase project. Do NOT use
+                    // this value to authenticate with your backend server, if
+                    // you have one. Use User.getToken() instead.
+  }
+  document.getElementById("user-name-label").innerHTML = name + " 你好"
+  console.log(user)
+}
+
