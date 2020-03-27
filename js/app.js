@@ -1,3 +1,16 @@
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAceEs3c7xMnYAMixeQObVahvyH3SzVenI",
+  authDomain: "circling-e3e41.firebaseapp.com",
+  databaseURL: "https://circling-e3e41.firebaseio.com",
+  projectId: "circling-e3e41",
+  storageBucket: "circling-e3e41.appspot.com",
+  messagingSenderId: "805716700872",
+  appId: "1:805716700872:web:11b10137cab5aa2a63bffd",
+  measurementId: "G-C9VGY24SYC"
+};
+
 var uiConfig = {
   signInSuccessUrl: 'nonmemberuser.html',
   signInOptions: [
@@ -20,20 +33,10 @@ var uiConfig = {
   }
 };
 
-// Your web app's Firebase configuration
-var firebaseConfig = {
-  apiKey: "AIzaSyAceEs3c7xMnYAMixeQObVahvyH3SzVenI",
-  authDomain: "circling-e3e41.firebaseapp.com",
-  databaseURL: "https://circling-e3e41.firebaseio.com",
-  projectId: "circling-e3e41",
-  storageBucket: "circling-e3e41.appspot.com",
-  messagingSenderId: "805716700872",
-  appId: "1:805716700872:web:11b10137cab5aa2a63bffd",
-  measurementId: "G-C9VGY24SYC"
-};
+
 // Initialize Firebase
 if (!firebase.apps.length) {
-  firebase.initializeApp({});
+  firebase.initializeApp(firebaseConfig);
 }
 // firebase.analytics();
 
