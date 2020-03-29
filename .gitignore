@@ -63,3 +63,6 @@ node_modules/
 
 # dotenv environment variables file
 .env
+
+# eleventy generated static site
+_site
