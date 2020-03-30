@@ -1,6 +1,6 @@
 backend:
-  name: git-gateway
-  branch: master # Branch to update (optional; defaults to master)
+  name: github
+  repo: esquaredly/circling
 
 media_folder: "/images/uploads"
 
@@ -19,3 +19,16 @@ collections:
       - { label: "Thumbnail", name: "thumbnail", widget: "image" }
       - { label: "Event URL", name: "event_url", widget: "string" }
       - { label: "Tags", name: "tags", widget: "list", default: ["event"] }
+  # Our blog posts
+  - name: "blog" # Used in routes, e.g., /admin/collections/blog
+    label: "Post" # Used in the UI
+    folder: "posts" # The path to the folder where the documents are stored
+    create: true # Allow users to create new documents in this collection
+    slug: "{{slug}}" # Filename template, e.g., YYYY-MM-DD-title.md
+    fields: # The fields for each document, usually in front matter
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Publish Date", name: "date", widget: "datetime" }
+      - { label: "Summary", name: "summary", widget: "text" }
+      - { label: "Image", name: "img", widget: "image" }
+      - { label: "Tags", name: "tags", widget: "list", default: ["post"] }
+      - { label: "Body", name: "body", widget: "markdown" }
