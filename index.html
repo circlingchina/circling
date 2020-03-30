@@ -2,21 +2,9 @@
 layout: layout.njk
 page_id: 5e4b8703f0815874152264f2
 site_id: 5e4b8703f0815874d02263b8
-custom_script: <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
 ---
 
-<script>
-  console.log("CMS")
-  if (window.netlifyIdentity) {
-    window.netlifyIdentity.on("init", user => {
-      if (!user) {
-        window.netlifyIdentity.on("login", () => {
-          document.location.href = "/admin/";
-        });
-      }
-    });
-  }
-</script>
 
 <div id="Top" class="banner">
   <div class="container w-container">
@@ -102,6 +90,9 @@ custom_script: <script src="https://identity.netlify.com/v1/netlify-identity-wid
     <div class="page-divider-white"></div>
   </div>
 </div>
+
+
+
 <div class="section transparent">
   <div class="container w-container">
     <div>
@@ -331,18 +322,21 @@ custom_script: <script src="https://identity.netlify.com/v1/netlify-identity-wid
     <div class="div-block-4">
       <div class="collection-list-wrapper-2 w-dyn-list">
         <div class="w-dyn-items w-row">
+
+        {% for event in collections.environment %}
           <div class="w-dyn-item w-col w-col-4">
-            <a href="#" class="product-wrapper w-inline-block">
+            <a href={{ event.url }} class="product-wrapper w-inline-block">
               <div class="product-photo">
-                <img src="" alt="" class="product-image-1" />
+                <img src="/images/uploads/{{ event.data.thumbnail }}" alt="" class="product-image-1" />
                 <div class="button in-product">报名参加</div>
               </div>
               <div class="product-content">
-                <h1 class="product-title"></h1>
-                <div></div>
+                <h1 class="product-title">{{ event.data.title }}</h1>
+                <div>{{ event.data.date }}</div>
               </div>
             </a>
           </div>
+        {% endfor %}
         </div>
         <div class="w-dyn-empty">
           <div>No items found.</div>
