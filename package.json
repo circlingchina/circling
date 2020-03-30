@@ -2,7 +2,6 @@
   "name": "circling-china.webflow",
   "version": "1.0.0",
   "description": "TODO",
-  
   "main": ".eleventy.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,6 +18,7 @@
   },
   "homepage": "https://github.com/esquaredly/circling#readme",
   "devDependencies": {
-    "@11ty/eleventy": "^0.10.0"
+    "@11ty/eleventy": "^0.10.0",
+    "moment": "^2.24.0"
   }
 }
