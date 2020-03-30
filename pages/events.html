@@ -23,20 +23,9 @@ layout: layout.njk
     <div>
       <div class="collection-list-wrapper-2 w-dyn-list">
         <div class="w-dyn-items w-row">
-          <div class="w-dyn-item w-col w-col-4">
-            <a href="#" class="product-wrapper w-inline-block">
-              <div class="product-photo"><img src="" alt="" class="product-image-1">
-                <div class="button in-product">报名参加</div>
-              </div>
-              <div class="product-content">
-                <h1 class="product-title"></h1>
-                <div></div>
-              </div>
-            </a>
-          </div>
-        </div>
-        <div class="w-dyn-empty">
-          <div>No items found.</div>
+          {% for event in collections.event %}
+            {% include _event.html %}
+          {% endfor %}
         </div>
       </div>
     </div>
