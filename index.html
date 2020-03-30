@@ -2,7 +2,9 @@
 layout: layout.njk
 page_id: 5e4b8703f0815874152264f2
 site_id: 5e4b8703f0815874d02263b8
+
 ---
+
 
 <div id="Top" class="banner">
   <div class="container w-container">
@@ -88,6 +90,9 @@ site_id: 5e4b8703f0815874d02263b8
     <div class="page-divider-white"></div>
   </div>
 </div>
+
+
+
 <div class="section transparent">
   <div class="container w-container">
     <div>
@@ -317,21 +322,21 @@ site_id: 5e4b8703f0815874d02263b8
     <div class="div-block-4">
       <div class="collection-list-wrapper-2 w-dyn-list">
         <div class="w-dyn-items w-row">
+
+        {% for event in collections.event %}
           <div class="w-dyn-item w-col w-col-4">
-            <a href="#" class="product-wrapper w-inline-block">
+            <a href={{ event.url }} class="product-wrapper w-inline-block">
               <div class="product-photo">
-                <img src="" alt="" class="product-image-1" />
+                <img src={{ event.data.thumbnail }} alt="" class="product-image-1" />
                 <div class="button in-product">报名参加</div>
               </div>
               <div class="product-content">
-                <h1 class="product-title"></h1>
-                <div></div>
+                <h1 class="product-title">{{ event.data.title }}</h1>
+                <div>{{ event.data.date }}</div>
               </div>
             </a>
           </div>
-        </div>
-        <div class="w-dyn-empty">
-          <div>No items found.</div>
+        {% endfor %}
         </div>
       </div>
       <a href="pages/events.html" class="button w-button">查看所有活动</a>
