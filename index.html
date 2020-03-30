@@ -2,7 +2,21 @@
 layout: layout.njk
 page_id: 5e4b8703f0815874152264f2
 site_id: 5e4b8703f0815874d02263b8
+custom_script: <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 ---
+
+<script>
+  console.log("CMS")
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
+</script>
 
 <div id="Top" class="banner">
   <div class="container w-container">
