@@ -1,3 +1,8 @@
+To Run
+
+`npx @11ty/eleventy --serve`
+
+
 TODO
   
 - need ping++ account (or just alipay account) 
