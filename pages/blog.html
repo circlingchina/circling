@@ -3,60 +3,46 @@ layout: layout.njk
 page_id: 5e4b8703f08158babb226480
 site_id: 5e4b8703f0815874d02263b8
 ---
-    <div id="Top" class="banner sub">
-      {% include _nav.html %}
-      <div class="container w-container">
-        <div class="algin-center">
-          <div id="w-node-e9bd645a185b-bb226480" class="left-banner normal">
-            <div>
-              <div data-w-id="1200627d-24c1-de19-7336-40fa2187d030" style="opacity:0" class="sub-text">Circling知识库<br></div>
-              <h1 data-w-id="1200627d-24c1-de19-7336-40fa2187d033" style="opacity:0" class="tittle-banner">关系中的冥想<br></h1>
-            </div>
-          </div>
-        </div>
-      </div><img src="../images/shape-1.svg" width="300" alt="" class="shape-2"><img src="../images/shape-1.svg" width="300" alt="" class="shape-2 second">
-      <div class="page-divider">
-        <div class="page-divider-white"></div>
-      </div>
-    </div>
-    <div class="section">
-      <div class="container w-container">
+<div id="Top" class="banner sub">
+  {% include _nav.html %}
+  <div class="container w-container">
+    <div class="algin-center">
+      <div id="w-node-e9bd645a185b-bb226480" class="left-banner normal">
         <div>
-          <div data-w-id="cc72a0db-582c-ddb8-8e25-5014c9aa8a62" style="opacity:0" class="blog-item-wrapper"><a href="../pages/blog.html" aria-current="page" class="category relative all w--current">全部文章</a>
-            <div class="w-dyn-list">
-              <div class="blog-categories-flex w-dyn-items">
-                <div class="w-dyn-item"><a href="#" class="category relative"></a></div>
-              </div>
-              <div class="w-dyn-empty">
-                <div>No items found.</div>
-              </div>
-            </div>
-          </div>
-          <div class="w-dyn-list">
-            <div class="w-dyn-items w-row">
-              <div class="w-dyn-item w-col w-col-6">
-                <a data-w-id="ec87aa09-73de-e04e-72d4-72bc93414322" style="opacity:0" href="#" class="blog-featured _95 add-margin-blog w-inline-block">
-                  <div class="blog-overlay">
-                    <div class="category"></div>
-                  </div>
-                  <div class="blog-text">
-                    <h1 class="blog-title"></h1>
-                    <div class="author-flex center">
-                      <h4 class="sub-title name whiter">By<br></h4>
-                      <h4 class="sub-title name whiter"></h4>
-                    </div>
-                  </div>
-                </a>
-              </div>
-            </div>
-            <div class="w-dyn-empty">
-              <div>No items found.</div>
+          <div data-w-id="1200627d-24c1-de19-7336-40fa2187d030" style="opacity:0" class="sub-text">Circling知识库<br></div>
+          <h1 data-w-id="1200627d-24c1-de19-7336-40fa2187d033" style="opacity:0" class="tittle-banner">关系中的冥想<br></h1>
+        </div>
+      </div>
+    </div>
+  </div><img src="../images/shape-1.svg" width="300" alt="" class="shape-2"><img src="../images/shape-1.svg" width="300" alt="" class="shape-2 second">
+  <div class="page-divider">
+    <div class="page-divider-white"></div>
+  </div>
+</div>
+<div class="section">
+  <div class="container w-container">
+    <div>
+      <div data-w-id="cc72a0db-582c-ddb8-8e25-5014c9aa8a62" style="opacity:0" class="blog-item-wrapper">
+        <a href="../pages/blog.html" aria-current="page" class="category relative all w--current">全部文章</a>
+        <div class="w-dyn-list">
+          <div class="blog-categories-flex w-dyn-items">
+            <div class="w-dyn-item">
+              <a href="#" class="category relative"></a>
             </div>
           </div>
         </div>
       </div>
-      <div class="page-divider">
-        <div class="page-divider-white down"></div>
+      <div class="w-dyn-list">
+        <div class="w-dyn-items w-row">
+          {% for blogpost in collections.post %}
+            {% include _blogpost.html %}
+          {% endfor %}
+        </div>
       </div>
     </div>
-    {%include _free_event.html%}
+  </div>
+  <div class="page-divider">
+    <div class="page-divider-white down"></div>
+  </div>
+</div>
+{%include _free_event.html%}
