@@ -322,7 +322,7 @@ site_id: 5e4b8703f0815874d02263b8
     <div class="div-block-4">
       <div class="collection-list-wrapper-2 w-dyn-list">
         <div class="w-dyn-items w-row">
-          {% for event in collections.event %}
+          {% for event in collections.event limit:3 %}
             {% include _event.html %}
           {% endfor %}
         </div>
