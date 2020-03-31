@@ -52,10 +52,14 @@ layout: layout.njk
   <div class="page-divider"></div>
 </div>
 <div class="section transparent">
-  <div class="page-divider"></div>
   <div class="container w-container">
+      <div
+      class="top-title center">
+      <div class="sub-text red">相关阅读<br /></div>
+      <h1 class="h1">来自社群伙伴的体验与思考<br /></h1>
+    </div>
     <div>
-      <div data-w-id="cc72a0db-582c-ddb8-8e25-5014c9aa8a62" style="opacity:0" class="blog-item-wrapper">
+      <div data-w-id="cc72a0db-582c-ddb8-8e25-5014c9aa8a62" style="opacity:1" class="blog-item-wrapper">
         <a href="../pages/blog.html" aria-current="page" class="category relative all w--current">全部文章</a>
         <div class="w-dyn-list">
           <div class="blog-categories-flex w-dyn-items">
@@ -66,10 +70,9 @@ layout: layout.njk
         </div>
       </div>
       <div class="w-dyn-list">
-      list of posts
         <div class="w-dyn-items w-row">
           {% for blogpost in collections.post %}
-            {% include _blogpost.html %}
+            {% include "_blogpost.html" %}
           {% endfor %}
         </div>
       </div>
