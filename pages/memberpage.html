@@ -54,33 +54,24 @@ site_id: 5e4b8703f0815874d02263b8
         </div>
       </div>
     </div>
-    <div class="section transparent">
-      <div class="container w-container">
-        <div data-w-id="62b2e2c2-ca7f-79d0-5982-de47109b5c06" style="opacity:0" class="top-title center">
-          <div class="sub-text red">近期活动<br></div>
-          <h1 class="h1">参加线上线下活动，在关系中冥想<br></h1>
-        </div>
-        <div class="div-block-4">
-          <div class="collection-list-wrapper-2 w-dyn-list">
-            <div class="w-dyn-items w-row">
-              <div class="w-dyn-item w-col w-col-4">
-                <a href="#" class="product-wrapper w-inline-block">
-                  <div class="product-photo"><img src="" alt="" class="product-image-1">
-                    <div class="button in-product">报名参加</div>
-                  </div>
-                  <div class="product-content">
-                    <h1 class="product-title"></h1>
-                    <div></div>
-                  </div>
-                </a>
-              </div>
-            </div>
-            <div class="w-dyn-empty">
-              <div>No items found.</div>
-            </div>
-          </div><a href="../pages/events.html" class="button w-button">查看所有活动</a></div>
-      </div>
-      <div class="page-divider">
-        <div class="page-divider-white down"></div>
-      </div>
+<div class="section transparent">
+  <div class="container w-container">
+    <div  class="top-title center">
+      <div class="sub-text red">近期活动<br /></div>
+      <h1 class="h1">参加线上线下活动，用心对话，可以很简单<br /></h1>
     </div>
+    <div class="div-block-4">
+      <div class="collection-list-wrapper-2 w-dyn-list">
+        <div class="w-dyn-items w-row">
+          {% for event in collections.event limit:3 %}
+            {% include _event.html %}
+          {% endfor %}
+        </div>
+      </div>
+      <a href="pages/events.html" class="button w-button">查看所有活动</a>
+    </div>
+  </div>
+  <div class="page-divider">
+    <div class="page-divider-white down"></div>
+  </div>
+</div>
