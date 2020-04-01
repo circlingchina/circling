@@ -11,6 +11,26 @@
         "time":"8:00 am - 8:15 am",
         "category": "每日冥想",
         "host": "Milk"
+      },
+      {
+        "time":"8:00 am - 8:15 am",
+        "category": "每日冥想",
+        "host": "Milk"
+      }
+    ]
+  },
+    { "date":"星期一 2020年4月6日",
+    "sessions" :
+    [
+      {
+        "time":"8:00 am - 8:15 am",
+        "category": "每日冥想",
+        "host": "Milk"
+      },
+      {
+        "time":"8:00 am - 8:15 am",
+        "category": "每日冥想",
+        "host": "Milk"
       }
     ]
   },
