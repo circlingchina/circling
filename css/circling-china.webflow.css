@@ -3103,8 +3103,8 @@ figure {
 }
 
 .body {
-  padding-right: 3%;
-  padding-left: 3%;
+  padding-right: 0%;
+  padding-left: 0%;
   background-color: #edf2f5;
 }
 
@@ -3334,137 +3334,6 @@ figure {
   transform: translate(-50%, 0px);
 }
 
-.hamburger {
-  position: relative;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  width: 60px;
-  height: 60px;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
-  align-items: center;
-  border-style: solid;
-  border-width: 1px;
-  border-color: hsla(0, 0%, 100%, 0.43);
-  border-radius: 100%;
-  cursor: pointer;
-}
-
-.hamburger.second-version {
-  border-color: hsla(0, 0%, 56.9%, 0.43);
-}
-
-.hamburger-wrapper {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  -webkit-box-pack: start;
-  -webkit-justify-content: flex-start;
-  -ms-flex-pack: start;
-  justify-content: flex-start;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
-  align-items: center;
-}
-
-.line-3-1 {
-  width: 30px;
-  height: 2px;
-  background-color: #fff;
-}
-
-.line-3-1.darker {
-  background-color: #121217;
-}
-
-.hamburger-content {
-  position: static;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  width: 30px;
-  height: 2px;
-  margin-top: 6px;
-  margin-bottom: 6px;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
-  align-items: center;
-  background-color: #fff;
-}
-
-.hamburger-content.dark {
-  background-color: #121217;
-}
-
-.line-1 {
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  z-index: 2;
-  width: 30px;
-  height: 2px;
-}
-
-.line-2 {
-  position: absolute;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  width: 30px;
-  height: 2px;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
-  align-items: center;
-  background-color: #fff;
-}
-
-.line-2.darker {
-  background-color: #121217;
-}
-
-.line-3 {
-  width: 30px;
-  height: 2px;
-  background-color: #fff;
-}
-
-.line-3.dark {
-  background-color: #121217;
-}
-
 .navigation-flex {
   position: absolute;
   left: 0%;
@@ -3619,6 +3488,7 @@ figure {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  width: 100%;
   -webkit-box-pack: center;
   -webkit-justify-content: center;
   -ms-flex-pack: center;
@@ -3629,7 +3499,7 @@ figure {
   align-items: center;
 }
 
-.navigation-menu {
+.navigation-menu-2 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -7217,6 +7087,7 @@ figure {
     -webkit-flex: 0 0 auto;
     -ms-flex: 0 0 auto;
     flex: 0 0 auto;
+    display: none;
   }
   .navigation-flex {
     width: 100%;
@@ -7224,7 +7095,8 @@ figure {
     padding-left: 2%;
     border-bottom-style: none;
   }
-  .navigation-menu {
+  .navigation-menu-2 {
+    display:none;
     position: absolute;
     left: 32px;
     top: 88px;
@@ -7672,7 +7544,7 @@ figure {
   .social-icon.dribbble {
     display: none;
   }
-  .navigation-menu {
+  .navigation-menu-2 {
     left: -63px;
     top: 85px;
   }
@@ -7977,7 +7849,7 @@ figure {
     -ms-flex-order: -1;
     order: -1;
   }
-  .navigation-menu {
+  .navigation-menu-2 {
     left: 18px;
     top: 88px;
     min-width: 90vw;
