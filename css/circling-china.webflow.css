@@ -4308,6 +4308,13 @@ figure {
   grid-row-gap: 16px;
   -ms-grid-columns: 1fr 1fr 1fr;
   grid-template-columns: 1fr 1fr 1fr;
+
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  text-align: center;
+  
   -ms-grid-rows: auto;
   grid-template-rows: auto;
 }
