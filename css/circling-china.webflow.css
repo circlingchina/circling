@@ -2524,6 +2524,11 @@ figure {
   background-color: #fff;
   color: #cc333f;
 }
+.button.white a {
+  background-color: #fff;
+  color: #cc333f;
+  text-decoration: none;
+}
 
 .button.white:hover {
   opacity: 0.9;
@@ -3373,7 +3378,7 @@ figure {
   display: flex;
 }
 
-.navigation-item {
+.navigation-item, .navigation-menu-2 .netlify-identity-button {
   padding: 30px 15px;
   -webkit-transition: all 200ms ease;
   transition: all 200ms ease;
@@ -3383,6 +3388,10 @@ figure {
   letter-spacing: 1px;
   text-decoration: none;
   text-transform: uppercase;
+}
+
+.navigation-menu-2 .netlify-identity-button {
+  display:inline-block;
 }
 
 .navigation-item:hover {
