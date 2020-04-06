@@ -2,6 +2,7 @@
 layout: layout.njk
 page_id: 5e5ab6fb3fb2ccc34f70a909
 site_id: 5e4b8703f0815874d02263b8
+custom_react: <script src="/js/member.js"></script>
 ---
     <div id="Top" class="banner sub">
       {% include _nav.html %}
@@ -33,7 +34,7 @@ site_id: 5e4b8703f0815874d02263b8
     <div class="section transparent">
       <div class="container w-container">
         <div class="sub-text red">本周会员Circling<br></div>
-        {% include _events_table.njk %}
+        <div id="react-table"></div>
       </div>
       <div class="page-divider">
         <div class="page-divider-white down"></div>
