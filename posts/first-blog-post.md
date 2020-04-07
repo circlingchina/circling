@@ -6,7 +6,6 @@ author: 翻译 Choo | 校对 静姝
 author_img: /images/uploads/circling-teacups.jpeg
 img: /images/uploads/5e6e5d74a87b2d48ec75e646_jr-korpa-aie6wdtc3q8-unsplash.jpg
 tags:
-  - post
   - 疗愈
 ---
 ‍*静姝按：*
