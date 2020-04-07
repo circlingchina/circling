@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "(./node_modules/parcel-bundler/bin/cli.js watch src/member.js --out-dir js &) && eleventy --serve",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "./node_modules/parcel-bundler/bin/cli.js build src/member.js --out-dir js && eleventy" 
+    "build": "./node_modules/parcel-bundler/bin/cli.js build src/member.js --out-dir js && eleventy"
   },
   "repository": {
     "type": "git",

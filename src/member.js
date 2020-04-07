@@ -2,6 +2,8 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
+var moment = require('moment');
+import locale from 'moment/src/locale/zh-cn'
 var Airtable = require("airtable");
 var base = new Airtable({ apiKey: "keyN6C9ddDWd2YTGi" }).base(
   "app53ecZ2UL9M6JOw"
@@ -104,12 +106,19 @@ class EventTableHeader extends React.Component {
 // console.log("go through babel js");
 class EventRow extends React.Component {
   render() {
+    moment.locale("zh-cn", locale);
+    const timeStr = moment(this.props.event.get("Time")).format('YYYY年M月D日 Ah点mm分');
     return (
       <div>
         <div className="schedule-columns w-row">
           <div className="w-col w-col-3">
             <div>
-              <div>{this.props.event.get("Time")}</div>
+              <div>
+                {
+                  timeStr
+                  
+                }
+              </div>
             </div>
           </div>
           <div className="w-col w-col-3">
