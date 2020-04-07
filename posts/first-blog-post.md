@@ -7,7 +7,7 @@ img: /images/uploads/5e6e5d74a87b2d48ec75e646_jr-korpa-aie6wdtc3q8-unsplash.jpg
 author_img: /images/uploads/circling-teacups.jpeg
 category: 疗愈
 tags:
-  - 疗愈
+  - post
 ---
 ‍*静姝按：*
 
