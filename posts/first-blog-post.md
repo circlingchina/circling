@@ -23,8 +23,6 @@ tags:
 
 *以下故事源自Tara Brach的一位来访者 “Rosalie”，由Jan Mullen 改写。*
 
-
-
 ![](https://uploads-ssl.webflow.com/5e4b8703f08158a6472263bb/5e6e5f0543f225cc8a8b4535_caleb-woods-VZILDYoqn_U-unsplash.jpg)
 
 ‍
@@ -70,5 +68,3 @@ tags:
 “有一天，你将重归完整。直到那一天，直到永远，我都在爱着你。”
 
 ![](https://uploads-ssl.webflow.com/5e4b8703f08158a6472263bb/5e6e5eeb43f2250c788b34dc_anna-kolosyuk-4R6pg0Iq5IU-unsplash.jpg)
-
-Type image caption here (optional)
