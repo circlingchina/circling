@@ -3,8 +3,9 @@ title: 好心仙子
 subtitle: 一个关于创伤与疗愈的童话
 date: 2020-03-30T22:27:54.520Z
 author: 翻译 Choo | 校对 静姝
-author_img: /images/uploads/circling-teacups.jpeg
 img: /images/uploads/5e6e5d74a87b2d48ec75e646_jr-korpa-aie6wdtc3q8-unsplash.jpg
+author_img: /images/uploads/circling-teacups.jpeg
+category: 疗愈
 tags:
   - 疗愈
 ---
