@@ -31,7 +31,7 @@ class EventsTable extends React.Component {
           // This function (`page`) will get called for each page of records.
           allEvents = allEvents.concat(records);
           console.log(allEvents)
-   
+
           // To fetch the next page of records, call `fetchNextPage`.
           // If there are more records, `page` will get called again.
           // If there are no more records, `done` will get called.
@@ -66,23 +66,7 @@ class EventsTable extends React.Component {
       return (
         <div className="div-block-11">
           <div>
-            <div className="schedule-title w-row">
-              <div className="column w-col w-col-3">
-                时间
-              </div>
-              <div className="w-col w-col-3">
-                活动
-              </div>
-              <div className="w-col w-col-3">
-                带领者
-              </div>
-              <div className="w-col w-col-3">
-                人数
-              </div>
-              <div className="w-col w-col-3">
-                报名
-              </div>
-            </div>
+            <EventTableHeader />
             {eventItems}
           </div>
         </div>
@@ -93,6 +77,30 @@ class EventsTable extends React.Component {
 
 ReactDOM.render(<EventsTable />, document.getElementById("react-table"));
 
+
+class EventTableHeader extends React.Component {
+  render() {
+    return (
+      <div className="schedule-title w-row">
+        <div className="column w-col w-col-3">
+          时间
+              </div>
+        <div className="w-col w-col-3">
+          活动
+              </div>
+        <div className="w-col w-col-3">
+          带领者
+              </div>
+        <div className="w-col w-col-3">
+          人数
+              </div>
+        <div className="w-col w-col-3">
+          报名
+              </div>
+      </div>
+    )
+  }
+}
 // console.log("go through babel js");
 class EventRow extends React.Component {
   render() {
@@ -108,7 +116,7 @@ class EventRow extends React.Component {
             <div>{this.props.event.fields.Category}</div>
           </div>
           <div className="w-col w-col-3">
-            <a href={"/pages/leaders/#"+this.props.event.fields.Host}>
+            <a href={"/pages/leaders/#" + this.props.event.fields.Host}>
               <div>{this.props.event.fields.Host}</div>
             </a>
           </div>

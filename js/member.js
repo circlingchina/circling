@@ -36525,19 +36525,7 @@ var EventsTable = /*#__PURE__*/function (_React$Component) {
         });
         return /*#__PURE__*/_react.default.createElement("div", {
           className: "div-block-11"
-        }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", {
-          className: "schedule-title w-row"
-        }, /*#__PURE__*/_react.default.createElement("div", {
-          className: "column w-col w-col-3"
-        }, "\u65F6\u95F4"), /*#__PURE__*/_react.default.createElement("div", {
-          className: "w-col w-col-3"
-        }, "\u6D3B\u52A8"), /*#__PURE__*/_react.default.createElement("div", {
-          className: "w-col w-col-3"
-        }, "\u5E26\u9886\u8005"), /*#__PURE__*/_react.default.createElement("div", {
-          className: "w-col w-col-3"
-        }, "\u4EBA\u6570"), /*#__PURE__*/_react.default.createElement("div", {
-          className: "w-col w-col-3"
-        }, "\u62A5\u540D")), eventItems));
+        }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(EventTableHeader, null), eventItems));
       }
     }
   }]);
@@ -36545,18 +36533,51 @@ var EventsTable = /*#__PURE__*/function (_React$Component) {
   return EventsTable;
 }(_react.default.Component);
 
-_reactDom.default.render( /*#__PURE__*/_react.default.createElement(EventsTable, null), document.getElementById("react-table")); // console.log("go through babel js");
+_reactDom.default.render( /*#__PURE__*/_react.default.createElement(EventsTable, null), document.getElementById("react-table"));
+
+var EventTableHeader = /*#__PURE__*/function (_React$Component2) {
+  _inherits(EventTableHeader, _React$Component2);
+
+  var _super2 = _createSuper(EventTableHeader);
+
+  function EventTableHeader() {
+    _classCallCheck(this, EventTableHeader);
+
+    return _super2.apply(this, arguments);
+  }
+
+  _createClass(EventTableHeader, [{
+    key: "render",
+    value: function render() {
+      return /*#__PURE__*/_react.default.createElement("div", {
+        className: "schedule-title w-row"
+      }, /*#__PURE__*/_react.default.createElement("div", {
+        className: "column w-col w-col-3"
+      }, "\u65F6\u95F4"), /*#__PURE__*/_react.default.createElement("div", {
+        className: "w-col w-col-3"
+      }, "\u6D3B\u52A8"), /*#__PURE__*/_react.default.createElement("div", {
+        className: "w-col w-col-3"
+      }, "\u5E26\u9886\u8005"), /*#__PURE__*/_react.default.createElement("div", {
+        className: "w-col w-col-3"
+      }, "\u4EBA\u6570"), /*#__PURE__*/_react.default.createElement("div", {
+        className: "w-col w-col-3"
+      }, "\u62A5\u540D"));
+    }
+  }]);
+
+  return EventTableHeader;
+}(_react.default.Component); // console.log("go through babel js");
 
 
-var EventRow = /*#__PURE__*/function (_React$Component2) {
-  _inherits(EventRow, _React$Component2);
+var EventRow = /*#__PURE__*/function (_React$Component3) {
+  _inherits(EventRow, _React$Component3);
 
-  var _super2 = _createSuper(EventRow);
+  var _super3 = _createSuper(EventRow);
 
   function EventRow() {
     _classCallCheck(this, EventRow);
 
-    return _super2.apply(this, arguments);
+    return _super3.apply(this, arguments);
   }
 
   _createClass(EventRow, [{
@@ -36613,7 +36634,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57867" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57828" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
