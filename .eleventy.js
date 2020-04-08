@@ -7,6 +7,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy('js')
   eleventyConfig.addPassthroughCopy('images')
   eleventyConfig.addPassthroughCopy('admin')
+  eleventyConfig.addPassthroughCopy('_email_templates')
 
   //add date filter
   eleventyConfig.addFilter('dateIso', date => {
