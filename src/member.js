@@ -21,6 +21,7 @@ class EventsTable extends React.Component {
   }
 
   componentDidMount() {
+    console.log("fetching event table")
     let allEvents = []
     base("OpenEvents")
       .select({
@@ -105,9 +106,60 @@ class EventTableHeader extends React.Component {
 }
 // console.log("go through babel js");
 class EventRow extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleJoinEvent = this.handleJoinEvent.bind(this)
+    this.state = {joined: false, attendees: this.props.event.fields.Attendees}
+  }
+
+  handleJoinEvent(e) {
+
+    e.preventDefault();
+    if(!window.airbaseUserId) {
+      return;
+    }
+
+    console.log("joining for " + window.airbaseUserId)
+    this.setState({joined: true})
+    let eventUsers = [window.airbaseUserId]
+    if(this.props.event.fields.Users) {
+      eventUsers = eventUsers.concat(this.props.event.fields.Users)
+    }
+    
+    console.log("eventUsers=", eventUsers)
+
+    base('OpenEvents').update([
+      {
+        "id": this.props.event.id,
+        "fields": {
+          "Users": eventUsers
+        }
+      }
+    ], (err, records) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      records.forEach((record) => {
+        console.log(record.get('Attendees'));
+        this.setState({attendees: record.get('Attendees')})
+      });
+    });
+    
+  }
+
   render() {
     moment.locale("zh-cn", locale);
     const timeStr = moment(this.props.event.get("Time")).format('YYYY年M月D日 Ah点mm分');
+    let joinButton
+    if(!this.state.joined) {
+      joinButton = <a href="#" className="join-button w-button"
+                      onClick={this.handleJoinEvent}>
+                      报名
+                    </a>
+    } else {
+      joinButton = "已报名"
+    }
     return (
       <div>
         <div className="schedule-columns w-row">
@@ -130,12 +182,10 @@ class EventRow extends React.Component {
             </a>
           </div>
           <div className="w-col w-col-3">
-            <div>{this.props.event.fields.Attendees}/{this.props.event.fields.MaxAttendees}</div>
+            <div>{this.state.attendees}/{this.props.event.fields.MaxAttendees}</div>
           </div>
           <div className="w-col w-col-3">
-            <a href="#" className="join-button w-button">
-              报名
-            </a>
+            {joinButton}
           </div>
         </div>
       </div>

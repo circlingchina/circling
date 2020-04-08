@@ -68,6 +68,5 @@ node_modules/
 _site
 
 .cache
-*.map
+js/*.js.map
 
-*.map

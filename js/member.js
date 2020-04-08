@@ -47788,6 +47788,7 @@ var EventsTable = /*#__PURE__*/function (_React$Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
+      console.log("fetching event table");
       var allEvents = [];
       base("OpenEvents").select({
         // Selecting the first 3 records in Grid view:
@@ -47888,17 +47889,79 @@ var EventRow = /*#__PURE__*/function (_React$Component3) {
 
   var _super3 = _createSuper(EventRow);
 
-  function EventRow() {
+  function EventRow(props) {
+    var _this3;
+
     _classCallCheck(this, EventRow);
 
-    return _super3.apply(this, arguments);
+    _this3 = _super3.call(this, props);
+    _this3.handleJoinEvent = _this3.handleJoinEvent.bind(_assertThisInitialized(_this3));
+    _this3.state = {
+      joined: false,
+      attendees: _this3.props.event.fields.Attendees
+    };
+    return _this3;
   }
 
   _createClass(EventRow, [{
+    key: "handleJoinEvent",
+    value: function handleJoinEvent(e) {
+      var _this4 = this;
+
+      e.preventDefault();
+
+      if (!window.airbaseUserId) {
+        return;
+      }
+
+      console.log("joining for " + window.airbaseUserId);
+      this.setState({
+        joined: true
+      });
+      var eventUsers = [window.airbaseUserId];
+
+      if (this.props.event.fields.Users) {
+        eventUsers = eventUsers.concat(this.props.event.fields.Users);
+      }
+
+      console.log("eventUsers=", eventUsers);
+      base('OpenEvents').update([{
+        "id": this.props.event.id,
+        "fields": {
+          "Users": eventUsers
+        }
+      }], function (err, records) {
+        if (err) {
+          console.error(err);
+          return;
+        }
+
+        records.forEach(function (record) {
+          console.log(record.get('Attendees'));
+
+          _this4.setState({
+            attendees: record.get('Attendees')
+          });
+        });
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
       moment.locale("zh-cn", _zhCn.default);
       var timeStr = moment(this.props.event.get("Time")).format('YYYY年M月D日 Ah点mm分');
+      var joinButton;
+
+      if (!this.state.joined) {
+        joinButton = /*#__PURE__*/_react.default.createElement("a", {
+          href: "#",
+          className: "join-button w-button",
+          onClick: this.handleJoinEvent
+        }, "\u62A5\u540D");
+      } else {
+        joinButton = "已报名";
+      }
+
       return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", {
         className: "schedule-columns w-row"
       }, /*#__PURE__*/_react.default.createElement("div", {
@@ -47911,12 +47974,9 @@ var EventRow = /*#__PURE__*/function (_React$Component3) {
         href: "/pages/leaders/#" + this.props.event.fields.Host
       }, /*#__PURE__*/_react.default.createElement("div", null, this.props.event.fields.Host))), /*#__PURE__*/_react.default.createElement("div", {
         className: "w-col w-col-3"
-      }, /*#__PURE__*/_react.default.createElement("div", null, this.props.event.fields.Attendees, "/", this.props.event.fields.MaxAttendees)), /*#__PURE__*/_react.default.createElement("div", {
+      }, /*#__PURE__*/_react.default.createElement("div", null, this.state.attendees, "/", this.props.event.fields.MaxAttendees)), /*#__PURE__*/_react.default.createElement("div", {
         className: "w-col w-col-3"
-      }, /*#__PURE__*/_react.default.createElement("a", {
-        href: "#",
-        className: "join-button w-button"
-      }, "\u62A5\u540D"))));
+      }, joinButton)));
     }
   }]);
 
@@ -47950,7 +48010,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54772" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60057" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
