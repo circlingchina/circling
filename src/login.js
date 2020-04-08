@@ -4,6 +4,9 @@ var base = new Airtable({ apiKey: "keyN6C9ddDWd2YTGi" }).base(
 );
 
 function getAirbaseUid(user) {
+  if(!user) {
+    return;
+  }
   console.log("get airbase UID", user.email)
   base('Users').select({
     // Selecting the first 3 records in Grid view:
