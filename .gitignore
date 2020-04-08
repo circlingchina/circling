@@ -68,9 +68,4 @@ node_modules/
 _site
 
 .cache
-js/*.js.map
-
-
-js/login.js
-
-js/member.js
+# js/*.js.map

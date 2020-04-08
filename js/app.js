@@ -1,5 +1,6 @@
 
-// Your web app's Firebase configuration
+//TODO Delete Your web app's Firebase configuration 1 2 3
+
 const firebaseConfig = {
   apiKey: "AIzaSyAceEs3c7xMnYAMixeQObVahvyH3SzVenI",
   authDomain: "circling-e3e41.firebaseapp.com",
