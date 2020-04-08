@@ -4,7 +4,7 @@ var base = new Airtable({ apiKey: "keyN6C9ddDWd2YTGi" }).base(
 );
 
 function getAirbaseUid(user) {
-
+  console.log("get airbase UID", user.email)
   base('Users').select({
     // Selecting the first 3 records in Grid view:
     maxRecords: 1,
@@ -15,6 +15,7 @@ function getAirbaseUid(user) {
     records.forEach(function(record) {
         console.log('Retrieved', record.id);
         window.airbaseUserId = record.id
+        window.localStorage.setItem('airbaseUserId', record.id)
     });
   });
 }

@@ -70,3 +70,7 @@ _site
 .cache
 js/*.js.map
 
+
+js/login.js
+
+js/member.js

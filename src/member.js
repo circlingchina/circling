@@ -9,6 +9,9 @@ var base = new Airtable({ apiKey: "keyN6C9ddDWd2YTGi" }).base(
   "app53ecZ2UL9M6JOw"
 );
 
+function getAirbaseUserId() {
+  return window.airbaseUserId || window.localStorage.getItem('airbaseUserId')
+}
 class EventsTable extends React.Component {
   constructor(props) {
     super(props);
@@ -108,26 +111,41 @@ class EventTableHeader extends React.Component {
 class EventRow extends React.Component {
   constructor(props) {
     super(props);
-    this.handleJoinEvent = this.handleJoinEvent.bind(this)
     this.state = {joined: false, attendees: this.props.event.fields.Attendees}
+
+    this.handleJoinEvent = this.handleJoinEvent.bind(this)
+  }
+
+  componentDidMount() {
+    let userJoined = false
+    // window.airbaseUserId = "recwLANU5KpoOSinS"
+    console.log("Event.Users", this.props.event.fields.Users)
+    if (this.props.event.fields.Users) {
+      console.log("airbaseId", getAirbaseUserId())
+      if (this.props.event.fields.Users.includes(getAirbaseUserId())) {
+        userJoined = true;
+      }
+    }
+    this.setState({joined:userJoined})
   }
 
   handleJoinEvent(e) {
-
     e.preventDefault();
-    if(!window.airbaseUserId) {
+    let airbaseUserId = getAirbaseUserId();
+    //can't join unless logged in
+    if(!airbaseUserId) {
       return;
     }
 
-    console.log("joining for " + window.airbaseUserId)
     this.setState({joined: true})
-    let eventUsers = [window.airbaseUserId]
-    if(this.props.event.fields.Users) {
-      eventUsers = eventUsers.concat(this.props.event.fields.Users)
+    let eventUsers = this.props.event.fields.Users ? this.props.event.fields.Users : []
+  
+    if(eventUsers.includes(airbaseUserId)) {
+      return; //already joined
     }
-    
-    console.log("eventUsers=", eventUsers)
 
+    eventUsers.push(airbaseUserId)
+    console.log("eventUsers", eventUsers)
     base('OpenEvents').update([
       {
         "id": this.props.event.id,
