@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 var moment = require('moment');
 import locale from 'moment/src/locale/zh-cn'
 var Airtable = require("airtable");
-var base = new Airtable({ apiKey: "keyN6C9ddDWd2YTGi" }).base(
+var base = new Airtable({ apiKey: process.env.AIRBASE_API_KEY }).base(
   "app53ecZ2UL9M6JOw"
 );
 
@@ -240,8 +240,6 @@ class EventRow extends React.Component {
     //based on state, render the correct UI element
     let joinButton
     let cancelButton
-
-    console.log("event before render row", this.props.event)
 
     if (!this.state.joined) {
       if (this.state.roomfull) {

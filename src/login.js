@@ -1,5 +1,5 @@
 var Airtable = require("airtable");
-var base = new Airtable({ apiKey: "keyN6C9ddDWd2YTGi" }).base(
+var base = new Airtable({ apiKey: process.env.AIRBASE_API_KEY }).base(
   "app53ecZ2UL9M6JOw"
 );
 
@@ -7,16 +7,13 @@ function getAirbaseUid(user) {
   if(!user) {
     return;
   }
-  console.log("get airbase UID", user.email)
   base('Users').select({
     // Selecting the first 3 records in Grid view:
     maxRecords: 1,
     filterByFormula: '{email} = \"'+user.email+'\"'
   }).eachPage(function page(records, fetchNextPage) {
     // This function (`page`) will get called for each page of records.
-    console.log("got back records", records.length)
     records.forEach(function(record) {
-        console.log('Retrieved', record.id);
         window.airbaseUserId = record.id
         window.localStorage.setItem('airbaseUserId', record.id)
     });
@@ -24,19 +21,17 @@ function getAirbaseUid(user) {
 }
 
 function attachIdentityListern() {
-  console.log("attatch")
   netlifyIdentity.on('init', user => {
     getAirbaseUid(user);
     updateNav(user)
   });
   netlifyIdentity.on('login', user => {
-    console.log('login', user)
     updateNav(user)
   });
-  netlifyIdentity.on('logout', () => console.log('Logged out'));
-  netlifyIdentity.on('error', err => console.error('Error', err));
-  netlifyIdentity.on('open', () => console.log('Widget opened'));
-  netlifyIdentity.on('close', () => console.log('Widget closed'));
+  // netlifyIdentity.on('logout', () => console.log('Logged out'));
+  // netlifyIdentity.on('error', err => console.error('Error', err));
+  // netlifyIdentity.on('open', () => console.log('Widget opened'));
+  // netlifyIdentity.on('close', () => console.log('Widget closed'));
   
 }
 
