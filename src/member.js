@@ -261,7 +261,7 @@ class EventRow extends React.Component {
         };
       };
     } else {
-      joinButton = <a href="#" className="join-button w-button">
+      joinButton = <a href={this.props.event.fields.EventLink} className="join-button w-button" target="_blank">
                       进入房间
                     </a>
 
