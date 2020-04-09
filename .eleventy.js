@@ -1,6 +1,6 @@
 const moment = require('moment');
  
-moment.locale('en');
+moment.locale('zh-cn');
 
 module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy('css')
