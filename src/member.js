@@ -116,6 +116,7 @@ class EventRow extends React.Component {
     this.state = { joined: false, full: false, timeUntil: false, attendees: this.props.event.fields.Attendees }
 
     this.handleJoinEvent = this.handleJoinEvent.bind(this)
+    this.handleUnjoinEvent = this.handleUnjoinEvent.bind(this)
   }
 
   componentDidMount() {
@@ -203,7 +204,48 @@ class EventRow extends React.Component {
         this.setState({ attendees: record.get('Attendees') })
       });
     });
+  }
 
+  handleUnjoinEvent(e) {
+    console.log("unjoin")
+
+    e.preventDefault();
+
+    let airbaseUserId = getAirbaseUserId();
+    //can't join unless logged in
+    if (!airbaseUserId) {
+      return;
+    }
+
+    
+    let eventUsers = this.props.event.fields.Users ? this.props.event.fields.Users : []
+    const index = eventUsers.indexOf(airbaseUserId)
+    if (index < 0) {
+      //user is not in this event
+      this.setState({ joined: false })
+      return; 
+    } else {
+      eventUsers.splice(index, 1)
+    }
+
+    console.log("eventUsers", eventUsers)
+    base('OpenEvents').update([
+      {
+        "id": this.props.event.id,
+        "fields": {
+          "Users": eventUsers
+        }
+      }
+    ], (err, records) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      records.forEach((record) => {
+        console.log(record.get('Attendees'));
+        this.setState({ attendees: record.get('Attendees'), joined: false })
+      });
+    });
   }
 
   render() {
@@ -238,7 +280,7 @@ class EventRow extends React.Component {
 
       if (this.state.timeUntil = "before") {
         cancelButton = <a href="#" className="join-button w-button"
-          onClick={this.handleJoinEvent}>
+          onClick={this.handleUnjoinEvent}>
           取消报名
                          </a>
       } else {

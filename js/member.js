@@ -47765,7 +47765,8 @@ var base = new Airtable({
 
 function getAirbaseUserId() {
   return window.airbaseUserId || window.localStorage.getItem('airbaseUserId');
-}
+} // events table in member page 
+
 
 var EventsTable = /*#__PURE__*/function (_React$Component) {
   _inherits(EventsTable, _React$Component);
@@ -47885,8 +47886,7 @@ var EventTableHeader = /*#__PURE__*/function (_React$Component2) {
   }]);
 
   return EventTableHeader;
-}(_react.default.Component); // console.log("go through babel js");
-
+}(_react.default.Component);
 
 var EventRow = /*#__PURE__*/function (_React$Component3) {
   _inherits(EventRow, _React$Component3);
@@ -47901,15 +47901,19 @@ var EventRow = /*#__PURE__*/function (_React$Component3) {
     _this3 = _super3.call(this, props);
     _this3.state = {
       joined: false,
+      full: false,
+      timeUntil: false,
       attendees: _this3.props.event.fields.Attendees
     };
     _this3.handleJoinEvent = _this3.handleJoinEvent.bind(_assertThisInitialized(_this3));
+    _this3.handleUnjoinEvent = _this3.handleUnjoinEvent.bind(_assertThisInitialized(_this3));
     return _this3;
   }
 
   _createClass(EventRow, [{
     key: "componentDidMount",
     value: function componentDidMount() {
+      //1. check if user is already in this event
       var userJoined = false; // window.airbaseUserId = "recwLANU5KpoOSinS"
 
       console.log("Event.Users", this.props.event.fields.Users);
@@ -47920,11 +47924,50 @@ var EventRow = /*#__PURE__*/function (_React$Component3) {
         if (this.props.event.fields.Users.includes(getAirbaseUserId())) {
           userJoined = true;
         }
+      } //2. check if event is full
+      // this.props.event attendees and max attendees , if equal, full
+
+
+      var roomfull = false;
+
+      if (this.props.event.attendees = this.props.event.MaxAttendees) {
+        roomfull = true;
       }
 
+      var timeUntil = false;
+      var dateNow = new Date();
+      var eventDate = new Date(this.props.event.get("Time"));
+      var msDiff = eventDate - dateNow;
+      var diffMin = msDiff / 1000 / 60;
+      var diffHour = diffMin / 60;
+      console.log("minuteDiff", diffMin);
+      console.log("hourDiff", diffHour);
+      console.log("event date", eventDate);
+
+      if (diffHour > 2) {
+        timeUntil = "before";
+      } else {
+        if (diffMin > 15) {
+          timeUntil = "soon";
+        } else {
+          if (diffMin < 15 && diffHour > -2) {
+            timeUntil = "now";
+          } else {
+            timeUntil = "past";
+          }
+
+          ;
+        }
+
+        ;
+      }
+
+      ;
       this.setState({
-        joined: userJoined
-      });
+        joined: userJoined,
+        full: roomfull,
+        timeUntil: timeUntil
+      }); //will auto call render()
     }
   }, {
     key: "handleJoinEvent",
@@ -47970,22 +48013,106 @@ var EventRow = /*#__PURE__*/function (_React$Component3) {
       });
     }
   }, {
+    key: "handleUnjoinEvent",
+    value: function handleUnjoinEvent(e) {
+      var _this5 = this;
+
+      console.log("unjoin");
+      e.preventDefault();
+      var airbaseUserId = getAirbaseUserId(); //can't join unless logged in
+
+      if (!airbaseUserId) {
+        return;
+      }
+
+      var eventUsers = this.props.event.fields.Users ? this.props.event.fields.Users : [];
+      var index = eventUsers.indexOf(airbaseUserId);
+
+      if (index < 0) {
+        //user is not in this event
+        this.setState({
+          joined: false
+        });
+        return;
+      } else {
+        eventUsers.splice(index, 1);
+      }
+
+      console.log("eventUsers", eventUsers);
+      base('OpenEvents').update([{
+        "id": this.props.event.id,
+        "fields": {
+          "Users": eventUsers
+        }
+      }], function (err, records) {
+        if (err) {
+          console.error(err);
+          return;
+        }
+
+        records.forEach(function (record) {
+          console.log(record.get('Attendees'));
+
+          _this5.setState({
+            attendees: record.get('Attendees'),
+            joined: false
+          });
+        });
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
       moment.locale("zh-cn", _zhCn.default);
-      var timeStr = moment(this.props.event.get("Time")).format('YYYY年M月D日 Ah点mm分');
+      var timeStr = moment(this.props.event.get("Time")).format('YYYY年M月D日 Ah点mm分'); //based on state, render the correct UI element
+
       var joinButton;
+      var cancelButton;
 
       if (!this.state.joined) {
+        if (this.state.roomfull) {
+          joinButton = /*#__PURE__*/_react.default.createElement("a", {
+            href: "#",
+            className: "join-button cancel w-button"
+          }, "\u62A5\u540D\u5DF2\u6EE1");
+        } else {
+          if (this.state.timeUntil == "soon" || this.state.timeUntil == "before") {
+            joinButton = /*#__PURE__*/_react.default.createElement("a", {
+              href: "#",
+              className: "join-button w-button",
+              onClick: this.handleJoinEvent
+            }, "\u62A5\u540D");
+          } else {
+            joinButton = /*#__PURE__*/_react.default.createElement("a", {
+              href: "#",
+              className: "join-button cancel"
+            }, "\u62A5\u540D\u622A\u6B62");
+          }
+
+          ;
+        }
+
+        ;
+      } else {
         joinButton = /*#__PURE__*/_react.default.createElement("a", {
           href: "#",
-          className: "join-button w-button",
-          onClick: this.handleJoinEvent
-        }, "\u62A5\u540D");
-      } else {
-        joinButton = "已报名";
+          className: "join-button w-button"
+        }, "\u8FDB\u5165\u623F\u95F4");
+
+        if (this.state.timeUntil = "before") {
+          cancelButton = /*#__PURE__*/_react.default.createElement("a", {
+            href: "#",
+            className: "join-button w-button",
+            onClick: this.handleUnjoinEvent
+          }, "\u53D6\u6D88\u62A5\u540D");
+        } else {
+          cancelButton = /*#__PURE__*/_react.default.createElement("a", null);
+        }
+
+        ;
       }
 
+      ;
       return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", {
         className: "schedule-columns w-row"
       }, /*#__PURE__*/_react.default.createElement("div", {
@@ -48000,7 +48127,7 @@ var EventRow = /*#__PURE__*/function (_React$Component3) {
         className: "w-col w-col-3"
       }, /*#__PURE__*/_react.default.createElement("div", null, this.state.attendees, "/", this.props.event.fields.MaxAttendees)), /*#__PURE__*/_react.default.createElement("div", {
         className: "w-col w-col-3"
-      }, joinButton)));
+      }, joinButton, cancelButton)));
     }
   }]);
 
@@ -48034,7 +48161,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51192" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63008" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
