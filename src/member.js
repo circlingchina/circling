@@ -26,7 +26,6 @@ class EventsTable extends React.Component {
   }
 
   componentDidMount() {
-    console.log("fetching event table")
     let allEvents = []
     base("OpenEvents")
       .select({
@@ -35,10 +34,8 @@ class EventsTable extends React.Component {
       })
       .eachPage(
         (records, fetchNextPage) => {
-          console.log(records)
           // This function (`page`) will get called for each page of records.
           allEvents = allEvents.concat(records);
-          console.log(allEvents)
 
           // To fetch the next page of records, call `fetchNextPage`.
           // If there are more records, `page` will get called again.
@@ -67,7 +64,6 @@ class EventsTable extends React.Component {
     } else if (!isLoaded) {
       return <div>Loading...</div>;
     } else {
-      console.log(this.state.events);
       const eventItems = this.state.events.map((event) => (
         <EventRow key={event.id} event={event} />
       ));
@@ -124,9 +120,7 @@ class EventRow extends React.Component {
     //1. check if user is already in this event
     let userJoined = false
     // window.airbaseUserId = "recwLANU5KpoOSinS"
-    console.log("Event.Users", this.props.event.fields.Users)
     if (this.props.event.fields.Users) {
-      console.log("airbaseId", getAirbaseUserId())
       if (this.props.event.fields.Users.includes(getAirbaseUserId())) {
         userJoined = true;
       }
@@ -145,9 +139,6 @@ class EventRow extends React.Component {
     const msDiff = eventDate - dateNow
     const diffMin = msDiff / 1000 / 60;
     const diffHour = diffMin / 60;
-    console.log("minuteDiff", diffMin);
-    console.log("hourDiff", diffHour);
-    console.log("event date", eventDate)
 
     if (diffHour > 2) {
       timeUntil = "before";
@@ -186,7 +177,6 @@ class EventRow extends React.Component {
     }
 
     eventUsers.push(airbaseUserId)
-    console.log("eventUsers", eventUsers)
     base('OpenEvents').update([
       {
         "id": this.props.event.id,
@@ -200,15 +190,12 @@ class EventRow extends React.Component {
         return;
       }
       records.forEach((record) => {
-        console.log(record.get('Attendees'));
         this.setState({ attendees: record.get('Attendees') })
       });
     });
   }
 
   handleUnjoinEvent(e) {
-    console.log("unjoin")
-
     e.preventDefault();
 
     let airbaseUserId = getAirbaseUserId();
@@ -228,7 +215,6 @@ class EventRow extends React.Component {
       eventUsers.splice(index, 1)
     }
 
-    console.log("eventUsers", eventUsers)
     base('OpenEvents').update([
       {
         "id": this.props.event.id,
@@ -242,7 +228,6 @@ class EventRow extends React.Component {
         return;
       }
       records.forEach((record) => {
-        console.log(record.get('Attendees'));
         this.setState({ attendees: record.get('Attendees'), joined: false })
       });
     });
@@ -255,6 +240,8 @@ class EventRow extends React.Component {
     //based on state, render the correct UI element
     let joinButton
     let cancelButton
+
+    console.log("event before render row", this.props.event)
 
     if (!this.state.joined) {
       if (this.state.roomfull) {

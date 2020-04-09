@@ -68,4 +68,11 @@ node_modules/
 _site
 
 .cache
-# js/*.js.map
+
+# packge generated files
+js/member.js
+js/member.js.map
+js/login.js
+js/login.js.map
+
+
