@@ -1674,12 +1674,14 @@ textarea.w-select {
 .w--nav-dropdown-list-open {
   position: static;
 }
+
 @media screen and (max-width: 991px) {
   .w-nav[data-collapse="medium"] .w-nav-menu {
     display: none;
   }
-  .w-nav[data-collapse="medium"] .w-nav-button {
-    display: block;
+  .w-dropdown {
+    display: none;
+  }
   }
 }
 @media screen and (max-width: 767px) {
