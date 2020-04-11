@@ -41,15 +41,11 @@ function EventRegion() {
 }
 // events table in member page
 class EventsTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: null,
-      isLoaded: false,
-      events: [],
-    };
-    this.componentDidMount = this.componentDidMount.bind(this);
-  }
+  state = {
+    error: null,
+    isLoaded: false,
+    events: [],
+  };
 
   componentDidMount() {
     let allEvents = [];
