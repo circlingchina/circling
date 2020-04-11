@@ -4,13 +4,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 var moment = require("moment");
 import locale from "moment/src/locale/zh-cn";
+import AirtableApi from "./airtable_api.js";
 
-const AirtableApi = require("./airtable_api.js");
-
-var Airtable = require("airtable");
-var base = new Airtable({ apiKey: process.env.AIRBASE_API_KEY }).base(
-  "app53ecZ2UL9M6JOw"
-);
+// var Airtable = require("airtable");
+// var base = new Airtable({ apiKey: process.env.AIRBASE_API_KEY }).base(
+//   "app53ecZ2UL9M6JOw"
+// );
 
 function getAirbaseUserId() {
   return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
@@ -63,33 +62,6 @@ class EventsTable extends React.Component {
         this.setState({ error: err, isLoaded: false });
       }
     );
-    // base("OpenEvents")
-    //   .select({
-    //     // Selecting the first 3 records in Grid view:
-    //     view: "Grid view",
-    //   })
-    //   .eachPage(
-    //     (records, fetchNextPage) => {
-    //       // This function (`page`) will get called for each page of records.
-    //       allEvents = allEvents.concat(records);
-
-    //       // To fetch the next page of records, call `fetchNextPage`.
-    //       // If there are more records, `page` will get called again.
-    //       // If there are no more records, `done` will get called.
-    //       fetchNextPage();
-    //     },
-    //     (err) => {
-    //       if (err) {
-    //         this.setState({ error: err, isLoaded: false });
-    //         return;
-    //       } else {
-    //         this.setState({
-    //           events: allEvents,
-    //           isLoaded: true,
-    //         });
-    //       }
-    //     }
-    //   );
   }
 
   render() {
@@ -176,7 +148,7 @@ class EventRow extends React.Component {
       joined: userJoined,
       full: roomfull,
       timeUntil: timeUntil,
-    }); //will auto call render()
+    });
   }
 
   handleJoinEvent = (e) => {
@@ -188,34 +160,12 @@ class EventRow extends React.Component {
     }
 
     this.setState({ joined: true });
-    let eventUsers = this.props.event.fields.Users
-      ? this.props.event.fields.Users
-      : [];
-
-    if (eventUsers.includes(airbaseUserId)) {
-      return; //already joined
-    }
-
-    eventUsers.push(airbaseUserId);
-    base("OpenEvents").update(
-      [
-        {
-          id: this.props.event.id,
-          fields: {
-            Users: eventUsers,
-          },
-        },
-      ],
-      (err, records) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        records.forEach((record) => {
-          this.setState({ attendees: record.get("Attendees") });
-        });
-      }
-    );
+    AirtableApi.join(this.props.event, airbaseUserId,
+      (updatedEvent) => {
+        this.setState({ attendees: updatedEvent.get("Attendees") });
+      },
+      (err) => console.log(err)
+    )
   };
 
   handleUnjoinEvent = (e) => {

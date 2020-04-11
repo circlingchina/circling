@@ -4,8 +4,34 @@ var base = new Airtable({ apiKey: process.env.AIRBASE_API_KEY }).base(
 );
 
 module.exports = {
-  join: () => {
-    console.log("API join")
+  join: (event, userId, onSuccess, onError) => {
+
+    //prepare eventUsers array
+    const eventUsers = event.fields.Users ? event.fields.Users : [];
+    if (eventUsers.includes(userId)) {
+      return; //already joined
+    }
+    eventUsers.push(airbaseUserId);
+
+    // call api
+    base("OpenEvents").update(
+      [
+        {
+          id: event.id,
+          fields: {
+            Users: eventUsers,
+          },
+        },
+      ],
+      (err, records) => {
+        if (err) {
+          onError(err)
+        } else {
+          console.log("records", records)
+          onSuccess(records[0])
+        }
+      }
+    );
   },
   unjoin: () => {
     console.log("API unjoin")
