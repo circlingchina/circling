@@ -8,51 +8,25 @@ function getAirbaseUserId() {
 }
 
 // events table in member page
-class EventsTable extends React.Component {
-  state = {
-    error: null,
-    isLoaded: false,
-    events: [],
-  };
-
-  componentDidMount() {
-    AirtableApi.getAllEvents(
-      (allEvents) => {
-        console.log("allEvents", allEvents)
-        this.setState({
-          events: allEvents,
-          isLoaded: true,
-        });
-      },
-      (err) => {
-        this.setState({ error: err, isLoaded: false });
-      }
-    );
-  }
-
-  render() {
-    const { error, isLoaded, events } = this.state;
-    if (error) {
-      return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
-      return <div>Loading...</div>;
-    } else {
-      const eventItems = this.state.events.map((event) => (
-        <EventRow key={event.id} event={event} />
-      ));
-      return (
-        <div className="div-block-11">
-          <div>
-            <EventTableHeader />
-            {eventItems}
-          </div>
-        </div>
-      );
-    }
-  }
+function EventsTable(props) {
+  const eventRows = props.events.map((event) => (
+    <EventRow
+      key={event.id}
+      event={event}
+      onEventChanged={props.onEventChanged}
+    />
+  ));
+  return (
+    <div className="div-block-11">
+      <div>
+        <TableHeader />
+        {eventRows}
+      </div>
+    </div>
+  );
 }
 
-function EventTableHeader() {
+function TableHeader() {
   return (
     <div className="schedule-title w-row">
       <div className="column w-col w-col-3">时间</div>
@@ -125,18 +99,21 @@ class EventRow extends React.Component {
       return;
     }
 
-    const oldJoinState = this.state.joined
+    const oldJoinState = this.state.joined;
     this.setState({ joined: true });
-    AirtableApi.join(this.props.event, airbaseUserId,
+    AirtableApi.join(
+      this.props.event,
+      airbaseUserId,
       (updatedEvent) => {
         this.setState({ attendees: updatedEvent.get("Attendees") });
+        this.props.onEventChanged(updatedEvent);
       },
       (err) => {
-        console.log(err)
+        console.log(err);
         //reset the join state
-        this.setState({joined: oldJoinState})
+        this.setState({ joined: oldJoinState });
       }
-    )
+    );
   };
 
   handleUnjoinEvent = (e) => {
@@ -148,17 +125,24 @@ class EventRow extends React.Component {
       return;
     }
 
-    const oldJoinState = this.state.joined
+    const oldJoinState = this.state.joined;
     this.setState({ joined: false });
-    
-    AirtableApi.unjoin(this.props.event, airbaseUserId,
+
+    AirtableApi.unjoin(
+      this.props.event,
+      airbaseUserId,
       (updatedEvent) => {
-        this.setState({ attendees: updatedEvent.get("Attendees"), joined: false });
+        this.setState({
+          attendees: updatedEvent.get("Attendees"),
+          joined: false,
+        });
+        this.props.onEventChanged(updatedEvent);
       },
       (err) => {
-        console.log(err)
-        this.setState({joined: oldJoinState})
-      })
+        console.log(err);
+        this.setState({ joined: oldJoinState });
+      }
+    );
   };
 
   render() {
@@ -256,4 +240,4 @@ class EventRow extends React.Component {
     );
   }
 }
-export default EventsTable
+export default EventsTable;
