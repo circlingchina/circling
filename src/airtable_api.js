@@ -33,9 +33,37 @@ module.exports = {
       }
     );
   },
-  unjoin: () => {
-    console.log("API unjoin")
+
+  unjoin: (event, userId, onSuccess, onError) => {
+    //prepare eventUser Array
+    let eventUsers = event.fields.Users ? event.fields.Users : [];
+    const index = eventUsers.indexOf(airbaseUserId);
+    if (index < 0) {
+      //user is not in this event
+      return;
+    }
+    eventUsers.splice(index, 1);
+
+    base("OpenEvents").update(
+      [
+        {
+          id: event.id,
+          fields: {
+            Users: eventUsers,
+          },
+        },
+      ],
+      (err, records) => {
+        if (err) {
+          onError(err)
+        } else {
+          console.log("records", records)
+          onSuccess(records[0])
+        }
+      }
+    );
   },
+
   getAllEvents: (onSuccess, onError) => {
     let allEvents = [];
     base("OpenEvents")

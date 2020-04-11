@@ -153,61 +153,46 @@ class EventRow extends React.Component {
 
   handleJoinEvent = (e) => {
     e.preventDefault();
-    let airbaseUserId = getAirbaseUserId();
+    const airbaseUserId = getAirbaseUserId();
     //can't join unless logged in
     if (!airbaseUserId) {
       return;
     }
 
+    const oldJoinState = this.state.joined
     this.setState({ joined: true });
     AirtableApi.join(this.props.event, airbaseUserId,
       (updatedEvent) => {
         this.setState({ attendees: updatedEvent.get("Attendees") });
       },
-      (err) => console.log(err)
+      (err) => {
+        console.log(err)
+        //reset the join state
+        this.setState({joined: oldJoinState})
+      }
     )
   };
 
   handleUnjoinEvent = (e) => {
     e.preventDefault();
 
-    let airbaseUserId = getAirbaseUserId();
+    const airbaseUserId = getAirbaseUserId();
     //can't join unless logged in
     if (!airbaseUserId) {
       return;
     }
 
-    let eventUsers = this.props.event.fields.Users
-      ? this.props.event.fields.Users
-      : [];
-    const index = eventUsers.indexOf(airbaseUserId);
-    if (index < 0) {
-      //user is not in this event
-      this.setState({ joined: false });
-      return;
-    } else {
-      eventUsers.splice(index, 1);
-    }
-
-    base("OpenEvents").update(
-      [
-        {
-          id: this.props.event.id,
-          fields: {
-            Users: eventUsers,
-          },
-        },
-      ],
-      (err, records) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        records.forEach((record) => {
-          this.setState({ attendees: record.get("Attendees"), joined: false });
-        });
-      }
-    );
+    const oldJoinState = this.state.joined
+    this.setState({ joined: false });
+    
+    AirtableApi.unjoin(this.props.event, airbaseUserId,
+      (updatedEvent) => {
+        this.setState({ attendees: updatedEvent.get("Attendees"), joined: false });
+      },
+      (err) => {
+        console.log(err)
+        this.setState({joined: oldJoinState})
+      })
   };
 
   render() {
