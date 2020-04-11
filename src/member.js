@@ -4,6 +4,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 var moment = require("moment");
 import locale from "moment/src/locale/zh-cn";
+
+const AirtableApi = require("./airtable_api.js");
+
 var Airtable = require("airtable");
 var base = new Airtable({ apiKey: process.env.AIRBASE_API_KEY }).base(
   "app53ecZ2UL9M6JOw"
@@ -48,34 +51,45 @@ class EventsTable extends React.Component {
   };
 
   componentDidMount() {
-    let allEvents = [];
-    base("OpenEvents")
-      .select({
-        // Selecting the first 3 records in Grid view:
-        view: "Grid view",
-      })
-      .eachPage(
-        (records, fetchNextPage) => {
-          // This function (`page`) will get called for each page of records.
-          allEvents = allEvents.concat(records);
+    AirtableApi.getAllEvents(
+      (allEvents) => {
+        console.log("allEvents", allEvents)
+        this.setState({
+          events: allEvents,
+          isLoaded: true,
+        });
+      },
+      (err) => {
+        this.setState({ error: err, isLoaded: false });
+      }
+    );
+    // base("OpenEvents")
+    //   .select({
+    //     // Selecting the first 3 records in Grid view:
+    //     view: "Grid view",
+    //   })
+    //   .eachPage(
+    //     (records, fetchNextPage) => {
+    //       // This function (`page`) will get called for each page of records.
+    //       allEvents = allEvents.concat(records);
 
-          // To fetch the next page of records, call `fetchNextPage`.
-          // If there are more records, `page` will get called again.
-          // If there are no more records, `done` will get called.
-          fetchNextPage();
-        },
-        (err) => {
-          if (err) {
-            this.setState({ error: err, isLoaded: false });
-            return;
-          } else {
-            this.setState({
-              events: allEvents,
-              isLoaded: true,
-            });
-          }
-        }
-      );
+    //       // To fetch the next page of records, call `fetchNextPage`.
+    //       // If there are more records, `page` will get called again.
+    //       // If there are no more records, `done` will get called.
+    //       fetchNextPage();
+    //     },
+    //     (err) => {
+    //       if (err) {
+    //         this.setState({ error: err, isLoaded: false });
+    //         return;
+    //       } else {
+    //         this.setState({
+    //           events: allEvents,
+    //           isLoaded: true,
+    //         });
+    //       }
+    //     }
+    //   );
   }
 
   render() {
@@ -100,33 +114,25 @@ class EventsTable extends React.Component {
   }
 }
 
-class EventTableHeader extends React.Component {
-  render() {
-    return (
-      <div className="schedule-title w-row">
-        <div className="column w-col w-col-3">时间</div>
-        <div className="w-col w-col-3">活动</div>
-        <div className="w-col w-col-3">带领者</div>
-        <div className="w-col w-col-3">人数</div>
-        <div className="w-col w-col-3">报名</div>
-      </div>
-    );
-  }
+function EventTableHeader() {
+  return (
+    <div className="schedule-title w-row">
+      <div className="column w-col w-col-3">时间</div>
+      <div className="w-col w-col-3">活动</div>
+      <div className="w-col w-col-3">带领者</div>
+      <div className="w-col w-col-3">人数</div>
+      <div className="w-col w-col-3">报名</div>
+    </div>
+  );
 }
 
 class EventRow extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      joined: false,
-      full: false,
-      timeUntil: false,
-      attendees: this.props.event.fields.Attendees,
-    };
-
-    this.handleJoinEvent = this.handleJoinEvent.bind(this);
-    this.handleUnjoinEvent = this.handleUnjoinEvent.bind(this);
-  }
+  state = {
+    joined: false,
+    full: false,
+    timeUntil: false,
+    attendees: this.props.event.fields.Attendees,
+  };
 
   componentDidMount() {
     //1. check if user is already in this event
@@ -173,7 +179,7 @@ class EventRow extends React.Component {
     }); //will auto call render()
   }
 
-  handleJoinEvent(e) {
+  handleJoinEvent = (e) => {
     e.preventDefault();
     let airbaseUserId = getAirbaseUserId();
     //can't join unless logged in
@@ -210,9 +216,9 @@ class EventRow extends React.Component {
         });
       }
     );
-  }
+  };
 
-  handleUnjoinEvent(e) {
+  handleUnjoinEvent = (e) => {
     e.preventDefault();
 
     let airbaseUserId = getAirbaseUserId();
@@ -252,7 +258,7 @@ class EventRow extends React.Component {
         });
       }
     );
-  }
+  };
 
   render() {
     moment.locale("zh-cn", locale);
