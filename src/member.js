@@ -72,18 +72,32 @@ function UpcomingEvent({events}) {
     return userId && eventUsers && eventUsers.includes(userId)
   })
   console.log("my events", myEvents)
-  if(myEvents.length <= 0) {
-    return null
+
+  let startingSoonEvent = null;
+
+  if(myEvents.length > 0) {
+    const nextEvent = myEvents[0]
+    
+    const dateNow = new Date();
+    const eventDate = new Date(nextEvent.get("Time"));
+    const diffHour = (eventDate - new Date()) / (1000 * 60 * 60)
+    console.log("diffHour", diffHour)
+    if (diffHour < 280) {
+      startingSoonEvent = nextEvent
+    }
   }
 
-  const nextEvent = myEvents[0]
+  if(!startingSoonEvent) {
+    return <div className="sub-text red">没有即将开始的活动</div>
+  }
+
   return (
     <>
       <div className="sub-text red">即将开始</div>
       <div className="div-block-13">
-        <div className="line-text">{nextEvent.fields.Name} {nextEvent.fields.Time}</div>
-        <div className="line-text">{nextEvent.fields.Host}</div>
-        <a href={nextEvent.fields.EventLink} className="button w-button" target="_blank">
+        <div className="line-text">{startingSoonEvent.fields.Name} {startingSoonEvent.fields.Time}</div>
+        <div className="line-text">{startingSoonEvent.fields.Host}</div>
+        <a href={startingSoonEvent.fields.EventLink} className="button w-button" target="_blank">
           点击进入
         </a>
         <a href="/pages/whatiscircling2">查看我需要准备什么</a>
