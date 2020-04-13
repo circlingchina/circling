@@ -7,23 +7,65 @@ function getAirbaseUserId() {
   return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
 }
 
+function getTimeUntil(event) {
+  let timeUntil = false;
+  const dateNow = new Date();
+  const eventDate = new Date(event.get("Time"));
+  const msDiff = eventDate - dateNow;
+  const diffMin = msDiff / 1000 / 60;
+  const diffHour = diffMin / 60;
+
+  if (diffHour > 2) {
+    timeUntil = "before";
+  } else {
+    if (diffMin > 15) {
+      timeUntil = "soon";
+    } else {
+      if (diffMin < 15 && diffHour > -2) {
+        timeUntil = "now";
+      } else {
+        timeUntil = "past";
+      };
+    };
+  };
+
+  return timeUntil
+}
+
+
 // events table in member page
 function EventsTable(props) {
-  const eventRows = props.events.map((event) => (
-    <EventRow
-      key={event.id}
-      event={event}
-      onEventChanged={props.onEventChanged}
-    />
-  ));
-  return (
-    <div className="div-block-11">
-      <div>
-        <TableHeader />
-        {eventRows}
+  const futureEvents = props.events.filter((event)=> {
+    const timeUntil = getTimeUntil(event)
+    console.log(event.get("Time"))
+    console.log("timeUntil", timeUntil)
+      // if event.date is in the future
+      if (timeUntil == "past") {
+        return false
+      } else {
+        return true
+      }
+  })
+
+  console.log(futureEvents);
+
+  // if (futureEvents){
+    const eventRows = futureEvents.map((event) => (
+      <EventRow
+        key={event.id}
+        event={event}
+        onEventChanged={props.onEventChanged}
+      />
+    ));
+    return (
+      <div className="div-block-11">
+        <div>
+          <TableHeader />
+          {eventRows}
+        </div>
       </div>
-    </div>
-  );
+    );
+  // } else;
 }
 
 function TableHeader() {
@@ -63,26 +105,7 @@ class EventRow extends React.Component {
       roomfull = true;
     }
 
-    let timeUntil = false;
-    const dateNow = new Date();
-    const eventDate = new Date(this.props.event.get("Time"));
-    const msDiff = eventDate - dateNow;
-    const diffMin = msDiff / 1000 / 60;
-    const diffHour = diffMin / 60;
-
-    if (diffHour > 2) {
-      timeUntil = "before";
-    } else {
-      if (diffMin > 15) {
-        timeUntil = "soon";
-      } else {
-        if (diffMin < 15 && diffHour > -2) {
-          timeUntil = "now";
-        } else {
-          timeUntil = "past";
-        }
-      }
-    }
+    const timeUntil = getTimeUntil(this.props.event)
 
     this.setState({
       joined: userJoined,
@@ -155,95 +178,91 @@ class EventRow extends React.Component {
     let joinButton;
     let cancelButton;
 
-    // if(this.state.timeUntil == "past"){
-    //   return;
-    // } else{
-
-      if (!this.state.joined) {
-        if (this.state.roomfull) {
-          joinButton = (
-            <a href="#" className="join-button cancel w-button">
-              报名已满
-            </a>
-          );
-        } else {
-          if (
-            this.state.timeUntil == "soon" ||
-            this.state.timeUntil == "before"
-          ) {
-            joinButton = (
-              <a
-                href="#"
-                className="join-button w-button"
-                onClick={this.handleJoinEvent}
-              >
-                报名
-              </a>
-            );
-          } else {
-            joinButton = (
-              <a href="#" className="join-button cancel">
-                报名截止
-              </a>
-            );
-          }
-        }
-      } else {
+    if (!this.state.joined) {
+      if (this.state.roomfull) {
         joinButton = (
-          <a
-            href={this.props.event.fields.EventLink}
-            className="join-button w-button"
-            target="_blank"
-          >
-            进入房间
+          <a href="#" className="join-button cancel w-button">
+            报名已满
           </a>
         );
-
-        if ((this.state.timeUntil = "before")) {
-          cancelButton = (
+      } else {
+        if (
+          this.state.timeUntil == "soon" ||
+          this.state.timeUntil == "before"
+        ) {
+          joinButton = (
             <a
               href="#"
               className="join-button w-button"
-              onClick={this.handleUnjoinEvent}
+              onClick={this.handleJoinEvent}
             >
-              取消报名
+              报名
             </a>
           );
         } else {
-          cancelButton = <a></a>;
+          joinButton = (
+            <a href="#" className="join-button cancel">
+              报名截止
+            </a>
+          );
         }
       }
+    } else {
+      joinButton = (
+        <a
+          href={this.props.event.fields.EventLink}
+          className="join-button w-button"
+          target="_blank"
+        >
+          进入房间
+        </a>
+      );
+
+      if ((this.state.timeUntil = "before")) {
+        cancelButton = (
+          <a
+            href="#"
+            className="join-button w-button"
+            onClick={this.handleUnjoinEvent}
+          >
+            取消报名
+          </a>
+        );
+      } else {
+        cancelButton = <a></a>;
+      }
+    }
 
 
-      return (
-        <div>
-          <div className="schedule-columns w-row">
-            <div className="w-col w-col-3">
-              <div>
-                <div>{timeStr}</div>
-              </div>
-            </div>
-            <div className="w-col w-col-3">
-              <div>{this.props.event.fields.Category}</div>
-            </div>
-            <div className="w-col w-col-3">
-              <a href={"/pages/leaders/#" + this.props.event.fields.Host}>
-                <div>{this.props.event.fields.Host}</div>
-              </a>
-            </div>
-            <div className="w-col w-col-3">
-              <div>
-                {this.state.attendees}/{this.props.event.fields.MaxAttendees}
-              </div>
-            </div>
-            <div className="w-col w-col-3">
-              {joinButton}
-              {cancelButton}
+    return (
+      <div>
+        <div className="schedule-columns w-row">
+          <div className="w-col w-col-3">
+            <div>
+              <div>{timeStr}</div>
             </div>
           </div>
+          <div className="w-col w-col-3">
+            <div>{this.props.event.fields.Category}</div>
+          </div>
+          <div className="w-col w-col-3">
+            <a href={"/pages/leaders/#" + this.props.event.fields.Host}>
+              <div>{this.props.event.fields.Host}</div>
+            </a>
+          </div>
+          <div className="w-col w-col-3">
+            <div>
+              {this.state.attendees}/{this.props.event.fields.MaxAttendees}
+            </div>
+          </div>
+          <div className="w-col w-col-3">
+            {joinButton}
+            {cancelButton}
+          </div>
         </div>
-      );
-    }
-  // }
+      </div>
+    );
+  }
+
 }
 export default EventsTable;
