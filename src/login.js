@@ -21,17 +21,30 @@ function getAirbaseUid(user) {
 }
 
 function attachIdentityListern() {
+  let isSigningIn = false
   netlifyIdentity.on('init', user => {
     getAirbaseUid(user);
     updateNav(user)
   });
   netlifyIdentity.on('login', user => {
+    console.log("login")
     updateNav(user)
+    if(isSigningIn) {
+      console.log("signing in, redirect")
+      window.location.replace("/pages/memberpage")
+    }
+    netlifyIdentity.close();
   });
-  // netlifyIdentity.on('logout', () => console.log('Logged out'));
-  // netlifyIdentity.on('error', err => console.error('Error', err));
-  // netlifyIdentity.on('open', () => console.log('Widget opened'));
-  // netlifyIdentity.on('close', () => console.log('Widget closed'));
+  netlifyIdentity.on('logout', () => console.log('Logged out'));
+  netlifyIdentity.on('error', err => console.error('Error', err));
+  netlifyIdentity.on('open', () => {
+    console.log('Widget opened')
+    isSigningIn = true
+  });
+  netlifyIdentity.on('close', () => {
+    console.log('Widget closed')
+    isSigningIn = false
+  });
   
 }
 

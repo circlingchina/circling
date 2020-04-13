@@ -4,75 +4,41 @@ page_id: 5e5ab6fb3fb2ccc34f70a909
 site_id: 5e4b8703f0815874d02263b8
 custom_react: <script src="/js/member.js"></script>
 ---
-    <div id="Top" class="banner sub">
-      {% include _nav.html %}
-      <div class="container w-container">
-        <div class="algin-center">
-          <div id="w-node-e9bd645a185b-4f70a909" class="left-banner normal">
-            <div>
-              <div data-w-id="a4c2ed94-0ecf-eb73-918b-e9bd645a185d" style="opacity:0" class="sub-text"><strong>个人页面</strong><br></div>
-              <h1 data-w-id="a4c2ed94-0ecf-eb73-918b-e9bd645a1860" style="opacity:0" class="tittle-banner"><label id="member-name-label"></label> <br></h1>
-            </div>
-          </div>
-        </div>
-      </div><img src="/images/shape-1.svg" width="300" alt="" class="shape-2"><img src="/images/shape-1.svg" width="300" alt="" class="shape-2 second">
-      <div class="page-divider">
-        <div class="page-divider-white"></div>
-      </div>
-    </div>
 
-    <!--
-    <div class="section">
-      <div class="container w-container">
-        <div class="sub-text red">即将开始<br></div>
-        <div class="div-block-13">
-          <div class="line-text">常规Circling 2020年4月2日 2:00pm</div>
-          <a href="{{currentEvent.zoom_link}}" class="button w-button" target="_blank">点击进入</a><a href="/pages/whatiscircling2">查看我需要准备什么</a></div>
-      </div>
-      <div class="page-divider">
-        <div class="page-divider-white down"></div>
-      </div>
-    </div>
-    -->
+<!-- top banner -->
 
-    <div class="section transparent">
-      <div class="container w-container">
-        <div class="sub-text red">本周会员Circling<br></div>
-        <div id="react-table"></div>
-      </div>
-      <div class="page-divider">
-        <div class="page-divider-white down"></div>
-      </div>
-    </div>
-    
-    <!--
-    <div class="section">
-      <div class="sub-text red">我报名的活动<br></div>
-      <div class="container-2 w-container"><img src="/images/036-share.png" width="50" height="50" srcset="/images/036-share-p-500.png 500w, /images/036-share.png 512w" sizes="50px" alt="" class="image-3">
-        <p class="paragraph-2">Circling线下体验-北京站<br>2020年8月30日</p><a href="#">查看详情</a>
-        <div class="page-divider">
-          <div class="page-divider-white down"></div>
-        </div>
-      </div>
-      <div class="container-2 w-container"><img src="/images/036-share.png" width="50" height="50" srcset="/images/036-share-p-500.png 500w, /images/036-share.png 512w" sizes="50px" alt="" class="image-3">
-        <p class="paragraph-2">Circling线下体验-北京站<br>2020年8月30日</p><a href="#">查看详情</a>
-        <div class="page-divider">
-          <div class="page-divider-white down"></div>
+<div id="Top" class="banner sub">
+  {% include _nav.html %}
+  <div class="container w-container">
+    <div class="algin-center">
+      <div id="w-node-e9bd645a185b-4f70a909" class="left-banner normal">
+        <div>
+          <div data-w-id="a4c2ed94-0ecf-eb73-918b-e9bd645a185d" style="opacity:0" class="sub-text">
+            <strong>个人页面</strong><br></div>
+          <h1 data-w-id="a4c2ed94-0ecf-eb73-918b-e9bd645a1860" style="opacity:0" class="tittle-banner">
+            <label id="member-name-label"></label>
+            <br></h1>
         </div>
       </div>
     </div>
-    -->
+  </div><img src="/images/shape-1.svg" width="300" alt="" class="shape-2"><img src="/images/shape-1.svg" width="300" alt="" class="shape-2 second">
+  <div class="page-divider">
+    <div class="page-divider-white"></div>
+  </div>
+</div>
+
+<div id="event-region"></div>
 
 <div class="section">
   <div class="container w-container">
     <div  class="top-title center">
-      <div class="sub-text red">近期活动<br /></div>
-      <h1 class="h1">参加线上线下活动，用心对话，可以很简单<br /></h1>
+      <div class="sub-text red">近期活动<br/></div>
+      <h1 class="h1">参加线上线下活动，用心对话，可以很简单<br/></h1>
     </div>
     <div class="div-block-4">
       <div class="collection-list-wrapper-2 w-dyn-list">
         <div class="w-dyn-items w-row">
-          {% for event in collections.event limit:3 %}
+          {% for event in collections.event limit : 3 %}
             {% include _event.html %}
           {% endfor %}
         </div>
