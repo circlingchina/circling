@@ -155,89 +155,95 @@ class EventRow extends React.Component {
     let joinButton;
     let cancelButton;
 
-    if (!this.state.joined) {
-      if (this.state.roomfull) {
-        joinButton = (
-          <a href="#" className="join-button cancel w-button">
-            报名已满
-          </a>
-        );
-      } else {
-        if (
-          this.state.timeUntil == "soon" ||
-          this.state.timeUntil == "before"
-        ) {
+    // if(this.state.timeUntil == "past"){
+    //   return;
+    // } else{
+
+      if (!this.state.joined) {
+        if (this.state.roomfull) {
           joinButton = (
-            <a
-              href="#"
-              className="join-button w-button"
-              onClick={this.handleJoinEvent}
-            >
-              报名
+            <a href="#" className="join-button cancel w-button">
+              报名已满
             </a>
           );
         } else {
-          joinButton = (
-            <a href="#" className="join-button cancel">
-              报名截止
-            </a>
-          );
+          if (
+            this.state.timeUntil == "soon" ||
+            this.state.timeUntil == "before"
+          ) {
+            joinButton = (
+              <a
+                href="#"
+                className="join-button w-button"
+                onClick={this.handleJoinEvent}
+              >
+                报名
+              </a>
+            );
+          } else {
+            joinButton = (
+              <a href="#" className="join-button cancel">
+                报名截止
+              </a>
+            );
+          }
         }
-      }
-    } else {
-      joinButton = (
-        <a
-          href={this.props.event.fields.EventLink}
-          className="join-button w-button"
-          target="_blank"
-        >
-          进入房间
-        </a>
-      );
-
-      if ((this.state.timeUntil = "before")) {
-        cancelButton = (
+      } else {
+        joinButton = (
           <a
-            href="#"
+            href={this.props.event.fields.EventLink}
             className="join-button w-button"
-            onClick={this.handleUnjoinEvent}
+            target="_blank"
           >
-            取消报名
+            进入房间
           </a>
         );
-      } else {
-        cancelButton = <a></a>;
-      }
-    }
 
-    return (
-      <div>
-        <div className="schedule-columns w-row">
-          <div className="w-col w-col-3">
-            <div>
-              <div>{timeStr}</div>
-            </div>
-          </div>
-          <div className="w-col w-col-3">
-            <div>{this.props.event.fields.Category}</div>
-          </div>
-          <div className="w-col w-col-3">
-            <a href={"/pages/leaders/#" + this.props.event.fields.Host}>
-              <div>{this.props.event.fields.Host}</div>
+        if ((this.state.timeUntil = "before")) {
+          cancelButton = (
+            <a
+              href="#"
+              className="join-button w-button"
+              onClick={this.handleUnjoinEvent}
+            >
+              取消报名
             </a>
-          </div>
-          <div className="w-col w-col-3">
-            <div>
-              {this.state.attendees}/{this.props.event.fields.MaxAttendees}
+          );
+        } else {
+          cancelButton = <a></a>;
+        }
+      }
+
+
+      return (
+        <div>
+          <div className="schedule-columns w-row">
+            <div className="w-col w-col-3">
+              <div>
+                <div>{timeStr}</div>
+              </div>
             </div>
-          </div>
-          <div className="w-col w-col-3">
-            {joinButton}
-            {cancelButton}
+            <div className="w-col w-col-3">
+              <div>{this.props.event.fields.Category}</div>
+            </div>
+            <div className="w-col w-col-3">
+              <a href={"/pages/leaders/#" + this.props.event.fields.Host}>
+                <div>{this.props.event.fields.Host}</div>
+              </a>
+            </div>
+            <div className="w-col w-col-3">
+              <div>
+                {this.state.attendees}/{this.props.event.fields.MaxAttendees}
+              </div>
+            </div>
+            <div className="w-col w-col-3">
+              {joinButton}
+              {cancelButton}
+            </div>
           </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
+  // }
 }
 export default EventsTable;
