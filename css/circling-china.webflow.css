@@ -4004,7 +4004,7 @@ figure {
   margin-right: auto;
   margin-left: auto;
   font-family: Roboto, sans-serif;
-  font-size: 28px;
+  font-size: 24px;
   font-style: normal;
   font-weight: 400;
   text-align: center;
@@ -7498,9 +7498,9 @@ figure {
   .testimonials-wrapper {
     margin-bottom: 30px;
   }
-  .quote-text.ceo-quote {
+  /* .quote-text.ceo-quote {
     width: 100%;
-  }
+  } */
   .counters-text {
     font-size: 50px;
     line-height: 60px;
