@@ -28,15 +28,7 @@ Build
 
 
 ## TODOs
+
+See [TODOs](TODO.md) for list of work
   
-- Add wechat/alipay (need account)
-- Add email service on key events
-  - first time join event
-  - scheduled emails 2 hours before event
-- login redirect, logout redirect
-- mobile nav improvement
-- first time login popup (查看活动, or auto-redirect)
-- tutorial walkthrough
-- leader account types
-- next-event status
-- https://shimo.im/docs/ne3VVNJJ88s8FB3b
+

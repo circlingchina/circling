@@ -3609,7 +3609,7 @@ figure {
   align-items: center;
   border-radius: 100%;
   background-color: #fff;
-  background-image: url('../images/ziye.jpeg');
+  background-image: url('../images/homeavatar4.jpeg');
   background-position: 0px 0px;
   background-size: cover;
   background-repeat: no-repeat;
@@ -3988,11 +3988,15 @@ figure {
 }
 
 .quote-text {
+  margin-right: auto;
+  margin-left: auto;
+  width: 70%;
   padding: 0px 40px;
   font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
-  font-size: 28px;
+  font-size: 24px;
   line-height: 38px;
   font-weight: 500;
+  text-align: center;
   letter-spacing: 0px;
   text-indent: 0px;
   -webkit-column-count: 0;
@@ -4000,7 +4004,7 @@ figure {
 }
 
 .quote-text.ceo-quote {
-  width: 70%;
+  width: 100%;
   margin-right: auto;
   margin-left: auto;
   font-family: Roboto, sans-serif;
@@ -7500,7 +7504,7 @@ figure {
   }
   .quote-text.ceo-quote {
     width: 100%;
-  }
+  } 
   .counters-text {
     font-size: 50px;
     line-height: 60px;
