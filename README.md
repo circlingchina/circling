@@ -22,6 +22,12 @@ Development
 
 `npm run dev`
 
+For localhost development, setup a [.env](.env) file:
+
+`cp .env.sample .env`
+
+(this file is designed to hold sensitive data, and should not be checked into source control)
+
 Build
 
 `npm run build`
