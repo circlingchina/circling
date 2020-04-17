@@ -7,23 +7,65 @@ function getAirbaseUserId() {
   return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
 }
 
+function getTimeUntil(event) {
+  let timeUntil = false;
+  const dateNow = new Date();
+  const eventDate = new Date(event.get("Time"));
+  const msDiff = eventDate - dateNow;
+  const diffMin = msDiff / 1000 / 60;
+  const diffHour = diffMin / 60;
+
+  if (diffHour > 2) {
+    timeUntil = "before";
+  } else {
+    if (diffMin > 15) {
+      timeUntil = "soon";
+    } else {
+      if (diffMin < 15 && diffHour > -2) {
+        timeUntil = "now";
+      } else {
+        timeUntil = "past";
+      };
+    };
+  };
+
+  return timeUntil
+}
+
+
 // events table in member page
 function EventsTable(props) {
-  const eventRows = props.events.map((event) => (
-    <EventRow
-      key={event.id}
-      event={event}
-      onEventChanged={props.onEventChanged}
-    />
-  ));
-  return (
-    <div className="div-block-11">
-      <div>
-        <TableHeader />
-        {eventRows}
+  const futureEvents = props.events.filter((event)=> {
+    const timeUntil = getTimeUntil(event)
+    console.log(event.get("Time"))
+    console.log("timeUntil", timeUntil)
+      // if event.date is in the future
+      if (timeUntil == "past") {
+        return false
+      } else {
+        return true
+      }
+  })
+
+  console.log(futureEvents);
+
+  // if (futureEvents){
+    const eventRows = futureEvents.map((event) => (
+      <EventRow
+        key={event.id}
+        event={event}
+        onEventChanged={props.onEventChanged}
+      />
+    ));
+    return (
+      <div className="div-block-11">
+        <div>
+          <TableHeader />
+          {eventRows}
+        </div>
       </div>
-    </div>
-  );
+    );
+  // } else;
 }
 
 function TableHeader() {
@@ -63,26 +105,7 @@ class EventRow extends React.Component {
       roomfull = true;
     }
 
-    let timeUntil = false;
-    const dateNow = new Date();
-    const eventDate = new Date(this.props.event.get("Time"));
-    const msDiff = eventDate - dateNow;
-    const diffMin = msDiff / 1000 / 60;
-    const diffHour = diffMin / 60;
-
-    if (diffHour > 2) {
-      timeUntil = "before";
-    } else {
-      if (diffMin > 15) {
-        timeUntil = "soon";
-      } else {
-        if (diffMin < 15 && diffHour > -2) {
-          timeUntil = "now";
-        } else {
-          timeUntil = "past";
-        }
-      }
-    }
+    const timeUntil = getTimeUntil(this.props.event)
 
     this.setState({
       joined: userJoined,
@@ -210,6 +233,7 @@ class EventRow extends React.Component {
       }
     }
 
+
     return (
       <div>
         <div className="schedule-columns w-row">
@@ -239,5 +263,6 @@ class EventRow extends React.Component {
       </div>
     );
   }
+
 }
 export default EventsTable;
