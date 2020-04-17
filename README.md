@@ -18,7 +18,7 @@ There's no backend. Server side functionality are built via a collection of 3rd 
 
 ## Setup
 
-Development
+**Development**
 
 `npm run dev`
 
@@ -28,9 +28,13 @@ For localhost development, setup a [.env](.env) file:
 
 (this file is designed to hold sensitive data, and should not be checked into source control)
 
-Build
+**Build**
 
 `npm run build`
+
+**Staging Branch**
+
+The `staging` branch is configured to auto-deploy to https://staging.circlingchina.org/ and can be used to test and demo experimental features
 
 
 ## TODOs
