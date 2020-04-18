@@ -23,9 +23,11 @@ const util = require("util");
 const createUser = util.promisify(AirtableApi.createUser);
 
 const handler = async function (event, context, callback) {
-  // const { identity, user } = context.clientContext;
-  const identityEvent = event["body"]["event"];
-  const user = event["body"]["user"];
+  const data = JSON.parse(event.body);
+  console.log("data", data);
+  const { user } = data;
+
+  console.log("user", user);
 
   const records = await createUser(
     user.user_metadata.email,

@@ -1,5 +1,2 @@
 [build] # specify folder for Netlify Functions
   functions = "func/"
-
-[dev]
-  publish = "_site" # If you use a _redirect file, provide the path to your static content folder
