@@ -79,3 +79,5 @@ js/login.js.map
 
 # Local Netlify folder
 .netlify
+
+func/

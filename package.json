@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "(./node_modules/parcel-bundler/bin/cli.js watch src/member.js src/login.js --out-dir _site/js &) && ./node_modules/@11ty/eleventy/cmd.js --serve",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "./node_modules/parcel-bundler/bin/cli.js build src/member.js src/login.js --out-dir _site/js && ./node_modules/@11ty/eleventy/cmd.js"
+    "build": "./node_modules/parcel-bundler/bin/cli.js build src/member.js src/login.js --out-dir _site/js && ./node_modules/@11ty/eleventy/cmd.js && ./node_modules/parcel-bundler/bin/cli.js build src/funcs/identity-signup.js --out-dir func/ --no-source-maps"
   },
   "repository": {
     "type": "git",
