@@ -24,19 +24,28 @@ const createUser = util.promisify(AirtableApi.createUser);
 
 const handler = async function (event, context, callback) {
   const data = JSON.parse(event.body);
-  console.log("data", data);
+  console.log("v1", data);
   const { user } = data;
 
-  console.log("user", user);
+  console.log("email", user.email);
 
-  const records = await createUser(
-    user.user_metadata.email,
-    user.user_metadata.full_name
-  );
+  // stick the airtable
+
+  const records = await createUser(user.email, user.user_metadata.full_name);
   console.log("records", records);
+  let responseBody = "success";
+  if (records.length > 0) {
+    responseBody = {
+      user_metadata: {
+        ...user.user_metadata, // append current user metadata
+        airtable_id: records[0].id,
+      },
+    };
+  }
+
   callback(null, {
     statusCode: 200,
-    body: `Success`,
+    body: JSON.stringify(responseBody),
   });
 };
 
