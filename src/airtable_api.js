@@ -4,8 +4,21 @@ var base = new Airtable({ apiKey: process.env.AIRBASE_API_KEY }).base(
 );
 
 module.exports = {
-  join: (event, userId, onSuccess, onError) => {
+  createUser: (email, name, cb) => {
+    base("Users").create(
+      [
+        {
+          fields: {
+            email: email,
+            Name: name,
+          },
+        },
+      ],
+      cb
+    );
+  },
 
+  join: (event, userId, onSuccess, onError) => {
     //prepare eventUsers array
     const eventUsers = event.fields.Users ? event.fields.Users : [];
     if (eventUsers.includes(userId)) {
@@ -25,10 +38,10 @@ module.exports = {
       ],
       (err, records) => {
         if (err) {
-          onError(err)
+          onError(err);
         } else {
-          console.log("records", records)
-          onSuccess(records[0])
+          console.log("records", records);
+          onSuccess(records[0]);
         }
       }
     );
@@ -55,10 +68,10 @@ module.exports = {
       ],
       (err, records) => {
         if (err) {
-          onError(err)
+          onError(err);
         } else {
-          console.log("records", records)
-          onSuccess(records[0])
+          console.log("records", records);
+          onSuccess(records[0]);
         }
       }
     );
@@ -83,11 +96,11 @@ module.exports = {
         },
         (err) => {
           if (err) {
-            onError(err)
+            onError(err);
           } else {
-            onSuccess(allEvents)
+            onSuccess(allEvents);
           }
         }
       );
-  }
-}
+  },
+};
