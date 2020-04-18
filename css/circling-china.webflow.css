@@ -3513,6 +3513,12 @@ figure {
   text-transform: uppercase;
 }
 
+.sub-text.black {
+  color:#111;
+  font-weight: 400;
+  margin-bottom: 5px;
+}
+
 .sub-text.red {
   color: #cc333f;
   text-align: center;
@@ -3968,6 +3974,7 @@ figure {
   -ms-flex-align: start;
   align-items: flex-start;
   background-color: #fff;
+  position: relative;
 }
 
 .testimonials-wrapper.ceo-quote {
@@ -6777,6 +6784,8 @@ figure {
   align-items: stretch;
 }
 
+
+
 .join-button {
   margin-right: auto;
   margin-left: auto;
@@ -6792,6 +6801,11 @@ figure {
 
 .join-button.cancel {
   color: #5e5e5f;
+}
+
+.join-button.host {
+  color: #000000;
+  font-weight: 500;
 }
 
 .tabs {

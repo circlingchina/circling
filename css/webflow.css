@@ -1776,3 +1776,10 @@ textarea.w-select {
 .w-condition-invisible {
   display: none !important;
 }
+
+@media screen and (max-width: 767px) {
+  .quote-test{
+    font-size: 20px;
+  }
+
+}
