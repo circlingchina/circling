@@ -74,7 +74,6 @@ module.exports = {
     let allEvents = [];
     base("OpenEvents")
       .select({
-        // Selecting the first 3 records in Grid view:
         view: "Grid view",
       })
       .eachPage(
