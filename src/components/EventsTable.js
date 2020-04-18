@@ -167,9 +167,9 @@ class EventRow extends React.Component {
 
   render() {
     moment.locale("zh-cn", locale);
-    const timeStr = moment(this.props.event.get("Time")).format('LLLL');
-
-    //based on state, render the correct UI element
+    const timeStr = moment(this.props.event.get("Time")).format(
+      "YYYY年M月D日 Ah点mm分"
+    );   //based on state, render the correct UI element
     let joinButton;
     let cancelButton;
 
