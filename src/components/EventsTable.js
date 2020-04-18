@@ -246,8 +246,8 @@ class EventRow extends React.Component {
             <div>{this.props.event.fields.Category}</div>
           </div>
           <div className="w-col w-col-3">
-            <a href={"/pages/leaders/#" + this.props.event.fields.Host}>
-              <div>{this.props.event.fields.Host}</div>
+            <a href={"/pages/leaders/#" + this.props.event.fields.Host} 
+                className="join-button host">{this.props.event.fields.Host}
             </a>
           </div>
           <div className="w-col w-col-3">

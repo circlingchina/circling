@@ -95,8 +95,9 @@ function UpcomingEvent({events}) {
     <>
       <div className="sub-text red">即将开始</div>
       <div className="div-block-13">
-        <div className="line-text">{startingSoonEvent.fields.Name} {startingSoonEvent.fields.Time}</div>
-        <div className="line-text">{startingSoonEvent.fields.Host}</div>
+        <div className="sub-text black">{startingSoonEvent.fields.Name}</div>
+        <div className="sub-text black">开始时间：{startingSoonEvent.fields.Time}</div>
+        <div className="sub-text black">带领者：{startingSoonEvent.fields.Host}</div>
         <a href={startingSoonEvent.fields.EventLink} className="button w-button" target="_blank">
           点击进入
         </a>
