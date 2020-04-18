@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "(./node_modules/parcel-bundler/bin/cli.js watch src/member.js src/login.js --out-dir _site/js &) && ./node_modules/@11ty/eleventy/cmd.js --serve",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "./node_modules/parcel-bundler/bin/cli.js build src/member.js src/login.js --out-dir _site/js && ./node_modules/@11ty/eleventy/cmd.js && ./node_modules/parcel-bundler/bin/cli.js build src/funcs/identity-signup.js --out-dir func/ --no-source-maps"
+    "build": "./node_modules/parcel-bundler/bin/cli.js build src/member.js src/login.js --out-dir _site/js && ./node_modules/@11ty/eleventy/cmd.js",
+    "build:server": "netlify-lambda build src/func"
   },
   "repository": {
     "type": "git",
@@ -33,6 +34,7 @@
     "airtable": "^0.8.1",
     "babel-cli": "^6.26.0",
     "babel-preset-react-app": "^3.1.2",
+    "netlify-lambda": "^1.6.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   }
