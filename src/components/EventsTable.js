@@ -121,11 +121,15 @@ class EventRow extends React.Component {
 
     const oldJoinState = this.state.joined;
     this.setState({ joined: true });
+
     AirtableApi.join(
       this.props.event,
       airbaseUserId,
       (updatedEvent) => {
         this.setState({ attendees: updatedEvent.get("Attendees") });
+        if (this.state.full) {
+          this.setState({full: false});
+        }
         this.props.onEventChanged(updatedEvent);
       },
       (err) => {
@@ -155,7 +159,7 @@ class EventRow extends React.Component {
         this.setState({
           attendees: updatedEvent.get("Attendees"),
           joined: false,
-        });
+        }); 
         this.props.onEventChanged(updatedEvent);
       },
       (err) => {
@@ -167,9 +171,8 @@ class EventRow extends React.Component {
 
   render() {
     moment.locale("zh-cn", locale);
-    const timeStr = moment(this.props.event.get("Time")).format(
-      "YYYY年M月D日 Ah点mm分"
-    );   //based on state, render the correct UI element
+    const timeStr = moment(this.props.event.get("Time"))
+      .format("YYYY年M月D日 Ah点mm分");   //based on state, render the correct UI element
     let joinButton;
     let cancelButton;
 
