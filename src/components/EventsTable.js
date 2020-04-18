@@ -100,10 +100,7 @@ class EventRow extends React.Component {
 
     //2. check if event is full
     // this.props.event attendees and max attendees , if equal, full
-    let roomfull = false;
-    if ((this.props.event.attendees = this.props.event.MaxAttendees)) {
-      roomfull = true;
-    }
+    const roomfull = this.props.event.fields.Attendees >= this.props.event.fields.MaxAttendees;
 
     const timeUntil = getTimeUntil(this.props.event)
 
@@ -170,16 +167,14 @@ class EventRow extends React.Component {
 
   render() {
     moment.locale("zh-cn", locale);
-    const timeStr = moment(this.props.event.get("Time")).format(
-      "YYYY年M月D日 Ah点mm分"
-    );
+    const timeStr = moment(this.props.event.get("Time")).format('LLLL');
 
     //based on state, render the correct UI element
     let joinButton;
     let cancelButton;
 
     if (!this.state.joined) {
-      if (this.state.roomfull) {
+      if (this.state.full) {
         joinButton = (
           <a href="#" className="join-button cancel w-button">
             报名已满

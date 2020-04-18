@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import EventsTable from "./components/EventsTable"
 import AirtableApi from "./airtable_api.js";
+import moment from "../node_modules/moment/src/moment";
+
 
 function getAirbaseUserId() {
   return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
@@ -95,7 +97,7 @@ function UpcomingEvent({events}) {
     <>
       <div className="sub-text red">即将开始</div>
       <div className="div-block-13">
-        <div className="line-text">{startingSoonEvent.fields.Name} {startingSoonEvent.fields.Time}</div>
+        <div className="line-text">{startingSoonEvent.fields.Name} {moment(startingSoonEvent.fields.Time).format('LLLL')}</div>
         <div className="line-text">{startingSoonEvent.fields.Host}</div>
         <a href={startingSoonEvent.fields.EventLink} className="button w-button" target="_blank">
           点击进入

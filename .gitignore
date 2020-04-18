@@ -1,3 +1,9 @@
+# editors
+.vscode/
+
+# OS
+**/.DS_store
+
 # Logs
 logs
 *.log
