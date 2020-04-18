@@ -11,6 +11,12 @@ module.exports = {
     if (eventUsers.includes(userId)) {
       return; //already joined
     }
+    
+    if (event.fields.Attendees >= event.fields.MaxAttendees) {
+      onError('MaxAttendees limit!');
+      return;
+    }
+    
     eventUsers.push(airbaseUserId);
 
     // call api
