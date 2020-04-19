@@ -1,4 +1,7 @@
 <h2>感谢注册Circling中国</h2>
-
-<p>点击下面链接完成注册:</p>
-<p><a href="{{ .SiteURL }}/#confirmation_token={{ .Token }}">邮箱确认</a></p>
+<p>您好，感谢你使用 CirclingChina!</p>
+<p>你的账号已经创建成功，请验证邮箱。<br/>
+<a href="{{ .SiteURL }}/#confirmation_token={{ .Token }}">验证邮箱</a>
+</p>
+如果按钮无法点击，请复制下面链接在浏览器中打开:
+{{ .SiteURL }}/#confirmation_token={{ .Token }}
