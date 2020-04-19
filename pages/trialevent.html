@@ -2,6 +2,7 @@
 layout: layout.njk
 page_id: 5e4b8703f081584ddf226523
 site_id: 5e4b8703f0815874d02263b8
+custom_react: <script src="/js/trailevent.js"></script>
 ---
     <div id="Top" class="banner sub">
       {% include _nav.html%}
@@ -22,25 +23,7 @@ site_id: 5e4b8703f0815874d02263b8
     <div class="section">
       <div class="page-divider"></div>
       <div class="container w-container">
-        <div class="submit-project-wrapper">
-          <div data-w-id="event-form" style="opacity:1" class="form-block w-form">
-            <form id="email-form" name="email-form" data-name="Email Form" class="form" data-netlify="true">
-              <div><label for="Timeline" class="field-label-2">下一次新人课程将会在2020年6月14日北京时间下午2点—4点在线上进行<br>请提前报名，我们会通过邮件和微信告知参与方式</label></div>
-              <div><label for="Name-2" class="field-label">你的名字或昵称</label><input type="text" class="text-field-form w-input" maxlength="256" name="Name" data-name="Name" placeholder="请输入姓名" id="Name-2" required=""></div>
-              <div><label for="Email-3" class="field-label">邮箱地址</label><input type="email" class="text-field-form w-input" maxlength="256" name="Email" data-name="Email" placeholder="mail@company.com" id="Email" required=""></div>
-              <div><label for="wechat" class="field-label">微信号</label><input type="text" class="text-field-form w-input" maxlength="256" name="wechat" data-name="wechat" placeholder="请输入微信号" id="wechat" required=""></div>
-              <div class="top-margin">
-                <div class="algin-center"><input type="submit" value="预留席位" data-wait="Please wait..." class="button w-button"></div>
-              </div>
-            </form>
-            <div class="success-message w-form-done">
-              <div>感谢报名！具体参与方式会通过邮件发送给你</div>
-            </div>
-            <div class="error-message w-form-fail">
-              <div>抱歉！表格信息填写有误</div>
-            </div>
-          </div>
-        </div>
+        <div id="enroll-form"></div>
       </div>
     </div>
    

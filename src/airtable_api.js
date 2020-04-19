@@ -1,4 +1,5 @@
 var Airtable = require("airtable");
+var _ = require("lodash");
 var base = new Airtable({ apiKey: process.env.AIRBASE_API_KEY }).base(
   "app53ecZ2UL9M6JOw"
 );
@@ -16,6 +17,38 @@ module.exports = {
       ],
       cb
     );
+  },
+
+  updateUser: (id, fieldsObj, onSuccess, onError) => {
+    // fields white list
+    const fieldList = ['Name', 'WechatUserName', 'email'];
+    const userObjToUpdate = {
+      id,
+      fields: _.pick(fieldsObj, fieldList),
+    };
+
+    base("Users").update([
+      userObjToUpdate 
+    ], (err, records) => {
+      if (err) {
+        onError(err);
+        return;
+      }
+      onSuccess(records[0]);
+    });
+  },
+
+  getEvent: (id, onSuccess, onError) => {
+    if(!id) {
+      return;
+    }
+    base('OpenEvents').find(id,(err, record)=> {
+      if (err) {
+        console.log(err); 
+        return;
+      }
+      onSuccess(record);
+    });
   },
 
   join: (event, userId, onSuccess, onError) => {
@@ -87,6 +120,7 @@ module.exports = {
     let allEvents = [];
     base("OpenEvents")
       .select({
+        filterByFormula: '{Category} = \"每日Circling\"',
         view: "Grid view",
       })
       .eachPage(
