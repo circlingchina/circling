@@ -1,44 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Airtable from "airtable";
-
-import AirtableAPI from "./airtable_api.js";
-
-var base = new Airtable({ apiKey: process.env.AIRBASE_API_KEY }).base(
-  "app53ecZ2UL9M6JOw"
-);
-
-function getUserByEmail(email, onSuccess) {
-  if(!email) {
-    return;
-  }
-
-  base('Users').select({
-    maxRecords: 1,
-    filterByFormula: '{email}=\"'+email+'\"'
-  }).eachPage(function page(records, fetchNextPage) {
-    if (records.length == 0) {
-       onSuccess(null);
-    }
-    onSuccess(records[0]);
-  });
-}
-
-function getAirbaseUserById(id) {
-  if(!id) {
-    return;
-  }
-
-  base('Users').select({
-    maxRecords: 1,
-    filterByFormula: '{email}=\"'+email+'\"'
-  }).eachPage(function page(records, fetchNextPage) {
-    if (records.length == 0) {
-      return null;
-    }
-    return records[0];
-  });
-}
+import AirtableAPI from "./airtable/api";
 
 class EnrollForm extends React.Component {
 
@@ -59,7 +21,7 @@ class EnrollForm extends React.Component {
     // TODO refactor use promise or async await
   
     // get user
-    getUserByEmail(this.state.email, user => {
+    AirtableAPI.getUserByEmail(this.state.email, user => {
       console.log(user);
       if (user) {
         // udate user wechat

@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import EventsTable from "./components/EventsTable"
-import AirtableApi from "./airtable_api.js";
-import moment from "../node_modules/moment/src/moment";
+import AirtableApi from "./airtable/api";
+import moment from "moment";
 
 
 function getAirbaseUserId() {

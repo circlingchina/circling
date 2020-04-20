@@ -1,6 +1,6 @@
 import React from "react";
-import AirtableApi from "../airtable_api.js";
-const moment = require("moment");
+import AirtableApi from "../airtable/api";
+import moment from 'moment'
 import locale from "moment/src/locale/zh-cn";
 
 function getAirbaseUserId() {

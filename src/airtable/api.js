@@ -1,12 +1,9 @@
-var Airtable = require("airtable");
-var _ = require("lodash");
-var base = new Airtable({ apiKey: process.env.AIRBASE_API_KEY }).base(
-  "app53ecZ2UL9M6JOw"
-);
+import _ from 'lodash';
+import { Users, OpenEvents } from './base';
 
-module.exports = {
+export default {
   createUser: (email, name, cb) => {
-    base("Users").create(
+    Users.create(
       [
         {
           fields: {
@@ -27,8 +24,8 @@ module.exports = {
       fields: _.pick(fieldsObj, fieldList),
     };
 
-    base("Users").update([
-      userObjToUpdate 
+    Users.update([
+      userObjToUpdate
     ], (err, records) => {
       if (err) {
         onError(err);
@@ -38,13 +35,29 @@ module.exports = {
     });
   },
 
-  getEvent: (id, onSuccess, onError) => {
-    if(!id) {
+  getUserByEmail: (email, onSuccess) => {
+    if(!email) {
       return;
     }
-    base('OpenEvents').find(id,(err, record)=> {
+  
+    Users.select({
+      maxRecords: 1,
+      filterByFormula: '{email}=\"'+email+'\"'
+    }).eachPage(function page(records, fetchNextPage) {
+      if (records.length == 0) {
+         onSuccess(null);
+      }
+      onSuccess(records[0]);
+    });
+  },
+
+  getEvent: (id, onSuccess, onError) => {
+    if (!id) {
+      return;
+    }
+    OpenEvents.find(id, (err, record) => {
       if (err) {
-        console.log(err); 
+        console.log(err);
         return;
       }
       onSuccess(record);
@@ -57,16 +70,16 @@ module.exports = {
     if (eventUsers.includes(userId)) {
       return; //already joined
     }
-    
+
     if (event.fields.Attendees >= event.fields.MaxAttendees) {
       onError('MaxAttendees limit!');
       return;
     }
-    
+
     eventUsers.push(airbaseUserId);
 
     // call api
-    base("OpenEvents").update(
+    OpenEvents.update(
       [
         {
           id: event.id,
@@ -96,7 +109,7 @@ module.exports = {
     }
     eventUsers.splice(index, 1);
 
-    base("OpenEvents").update(
+    OpenEvents.update(
       [
         {
           id: event.id,
@@ -118,7 +131,7 @@ module.exports = {
 
   getAllEvents: (onSuccess, onError) => {
     let allEvents = [];
-    base("OpenEvents")
+    OpenEvents
       .select({
         filterByFormula: '{Category} = \"每日Circling\"',
         view: "Grid view",
