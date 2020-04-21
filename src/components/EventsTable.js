@@ -32,39 +32,38 @@ function getTimeUntil(event) {
   return timeUntil
 }
 
-
 // events table in member page
 function EventsTable(props) {
-  const futureEvents = props.events.filter((event)=> {
+  const futureEvents = props.events.filter((event) => {
     const timeUntil = getTimeUntil(event)
     console.log(event.get("Time"))
     console.log("timeUntil", timeUntil)
-      // if event.date is in the future
-      if (timeUntil == "past") {
-        return false
-      } else {
-        return true
-      }
+    // if event.date is in the future
+    if (timeUntil == "past") {
+      return false
+    } else {
+      return true
+    }
   })
 
   console.log(futureEvents);
 
   // if (futureEvents){
-    const eventRows = futureEvents.map((event) => (
-      <EventRow
-        key={event.id}
-        event={event}
-        onEventChanged={props.onEventChanged}
-      />
-    ));
-    return (
-      <div className="div-block-11">
-        <div>
-          <TableHeader />
-          {eventRows}
-        </div>
+  const eventRows = futureEvents.map((event) => (
+    <EventRow
+      key={event.id}
+      event={event}
+      onEventChanged={props.onEventChanged}
+    />
+  ));
+  return (
+    <div className="div-block-11">
+      <div>
+        <TableHeader />
+        {eventRows}
       </div>
-    );
+    </div>
+  );
   // } else;
 }
 
@@ -111,7 +110,7 @@ class EventRow extends React.Component {
     });
   }
 
-  handleJoinEvent = (e) => {
+  handleJoinEvent = async (e) => {
     e.preventDefault();
     const airbaseUserId = getAirbaseUserId();
     //can't join unless logged in
@@ -122,25 +121,26 @@ class EventRow extends React.Component {
     const oldJoinState = this.state.joined;
     this.setState({ joined: true });
 
-    AirtableApi.join(
-      this.props.event,
-      airbaseUserId,
-      (updatedEvent) => {
+    try {
+      const updatedEvent = await AirtableApi.join(
+        this.props.event,
+        airbaseUserId);
+      if (updatedEvent) {
         this.setState({ attendees: updatedEvent.get("Attendees") });
         if (this.state.full) {
-          this.setState({full: false});
+          this.setState({ full: false });
         }
         this.props.onEventChanged(updatedEvent);
-      },
-      (err) => {
-        console.log(err);
-        //reset the join state
-        this.setState({ joined: oldJoinState });
       }
-    );
+    }
+    catch (err) {
+      console.log(err);
+      //reset the join state
+      this.setState({ joined: oldJoinState });
+    }
   };
 
-  handleUnjoinEvent = (e) => {
+  handleUnjoinEvent = async (e) => {
     e.preventDefault();
 
     const airbaseUserId = getAirbaseUserId();
@@ -152,21 +152,21 @@ class EventRow extends React.Component {
     const oldJoinState = this.state.joined;
     this.setState({ joined: false });
 
-    AirtableApi.unjoin(
-      this.props.event,
-      airbaseUserId,
-      (updatedEvent) => {
+    try {
+      const updatedEvent = await AirtableApi.unjoin(
+        this.props.event, airbaseUserId);
+
+      if (updatedEvent) {
         this.setState({
           attendees: updatedEvent.get("Attendees"),
           joined: false,
-        }); 
+        });
         this.props.onEventChanged(updatedEvent);
-      },
-      (err) => {
-        console.log(err);
-        this.setState({ joined: oldJoinState });
       }
-    );
+    } catch (err) {
+      console.log(err);
+      this.setState({ joined: oldJoinState });
+    }
   };
 
   render() {
@@ -231,7 +231,6 @@ class EventRow extends React.Component {
       }
     }
 
-
     return (
       <div>
         <div className="schedule-columns w-row">
@@ -244,8 +243,8 @@ class EventRow extends React.Component {
             <div>{this.props.event.fields.Category}</div>
           </div>
           <div className="w-col w-col-3">
-            <a href={"/pages/leaders/#" + this.props.event.fields.Host} 
-                className="join-button host">{this.props.event.fields.Host}
+            <a href={"/pages/leaders/#" + this.props.event.fields.Host}
+              className="join-button host">{this.props.event.fields.Host}
             </a>
           </div>
           <div className="w-col w-col-3">
