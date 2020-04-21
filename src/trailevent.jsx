@@ -1,44 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Airtable from "airtable";
-
-import AirtableAPI from "./airtable_api.js";
-
-var base = new Airtable({ apiKey: process.env.AIRBASE_API_KEY }).base(
-  "app53ecZ2UL9M6JOw"
-);
-
-function getUserByEmail(email, onSuccess) {
-  if(!email) {
-    return;
-  }
-
-  base('Users').select({
-    maxRecords: 1,
-    filterByFormula: '{email}=\"'+email+'\"'
-  }).eachPage(function page(records, fetchNextPage) {
-    if (records.length == 0) {
-       onSuccess(null);
-    }
-    onSuccess(records[0]);
-  });
-}
-
-function getAirbaseUserById(id) {
-  if(!id) {
-    return;
-  }
-
-  base('Users').select({
-    maxRecords: 1,
-    filterByFormula: '{email}=\"'+email+'\"'
-  }).eachPage(function page(records, fetchNextPage) {
-    if (records.length == 0) {
-      return null;
-    }
-    return records[0];
-  });
-}
+import AirtableAPI from "./airtable/api";
 
 class EnrollForm extends React.Component {
 
@@ -53,46 +15,44 @@ class EnrollForm extends React.Component {
     };
   }
 
-  handleSubmit = event => {
-    this.setState({submitted: true});
+  handleSubmit = async event => {
+    this.setState({ submitted: true });
     event.preventDefault();
-    // TODO refactor use promise or async await
-  
-    // get user
-    getUserByEmail(this.state.email, user => {
+
+    try {
+      const user = await AirtableAPI.getUserByEmail(this.state.email);
       console.log(user);
+
+      const TRAIL_EVENT_ID = 'recXx8gFGJ6c9fC2R';
+      const trailEvent = await AirtableAPI.getEvent(TRAIL_EVENT_ID);
+
       if (user) {
         // udate user wechat
         const userId = user.id;
         const fields = user.fields;
         fields.WechatUserName = this.state.wechatUserName;
-        AirtableAPI.updateUser(userId, fields, (rec) => {
-          console.log("user wechat update success", rec);
-        });
 
-        // TODO now hard code the trailEvent id:
-        const TRAIL_EVENT_ID = 'recXx8gFGJ6c9fC2R';
-        
-        AirtableAPI.getEvent(TRAIL_EVENT_ID, (event) => {
-          AirtableAPI.join(event, userId, 
-            (rec) => {
-            console.log("joined with event", rec);
-          }, (err) => {
-            console.log(err);
-          });
-        })
+        const updatedUser = await AirtableAPI.updateUser(userId, fields);
+        console.log("user wechat update success", updatedUser);
       }
-    });
+
+      if (user && trailEvent) {
+        const updatedTrailEvent = await AirtableAPI.join(trailEvent, user.id);
+        console.log("joined with event", updatedTrailEvent);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   handleChange = (event)=> {
     const name = event.target.name;
     
-    if (name == 'name') {
+    if (name === 'name') {
       this.setState({name: event.target.value});
-    } else if (name == 'email') {
+    } else if (name === 'email') {
       this.setState({email: event.target.value}); 
-    } else if (name == 'wechat') {
+    } else if (name === 'wechat') {
       this.setState({wechatUserName: event.target.value});  
     }
     
