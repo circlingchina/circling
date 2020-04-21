@@ -104,7 +104,10 @@ class EnrollForm extends React.Component {
 
     let btn = (
       <div className="top-margin">
-            <div className="algin-center"><input type="submit" onClick={this.handleSubmit} value="预留席位" data-wait="Please wait..." className="button w-button"/></div>
+            <div className="algin-center"><input type="submit" 
+            onClick={this.handleSubmit} 
+            onTouchStart={this.handleSubmit}
+            value="预留席位" data-wait="Please wait..." className="button w-button"/></div>
           </div>
     );
     let notification;
