@@ -1,4 +1,5 @@
 const moment = require('moment');
+const lazyImagesPlugin = require('eleventy-plugin-lazyimages');
  
 moment.locale('zh-cn');
 
@@ -8,6 +9,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy('images')
   eleventyConfig.addPassthroughCopy('admin')
   eleventyConfig.addPassthroughCopy('_email_templates')
+  eleventyConfig.addPlugin(lazyImagesPlugin)
 
   //add date filter
   eleventyConfig.addFilter('dateIso', date => {

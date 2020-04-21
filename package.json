@@ -4,9 +4,10 @@
   "description": "TODO",
   "main": ".eleventy.js",
   "scripts": {
-    "dev": "(./node_modules/parcel-bundler/bin/cli.js watch src/member.js src/login.js src/trailevent.jsx --out-dir _site/js &) && ./node_modules/@11ty/eleventy/cmd.js --serve",
+    "dev": "(npx parcel watch src/member.js src/login.js src/trailevent.jsx --out-dir _site/js &) && ./node_modules/@11ty/eleventy/cmd.js --serve",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "./node_modules/parcel-bundler/bin/cli.js build src/member.js src/login.js src/trailevent.jsx --out-dir _site/js && ./node_modules/@11ty/eleventy/cmd.js",
+    "build": "npx parcel build src/member.js src/login.js src/trailevent.jsx --out-dir _site/js && ./node_modules/@11ty/eleventy/cmd.js && npm run imagemin",
+    "imagemin": "npx parcel build ./_site/images/**/**/** --out-dir ./_site/images/",
     "build:server": "netlify-lambda build src/func"
   },
   "repository": {
@@ -28,10 +29,12 @@
     "@babel/preset-react": "^7.9.4",
     "browserify": "^16.5.1",
     "dotenv": "^8.2.0",
+    "eleventy-plugin-lazyimages": "^1.1.1",
     "eslint": "^6.8.0",
     "eslint-plugin-react": "^7.19.0",
     "moment": "^2.24.0",
-    "parcel-bundler": "^1.12.4"
+    "parcel-bundler": "^1.12.4",
+    "parcel-plugin-imagemin": "^4.0.1"
   },
   "dependencies": {
     "airtable": "^0.8.1",
