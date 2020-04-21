@@ -35,10 +35,5 @@ For localhost development, setup a [.env](.env) file:
 **Staging Branch**
 
 The `staging` branch is configured to auto-deploy to https://staging.circlingchina.org/ and can be used to test and demo experimental features
-
-
-## TODOs
-
-See [TODOs](TODO.md) for list of work
   
 
