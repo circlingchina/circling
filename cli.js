@@ -1,7 +1,7 @@
 // This file serves as an ad-hoc runner for testing stuff once or twice (i.e API calls)
 const util = require("util");
 require("dotenv").config();
-const AirtableApi = require("./src/airtable/api");
+const AirtableApi = require("./src/airtable/api.js");
 
 const createUser = util.promisify(AirtableApi.createUser);
 

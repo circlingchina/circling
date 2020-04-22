@@ -16,7 +16,7 @@
 //   }
 // }
 
-const AirtableApi = require("../airtable/api");
+const AirtableApi = require("../airtable/api.js");
 const util = require("util");
 
 //call Airtable API synchronously inside lambda

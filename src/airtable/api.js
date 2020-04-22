@@ -1,13 +1,13 @@
-import _ from 'lodash';
-import { Users, OpenEvents } from './base';
+// Use common js as it might be imported in Node (netlify functions)
+const _ = require('lodash');
+const base = require('./base.js');
 
 // Promisify the AirTable api so the caller don't have to
 // follow the callback style.
 
-export default {
+module.exports = {
   createUser: (email, name, cb) => {
-
-    Users.create(
+    base.Users.create(
       [
         {
           fields: {
@@ -29,7 +29,7 @@ export default {
         fields: _.pick(fieldsObj, fieldList),
       };
 
-      Users.update([
+      base.Users.update([
         userObjToUpdate
       ], (err, records) => {
         if (err) {
@@ -46,7 +46,7 @@ export default {
       if (!email) {
         resolve();
       }
-      Users.select({
+      base.Users.select({
         maxRecords: 1,
         filterByFormula: `{email}="${email}"`
       }).eachPage(function page(records, fetchNextPage) {
@@ -63,7 +63,7 @@ export default {
       if (!id) {
         resolve();
       }
-      OpenEvents.find(id, (err, record) => {
+      base.OpenEvents.find(id, (err, record) => {
         if (err) {
           reject(err);
         }
@@ -87,7 +87,7 @@ export default {
       eventUsers.push(airbaseUserId);
 
       // call api
-      OpenEvents.update([
+      base.OpenEvents.update([
         {
           id: event.id,
           fields: {
@@ -116,7 +116,7 @@ export default {
       }
       eventUsers.splice(index, 1);
 
-      OpenEvents.update([
+      base.OpenEvents.update([
         {
           id: event.id,
           fields: {
@@ -140,7 +140,7 @@ export default {
     return new Promise((resolve, reject) => {
       let allEvents = [];
       const CATEGORY = '每日Circling';
-      OpenEvents.select({
+      base.OpenEvents.select({
         filterByFormula: `{Category}="${CATEGORY}"`,
         view: "Grid view",
       }).eachPage((records, fetchNextPage) => {
