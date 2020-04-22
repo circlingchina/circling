@@ -193,7 +193,6 @@ class EventRow extends React.Component {
               href="#"
               className="join-button w-button"
               onClick={this.handleJoinEvent}
-              onTouchStart={this.handleJoinEvent}
             >
               报名
             </a>
@@ -223,7 +222,6 @@ class EventRow extends React.Component {
             href="#"
             className="join-button w-button"
             onClick={this.handleUnjoinEvent}
-            onTouchStart={this.handleUnjoinEvent}
           >
             取消报名
           </a>
