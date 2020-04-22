@@ -1,5 +1,7 @@
 # Circling China Site
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/83a0a3a6-8dbc-4cb9-8857-d9a367fc55f2/deploy-status)](https://app.netlify.com/sites/circlingchina/deploys)
+
 This project compiles to a statically generated website for https://circlingchina.org.
 
 
