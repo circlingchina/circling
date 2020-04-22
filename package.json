@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "(npx parcel watch src/member.js src/login.js src/trailevent.jsx --out-dir _site/js &) && ./node_modules/@11ty/eleventy/cmd.js --serve",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx parcel build src/member.js src/login.js src/trailevent.jsx --out-dir _site/js && ./node_modules/@11ty/eleventy/cmd.js && npm run imagemin",
-    "imagemin": "npx parcel build ./_site/images/**/**/** --out-dir ./_site/images/",
+    "build": "npx parcel build src/member.js src/login.js src/trailevent.jsx --out-dir _site/js && ./node_modules/@11ty/eleventy/cmd.js && npm run build:imagemin",
+    "build:imagemin": "npx parcel build ./_site/images/**/**/** --out-dir ./_site/images/",
     "build:server": "netlify-lambda build src/func"
   },
   "repository": {
