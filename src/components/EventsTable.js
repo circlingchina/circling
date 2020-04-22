@@ -1,6 +1,6 @@
 import React from "react";
-import AirtableApi from "../airtable_api.js";
-const moment = require("moment");
+import AirtableApi from "../airtable/api";
+import moment from 'moment'
 import locale from "moment/src/locale/zh-cn";
 
 function getAirbaseUserId() {
@@ -31,7 +31,6 @@ function getTimeUntil(event) {
 
   return timeUntil
 }
-
 
 // events table in member page
 function EventsTable(props) {
@@ -111,7 +110,7 @@ class EventRow extends React.Component {
     });
   }
 
-  handleJoinEvent = (e) => {
+  handleJoinEvent = async (e) => {
     e.preventDefault();
     const airbaseUserId = getAirbaseUserId();
     //can't join unless logged in
@@ -122,25 +121,26 @@ class EventRow extends React.Component {
     const oldJoinState = this.state.joined;
     this.setState({ joined: true });
 
-    AirtableApi.join(
-      this.props.event,
-      airbaseUserId,
-      (updatedEvent) => {
+    try {
+      const updatedEvent = await AirtableApi.join(
+        this.props.event,
+        airbaseUserId);
+      if (updatedEvent) {
         this.setState({ attendees: updatedEvent.get("Attendees") });
         if (this.state.full) {
           this.setState({ full: false });
         }
         this.props.onEventChanged(updatedEvent);
-      },
-      (err) => {
-        console.log(err);
-        //reset the join state
-        this.setState({ joined: oldJoinState });
       }
-    );
+    }
+    catch (err) {
+      console.log(err);
+      //reset the join state
+      this.setState({ joined: oldJoinState });
+    }
   };
 
-  handleUnjoinEvent = (e) => {
+  handleUnjoinEvent = async (e) => {
     e.preventDefault();
 
     const airbaseUserId = getAirbaseUserId();
@@ -152,21 +152,21 @@ class EventRow extends React.Component {
     const oldJoinState = this.state.joined;
     this.setState({ joined: false });
 
-    AirtableApi.unjoin(
-      this.props.event,
-      airbaseUserId,
-      (updatedEvent) => {
+    try {
+      const updatedEvent = await AirtableApi.unjoin(
+        this.props.event, airbaseUserId);
+
+      if (updatedEvent) {
         this.setState({
           attendees: updatedEvent.get("Attendees"),
           joined: false,
         });
         this.props.onEventChanged(updatedEvent);
-      },
-      (err) => {
-        console.log(err);
-        this.setState({ joined: oldJoinState });
       }
-    );
+    } catch (err) {
+      console.log(err);
+      this.setState({ joined: oldJoinState });
+    }
   };
 
   render() {
@@ -230,7 +230,6 @@ class EventRow extends React.Component {
         cancelButton = <a></a>;
       }
     }
-
 
     return (
       <div>

@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import EventsTable from "./components/EventsTable"
-import AirtableApi from "./airtable_api.js";
-import moment from "../node_modules/moment/src/moment";
+import AirtableApi from "./airtable/api";
+import moment from "moment";
 
 
 function getAirbaseUserId() {
@@ -16,20 +16,21 @@ function EventRegion() {
   const [isLoaded, setIsLoaded] = useState(false)
   
   useEffect(() => {
-    //TODO fix loading twice (API call in useEffect pattern)
-    if(isLoaded) return
-    console.log("loading all events from API")
-    AirtableApi.getAllEvents(
-      (allEvents) => {
-        setEvents(allEvents)
-        setIsLoaded(true)
-      },
-      (err) => {
-        setIsLoaded(true)
-        return <div>Error: {error.message}</div>
+    async function refreshEvents() {
+      if (isLoaded) {
+        return
       }
-    );
-  });
+      setIsLoaded(true);
+      console.log("loading all events from API");
+      try {
+        const allEvents = await AirtableApi.getAllEvents();
+        setEvents(allEvents);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    refreshEvents();
+  }, []);
   
   const updateEvents = (changedEvent) => {
     const newEvents = events.map((event)=> {
