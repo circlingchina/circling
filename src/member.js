@@ -20,13 +20,15 @@ function EventRegion() {
       if (isLoaded) {
         return
       }
-      setIsLoaded(true);
+      
       console.log("loading all events from API");
       try {
         const allEvents = await AirtableApi.getAllEvents();
         setEvents(allEvents);
+        setIsLoaded(true);
       } catch (err) {
         console.error(err);
+        setIsLoaded(true);
       }
     }
     refreshEvents();
@@ -40,7 +42,16 @@ function EventRegion() {
   }
   //TODO update parent when child changes event stuff (joine, unjoin)
 
-  if (!isLoaded) return <div>Loading...</div>
+  if (!isLoaded) return (
+    <div style={{
+      margin: "0 auto",
+      maxWidth: "fit-content",
+      textAlign: "right"
+      }}>
+      <span>给自己几次深呼吸吧!</span><br/>
+      <span> - Milk </span>
+    </div>
+  );
 
   return (
     <>
