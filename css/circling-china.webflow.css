@@ -6784,27 +6784,32 @@ figure {
   align-items: stretch;
 }
 
-
-
 .join-button {
-  margin-right: auto;
-  margin-left: auto;
+  margin: 2px 5px 2px 5px;
   padding-top: 4px;
   padding-bottom: 4px;
-  background-color: #edf2f5;
-  color: #1b8ff7;
+  background-color: #cc333f;
+  color: white;
   font-size: 15px;
   line-height: 20px;
   -o-object-fit: fill;
   object-fit: fill;
+  -webkit-transition: all 400ms ease;
+  transition: all 400ms ease;
+}
+
+.join-button:hover {
+  background-color: #d64e59;
 }
 
 .join-button.cancel {
+  background-color: #edf2f5;
   color: #5e5e5f;
 }
 
 .join-button.host {
-  color: #000000;
+  color: black;
+  background-color: #edf2f5;
   font-weight: 500;
 }
 
