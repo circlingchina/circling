@@ -1,7 +1,7 @@
-import React from "react";
-import AirtableApi from "../airtable/api";
+import React from 'react';
+import AirtableApi from '../airtable/api';
 import moment from 'moment'
-import locale from "moment/src/locale/zh-cn";
+import locale from 'moment/src/locale/zh-cn';
 
 function getAirbaseUserId() {
   return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
@@ -69,7 +69,7 @@ function EventsTable(props) {
 
 function TableHeader() {
   return (
-    <div className="schedule-title w-row">
+    <div className="schedule-title w-row events-table-header">
       <div className="column w-col w-col-3">时间</div>
       <div className="w-col w-col-3">活动</div>
       <div className="w-col w-col-3">带领者</div>
@@ -169,70 +169,54 @@ class EventRow extends React.Component {
     }
   };
 
+  handleOpenMeetingRoom = (url, e) => {
+    e.preventDefault();
+    window.open(url);
+  }
+
   render() {
     moment.locale("zh-cn", locale);
     const timeStr = moment(this.props.event.get("Time"))
       .format("YYYY年M月D日 Ah点mm分");   //based on state, render the correct UI element
     let joinButton;
     let cancelButton;
+    
 
+    // TODO test animation
     if (!this.state.joined) {
       if (this.state.full) {
         joinButton = (
-          <a href="#" className="join-button cancel w-button">
-            报名已满
-          </a>
-        );
+          <span className="join-button cancel w-button">报名已满</span>
+          );
       } else {
-        if (
-          this.state.timeUntil == "soon" ||
-          this.state.timeUntil == "before"
-        ) {
+        if (this.state.timeUntil == "soon" || this.state.timeUntil == "before") {
           joinButton = (
-            <a
-              href="#"
-              className="join-button w-button"
-              onClick={this.handleJoinEvent}
-            >
-              报名
-            </a>
+            <span className="join-button w-button" onClick={this.handleJoinEvent}>报名</span>
           );
         } else {
           joinButton = (
-            <a href="#" className="join-button cancel">
-              报名截止
-            </a>
+            <span className="join-button cancel">报名截止</span>
           );
         }
       }
     } else {
       joinButton = (
-        <a
-          href={this.props.event.fields.EventLink}
-          className="join-button w-button"
-          target="_blank"
-        >
-          进入房间
-        </a>
+        <span className="join-button w-button"
+             onClick={(e) => this.handleOpenMeetingRoom(this.props.event.fields.EventLink, e)}>
+        进入房间</span>
       );
 
       if ((this.state.timeUntil = "before")) {
         cancelButton = (
-          <a
-            href="#"
-            className="join-button w-button"
-            onClick={this.handleUnjoinEvent}
-          >
-            取消报名
-          </a>
+          <span className="join-button w-button" onClick={this.handleUnjoinEvent}>
+          取消报名</span>
         );
       } else {
-        cancelButton = <a></a>;
+        cancelButton = <span></span>;
       }
     }
 
     return (
-      <div>
         <div className="schedule-columns w-row">
           <div className="w-col w-col-3">
             <div>
@@ -257,7 +241,6 @@ class EventRow extends React.Component {
             {cancelButton}
           </div>
         </div>
-      </div>
     );
   }
 
