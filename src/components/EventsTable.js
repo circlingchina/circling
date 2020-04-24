@@ -69,7 +69,7 @@ function EventsTable(props) {
 
 function TableHeader() {
   return (
-    <div className="schedule-title w-row">
+    <div className="schedule-title w-row events-table-header">
       <div className="column w-col w-col-3">时间</div>
       <div className="w-col w-col-3">活动</div>
       <div className="w-col w-col-3">带领者</div>
@@ -217,7 +217,6 @@ class EventRow extends React.Component {
     }
 
     return (
-      <div>
         <div className="schedule-columns w-row">
           <div className="w-col w-col-3">
             <div>
@@ -242,7 +241,6 @@ class EventRow extends React.Component {
             {cancelButton}
           </div>
         </div>
-      </div>
     );
   }
 

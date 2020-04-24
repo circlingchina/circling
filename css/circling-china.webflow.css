@@ -2241,6 +2241,9 @@
     -ms-flex-preferred-size: auto;
     flex-basis: auto;
   }
+  .events-table-header {
+    display: none !important;
+  }
 }
 
 body {
@@ -6838,7 +6841,7 @@ figure {
   padding-top: 15px;
   padding-bottom: 15px;
   text-align: center;
-  height: 28px;
+  height: auto;
 }
 
 .schedule-title {
