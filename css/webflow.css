@@ -1682,8 +1682,8 @@ textarea.w-select {
   .w-dropdown {
     display: none;
   }
-  }
 }
+
 @media screen and (max-width: 767px) {
   .w-nav[data-collapse="small"] .w-nav-menu {
     display: none;

@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "(./node_modules/parcel-bundler/bin/cli.js watch src/member.js src/login.js src/trailevent.jsx --out-dir _site/js &) && ./node_modules/@11ty/eleventy/cmd.js --serve",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "./node_modules/parcel-bundler/bin/cli.js build src/member.js src/login.js src/trailevent.jsx --out-dir _site/js && ./node_modules/@11ty/eleventy/cmd.js",
+    "build": "npm run build:js && npm run build:site && npm run build:cssmin",
+    "build:site": "npx eleventy",
+    "build:js": "npx parcel build ./src/* --out-dir ./js",
+    "build:cssmin": "npx parcel build _site/css/*.css --out-dir _site/css --public-url .",
     "build:server": "netlify-lambda build src/func"
   },
   "repository": {

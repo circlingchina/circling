@@ -71,17 +71,12 @@ node_modules/
 .env
 
 # eleventy generated static site
-_site
+_site/
 
 .cache
 
 # packge generated files
-js/member.js
-js/member.js.map
-js/login.js
-js/login.js.map
-
-
+js/*.js*
 
 # Local Netlify folder
 .netlify
