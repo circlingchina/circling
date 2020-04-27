@@ -49,7 +49,7 @@ module.exports = {
       base.Users.select({
         maxRecords: 1,
         filterByFormula: `{email}="${email}"`
-      }).eachPage(function page(records, fetchNextPage) {
+      }).eachPage((records, fetchNextPage) => {
         if (records.length == 0) {
           resolve();
         }
@@ -84,7 +84,7 @@ module.exports = {
         reject('MaxAttendees limit!');
       }
 
-      eventUsers.push(airbaseUserId);
+      eventUsers.push(userId);
 
       // call api
       base.OpenEvents.update([
@@ -98,7 +98,6 @@ module.exports = {
         if (err) {
           reject(err.message);
         } else {
-          console.log("records", records);
           resolve(records[0]);
         }
       });
@@ -109,7 +108,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       //prepare eventUser Array
       let eventUsers = event.fields.Users ? event.fields.Users : [];
-      const index = eventUsers.indexOf(airbaseUserId);
+      const index = eventUsers.indexOf(userId);
       if (index < 0) {
         //user is not in this event
         resolve();
@@ -124,14 +123,13 @@ module.exports = {
           },
         },
       ],
-        (err, records) => {
-          if (err) {
-            reject(err);
-          } else {
-            console.log("records", records);
-            resolve(records[0]);
-          }
+      (err, records) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(records[0]);
         }
+      }
       );
     });
   },
