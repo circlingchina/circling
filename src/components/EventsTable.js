@@ -85,7 +85,17 @@ class EventRow extends React.Component {
     full: false,
     timeUntil: false,
     attendees: this.props.event.fields.Attendees,
+    isLoading: false,
   };
+
+  _updateStates(updatedEvent) {
+    const joined = updatedEvent.fields.Users.includes(airbaseUserId);
+    this.setState({
+      attendees: updatedEvent.fields.Attendees,
+      joined,
+      full: updatedEvent.fields.Attendees >= updatedEvent.fields.MaxAttendees,
+    });
+  }
 
   componentDidMount() {
     //1. check if user is already in this event
@@ -112,6 +122,13 @@ class EventRow extends React.Component {
 
   handleJoinEvent = async (e) => {
     e.preventDefault();
+
+    if (this.state.isLoading) {
+      return;
+    }
+
+    this.setState({ isLoading: true });
+
     const airbaseUserId = getAirbaseUserId();
     //can't join unless logged in
     if (!airbaseUserId) {
@@ -119,30 +136,35 @@ class EventRow extends React.Component {
     }
 
     const oldJoinState = this.state.joined;
-    this.setState({ joined: true });
 
     try {
-      const updatedEvent = await AirtableApi.join(
-        this.props.event,
-        airbaseUserId);
+      const updatedEvent = await AirtableApi.join(this.props.event, airbaseUserId);
+
       if (updatedEvent) {
-        this.setState({ attendees: updatedEvent.get("Attendees") });
-        if (this.state.full) {
-          this.setState({ full: false });
-        }
+        this._updateStates(updatedEvent);
         this.props.onEventChanged(updatedEvent);
       }
+      this.setState({ isLoading: false });
     }
     catch (err) {
       console.log(err);
       //reset the join state
-      this.setState({ joined: oldJoinState });
+      this.setState({
+        joined: oldJoinState,
+        isLoading: false,
+      });
     }
   };
 
   handleUnjoinEvent = async (e) => {
     e.preventDefault();
 
+    if (this.state.isLoading) {
+      return;
+    }
+
+    this.setState({ isLoading: true });
+
     const airbaseUserId = getAirbaseUserId();
     //can't join unless logged in
     if (!airbaseUserId) {
@@ -150,22 +172,22 @@ class EventRow extends React.Component {
     }
 
     const oldJoinState = this.state.joined;
-    this.setState({ joined: false });
 
     try {
       const updatedEvent = await AirtableApi.unjoin(
         this.props.event, airbaseUserId);
 
       if (updatedEvent) {
-        this.setState({
-          attendees: updatedEvent.get("Attendees"),
-          joined: false,
-        });
+        this._updateStates(updatedEvent);
         this.props.onEventChanged(updatedEvent);
+        this.setState({ isLoading: false });
       }
     } catch (err) {
       console.log(err);
-      this.setState({ joined: oldJoinState });
+      this.setState({
+        joined: oldJoinState,
+        isLoading: false,
+      });
     }
   };
 
@@ -180,14 +202,14 @@ class EventRow extends React.Component {
       .format("YYYY年M月D日 Ah点mm分");   //based on state, render the correct UI element
     let joinButton;
     let cancelButton;
-    
+
 
     // TODO test animation
     if (!this.state.joined) {
       if (this.state.full) {
         joinButton = (
           <span className="join-button cancel w-button">报名已满</span>
-          );
+        );
       } else {
         if (this.state.timeUntil == "soon" || this.state.timeUntil == "before") {
           joinButton = (
@@ -202,14 +224,14 @@ class EventRow extends React.Component {
     } else {
       joinButton = (
         <span className="join-button w-button"
-             onClick={(e) => this.handleOpenMeetingRoom(this.props.event.fields.EventLink, e)}>
-        进入房间</span>
+          onClick={(e) => this.handleOpenMeetingRoom(this.props.event.fields.EventLink, e)}>
+          进入房间</span>
       );
 
       if ((this.state.timeUntil = "before")) {
         cancelButton = (
           <span className="join-button w-button" onClick={this.handleUnjoinEvent}>
-          取消报名</span>
+            取消报名</span>
         );
       } else {
         cancelButton = <span></span>;
@@ -217,30 +239,30 @@ class EventRow extends React.Component {
     }
 
     return (
-        <div className="schedule-columns w-row">
-          <div className="w-col w-col-3">
-            <div>
-              <div>{timeStr}</div>
-            </div>
-          </div>
-          <div className="w-col w-col-3">
-            <div>{this.props.event.fields.Category}</div>
-          </div>
-          <div className="w-col w-col-3">
-            <a href={"/pages/leaders/#" + this.props.event.fields.Host}
-              className="join-button host">{this.props.event.fields.Host}
-            </a>
-          </div>
-          <div className="w-col w-col-3">
-            <div>
-              {this.state.attendees}/{this.props.event.fields.MaxAttendees}
-            </div>
-          </div>
-          <div className="w-col w-col-3">
-            {joinButton}
-            {cancelButton}
+      <div className="schedule-columns w-row">
+        <div className="w-col w-col-3">
+          <div>
+            <div>{timeStr}</div>
           </div>
         </div>
+        <div className="w-col w-col-3">
+          <div>{this.props.event.fields.Category}</div>
+        </div>
+        <div className="w-col w-col-3">
+          <a href={"/pages/leaders/#" + this.props.event.fields.Host}
+            className="join-button host">{this.props.event.fields.Host}
+          </a>
+        </div>
+        <div className="w-col w-col-3">
+          <div>
+            {this.state.attendees}/{this.props.event.fields.MaxAttendees}
+          </div>
+        </div>
+        <div className="w-col w-col-3">
+          {joinButton}
+          {cancelButton}
+        </div>
+      </div>
     );
   }
 
