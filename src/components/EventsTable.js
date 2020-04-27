@@ -36,8 +36,6 @@ function getTimeUntil(event) {
 function EventsTable(props) {
   const futureEvents = props.events.filter((event) => {
     const timeUntil = getTimeUntil(event)
-    console.log(event.get("Time"))
-    console.log("timeUntil", timeUntil)
     // if event.date is in the future
     if (timeUntil == "past") {
       return false
@@ -46,7 +44,6 @@ function EventsTable(props) {
     }
   })
 
-  console.log(futureEvents);
 
   // if (futureEvents){
   const eventRows = futureEvents.map((event) => (

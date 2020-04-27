@@ -21,7 +21,6 @@ function EventRegion() {
         return
       }
       
-      console.log("loading all events from API");
       try {
         const allEvents = await AirtableApi.getAllEvents();
         setEvents(allEvents);
@@ -85,7 +84,6 @@ function UpcomingEvent({events}) {
     const eventUsers = event.fields.Users
     return userId && eventUsers && eventUsers.includes(userId)
   })
-  console.log("my events", myEvents)
 
   let startingSoonEvent = null;
 
@@ -95,7 +93,6 @@ function UpcomingEvent({events}) {
     const dateNow = new Date();
     const eventDate = new Date(nextEvent.get("Time"));
     const diffHour = (eventDate - new Date()) / (1000 * 60 * 60)
-    console.log("diffHour", diffHour)
     if (diffHour < 280) {
       startingSoonEvent = nextEvent
     }
