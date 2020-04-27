@@ -202,7 +202,7 @@ class EventRow extends React.Component {
         进入房间</span>
       );
 
-      if ((this.state.timeUntil = "before")) {
+      if ((this.state.timeUntil == "before")) {
         cancelButton = (
           <span className="join-button w-button" onClick={this.handleUnjoinEvent}>
           取消报名</span>
