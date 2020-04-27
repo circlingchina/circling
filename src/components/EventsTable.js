@@ -1,6 +1,6 @@
 import React from 'react';
 import AirtableApi from '../airtable/api';
-import moment from 'moment'
+import moment from 'moment';
 import locale from 'moment/src/locale/zh-cn';
 
 function getAirbaseUserId() {
@@ -25,24 +25,24 @@ function getTimeUntil(event) {
         timeUntil = "now";
       } else {
         timeUntil = "past";
-      };
-    };
-  };
+      }
+    }
+  }
 
-  return timeUntil
+  return timeUntil;
 }
 
 // events table in member page
 function EventsTable(props) {
   const futureEvents = props.events.filter((event) => {
-    const timeUntil = getTimeUntil(event)
+    const timeUntil = getTimeUntil(event);
     // if event.date is in the future
     if (timeUntil == "past") {
-      return false
-    } else {
-      return true
-    }
-  })
+      return false;
+    } 
+    return true;
+    
+  });
 
 
   // if (futureEvents){
@@ -87,7 +87,6 @@ class EventRow extends React.Component {
   componentDidMount() {
     //1. check if user is already in this event
     let userJoined = false;
-    // window.airbaseUserId = "recwLANU5KpoOSinS"
     if (this.props.event.fields.Users) {
       if (this.props.event.fields.Users.includes(getAirbaseUserId())) {
         userJoined = true;
@@ -98,7 +97,7 @@ class EventRow extends React.Component {
     // this.props.event attendees and max attendees , if equal, full
     const roomfull = this.props.event.fields.Attendees >= this.props.event.fields.MaxAttendees;
 
-    const timeUntil = getTimeUntil(this.props.event)
+    const timeUntil = getTimeUntil(this.props.event);
 
     this.setState({
       joined: userJoined,
@@ -184,7 +183,7 @@ class EventRow extends React.Component {
       if (this.state.full) {
         joinButton = (
           <span className="join-button cancel w-button">报名已满</span>
-          );
+        );
       } else {
         if (this.state.timeUntil == "soon" || this.state.timeUntil == "before") {
           joinButton = (
@@ -199,7 +198,7 @@ class EventRow extends React.Component {
     } else {
       joinButton = (
         <span className="join-button w-button"
-             onClick={(e) => this.handleOpenMeetingRoom(this.props.event.fields.EventLink, e)}>
+          onClick={(e) => this.handleOpenMeetingRoom(this.props.event.fields.EventLink, e)}>
         进入房间</span>
       );
 
@@ -214,30 +213,30 @@ class EventRow extends React.Component {
     }
 
     return (
-        <div className="schedule-columns w-row">
-          <div className="w-col w-col-3">
-            <div>
-              <div>{timeStr}</div>
-            </div>
-          </div>
-          <div className="w-col w-col-3">
-            <div>{this.props.event.fields.Category}</div>
-          </div>
-          <div className="w-col w-col-3">
-            <a href={"/pages/leaders/#" + this.props.event.fields.Host}
-              className="join-button host">{this.props.event.fields.Host}
-            </a>
-          </div>
-          <div className="w-col w-col-3">
-            <div>
-              {this.state.attendees}/{this.props.event.fields.MaxAttendees}
-            </div>
-          </div>
-          <div className="w-col w-col-3">
-            {joinButton}
-            {cancelButton}
+      <div className="schedule-columns w-row">
+        <div className="w-col w-col-3">
+          <div>
+            <div>{timeStr}</div>
           </div>
         </div>
+        <div className="w-col w-col-3">
+          <div>{this.props.event.fields.Category}</div>
+        </div>
+        <div className="w-col w-col-3">
+          <a href={"/pages/leaders/#" + this.props.event.fields.Host}
+            className="join-button host">{this.props.event.fields.Host}
+          </a>
+        </div>
+        <div className="w-col w-col-3">
+          <div>
+            {this.state.attendees}/{this.props.event.fields.MaxAttendees}
+          </div>
+        </div>
+        <div className="w-col w-col-3">
+          {joinButton}
+          {cancelButton}
+        </div>
+      </div>
     );
   }
 
