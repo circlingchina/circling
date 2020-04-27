@@ -1,13 +1,11 @@
 var Airtable = require("airtable");
-var base = new Airtable({ apiKey: process.env.AIRBASE_API_KEY }).base(
-  "app53ecZ2UL9M6JOw"
-);
+var base = require("./airtable/base");
 
 function getAirbaseUid(user) {
   if (!user) {
     return;
   }
-  base('Users').select({
+  base.Users.select({
     // Selecting the first 3 records in Grid view:
     maxRecords: 1,
     filterByFormula: '{email} = \"' + user.email + '\"'
@@ -27,10 +25,8 @@ function attachIdentityListern() {
     updateNav(user)
   });
   netlifyIdentity.on('login', user => {
-    console.log("login")
     updateNav(user)
     if (isSigningIn) {
-      console.log("signing in, redirect")
       window.location.replace("/pages/memberpage")
     }
     netlifyIdentity.close();
@@ -38,11 +34,9 @@ function attachIdentityListern() {
   netlifyIdentity.on('logout', () => console.log('Logged out'));
   netlifyIdentity.on('error', err => console.error('Error', err));
   netlifyIdentity.on('open', () => {
-    console.log('Widget opened')
     isSigningIn = true
   });
   netlifyIdentity.on('close', () => {
-    console.log('Widget closed')
     isSigningIn = false
   });
 
