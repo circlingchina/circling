@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import EventsTable from "./components/EventsTable";
 import AirtableApi from "./airtable/api";
 import moment from "moment";
+require('dotenv').config();
 
 
 function getAirbaseUserId() {

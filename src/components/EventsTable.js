@@ -1,5 +1,6 @@
 import React from 'react';
 import AirtableApi from '../airtable/api';
+import {joinEvent} from '../circling-api/index';
 import moment from 'moment';
 import locale from 'moment/src/locale/zh-cn';
 
@@ -114,26 +115,13 @@ class EventRow extends React.Component {
       return;
     }
 
-    const oldJoinState = this.state.joined;
-    this.setState({ joined: true });
-
-    try {
-      const updatedEvent = await AirtableApi.join(
-        this.props.event,
-        airbaseUserId);
-      if (updatedEvent) {
-        this.setState({ attendees: updatedEvent.get("Attendees") });
-        if (this.state.full) {
-          this.setState({ full: false });
-        }
-        this.props.onEventChanged(updatedEvent);
-      }
-    }
-    catch (err) {
-      console.log(err);
-      //reset the join state
-      this.setState({ joined: oldJoinState });
-    }
+    joinEvent(this.props.event.id, airbaseUserId).then((updatedEvent)=> {
+      this.setState({ joined: true });
+      this.setState({ attendees: updatedEvent.fields.Attendees });
+    },
+    (error) => {
+      console.error("error joining event", error);
+    });
   };
 
   handleUnjoinEvent = async (e) => {

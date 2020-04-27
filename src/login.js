@@ -6,7 +6,6 @@ function getAirbaseUid(user) {
     return;
   }
   base.Users.select({
-    // Selecting the first 3 records in Grid view:
     maxRecords: 1,
     filterByFormula: '{email} = \"' + user.email + '\"'
   }).eachPage((records) => {
