@@ -1,8 +1,8 @@
-"use strict";
+
 
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import EventsTable from "./components/EventsTable"
+import EventsTable from "./components/EventsTable";
 import AirtableApi from "./airtable/api";
 import moment from "moment";
 
@@ -12,13 +12,13 @@ function getAirbaseUserId() {
 }
 
 function EventRegion() {
-  const [events, setEvents] = useState([])
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [events, setEvents] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
   
   useEffect(() => {
     async function refreshEvents() {
       if (isLoaded) {
-        return
+        return;
       }
       
       try {
@@ -35,22 +35,22 @@ function EventRegion() {
   
   const updateEvents = (changedEvent) => {
     const newEvents = events.map((event)=> {
-      return event.id == changedEvent.id ? changedEvent : event
-    })
-    setEvents(newEvents)
-  }
+      return event.id == changedEvent.id ? changedEvent : event;
+    });
+    setEvents(newEvents);
+  };
   //TODO update parent when child changes event stuff (joine, unjoin)
 
-  if (!isLoaded) return (
+  if (!isLoaded) {return (
     <div style={{
       margin: "0 auto",
       maxWidth: "fit-content",
       textAlign: "right"
-      }}>
+    }}>
       <span>给自己几次深呼吸吧!</span><br/>
       <span> - Milk </span>
     </div>
-  );
+  );}
 
   return (
     <>
@@ -80,26 +80,25 @@ function EventRegion() {
 
 function UpcomingEvent({events}) {
   const myEvents = events.filter((event) => {
-    const userId = getAirbaseUserId()
-    const eventUsers = event.fields.Users
-    return userId && eventUsers && eventUsers.includes(userId)
-  })
+    const userId = getAirbaseUserId();
+    const eventUsers = event.fields.Users;
+    return userId && eventUsers && eventUsers.includes(userId);
+  });
 
   let startingSoonEvent = null;
 
   if(myEvents.length > 0) {
-    const nextEvent = myEvents[0]
+    const nextEvent = myEvents[0];
     
-    const dateNow = new Date();
     const eventDate = new Date(nextEvent.get("Time"));
-    const diffHour = (eventDate - new Date()) / (1000 * 60 * 60)
+    const diffHour = (eventDate - new Date()) / (1000 * 60 * 60);
     if (diffHour < 280) {
-      startingSoonEvent = nextEvent
+      startingSoonEvent = nextEvent;
     }
   }
 
   if(!startingSoonEvent) {
-    return <div className="sub-text red">没有即将开始的活动</div>
+    return <div className="sub-text red">没有即将开始的活动</div>;
   }
 
   return (
