@@ -16,10 +16,10 @@ app.get('/api/events/:event_id/join', async (req, res) => {
   const user_id = req.query.user_id; // TODO authenticate the user
   airbaseApi.getEvent(event_id).then((event)=> {
     if(event) {
-      airbaseApi.join(event._rawJson, user_id).then((result) => {
+      airbaseApi.join(event._rawJson, user_id).then((events) => {
         
         //pick the min amount of useful info to send back
-        const responseJson = {id: result[0].id, fields: result[0].fields};
+        const responseJson = {id: events[0].id, fields: events[0].fields};
         res.status(200).end(JSON.stringify(responseJson));
       });
     }
@@ -33,8 +33,18 @@ app.get('/api/events/:event_id/join', async (req, res) => {
 app.get('/api/events/:event_id/unjoin', async (req, res) => {
   const event_id = req.params.event_id;
   const user_id = req.query.user_id; // TODO authenticate the user
-  res.send(`leaving event ${event_id}`);
-  const event = await airbaseApi.getEvent(event_id);
+  airbaseApi.getEvent(event_id).then((event)=> {
+    if(event) {
+      airbaseApi.unjoin(event._rawJson, user_id).then((result) => {
+        //pick the min amount of useful info to send back
+        const responseJson = {id: result.id, fields: result.fields};
+        res.status(200).end(JSON.stringify(responseJson));
+      });
+    }
+  }, (error) => {
+    console.error("error", error);
+    res.status(error.statusCode).end(JSON.stringify(error.message));
+  });
 });
 
 app.listen(port, () => {

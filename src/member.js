@@ -91,7 +91,7 @@ function UpcomingEvent({events}) {
   if(myEvents.length > 0) {
     const nextEvent = myEvents[0];
     
-    const eventDate = new Date(nextEvent.get("Time"));
+    const eventDate = new Date(nextEvent.fields.Time);
     const diffHour = (eventDate - new Date()) / (1000 * 60 * 60);
     if (diffHour < 280) {
       startingSoonEvent = nextEvent;

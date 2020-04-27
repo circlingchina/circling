@@ -1,6 +1,6 @@
 import React from 'react';
 import AirtableApi from '../airtable/api';
-import {joinEvent} from '../circling-api/index';
+import {joinEvent, unjoinEvent} from '../circling-api/index';
 import moment from 'moment';
 import locale from 'moment/src/locale/zh-cn';
 
@@ -11,7 +11,7 @@ function getAirbaseUserId() {
 function getTimeUntil(event) {
   let timeUntil = false;
   const dateNow = new Date();
-  const eventDate = new Date(event.get("Time"));
+  const eventDate = new Date(event.fields.Time);
   const msDiff = eventDate - dateNow;
   const diffMin = msDiff / 1000 / 60;
   const diffHour = diffMin / 60;
@@ -136,21 +136,21 @@ class EventRow extends React.Component {
     const oldJoinState = this.state.joined;
     this.setState({ joined: false });
 
-    try {
-      const updatedEvent = await AirtableApi.unjoin(
-        this.props.event, airbaseUserId);
-
-      if (updatedEvent) {
-        this.setState({
-          attendees: updatedEvent.get("Attendees"),
-          joined: false,
-        });
-        this.props.onEventChanged(updatedEvent);
-      }
-    } catch (err) {
-      console.log(err);
-      this.setState({ joined: oldJoinState });
-    }
+    unjoinEvent(this.props.event.id, airbaseUserId)
+      .then((updatedEvent)=> {
+        if (updatedEvent) {
+          console.log("got back from unjoin", updatedEvent);
+          this.setState({
+            attendees: updatedEvent.fields.Attendees,
+            joined: false,
+          });
+          this.props.onEventChanged(updatedEvent);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        this.setState({ joined: oldJoinState });
+      });
   };
 
   handleOpenMeetingRoom = (url, e) => {
@@ -160,7 +160,7 @@ class EventRow extends React.Component {
 
   render() {
     moment.locale("zh-cn", locale);
-    const timeStr = moment(this.props.event.get("Time"))
+    const timeStr = moment(this.props.event.fields.Time)
       .format("YYYY年M月D日 Ah点mm分");   //based on state, render the correct UI element
     let joinButton;
     let cancelButton;
