@@ -76,12 +76,7 @@ _site
 .cache
 
 # packge generated files
-js/member.js
-js/member.js.map
-js/login.js
-js/login.js.map
-
-
+js/*.js*
 
 # Local Netlify folder
 .netlify

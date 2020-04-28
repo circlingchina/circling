@@ -35,7 +35,13 @@ function attachIdentityListern() {
     }
     netlifyIdentity.close();
   });
-  netlifyIdentity.on('logout', () => console.log('Logged out'));
+
+  netlifyIdentity.on('logout', () => {
+    console.log('Logged out');
+    logoutHook();
+    window.location.replace("/");
+  });
+
   netlifyIdentity.on('error', err => console.error('Error', err));
   netlifyIdentity.on('open', () => {
     console.log('Widget opened')
@@ -51,12 +57,16 @@ function attachIdentityListern() {
 attachIdentityListern()
 
 
+function logoutHook() {
+  $("#nav-user-name").css({display: "none"});
+}
+
 function updateNav(user) {
   if (user) {
     let user_link = document.getElementById('nav-user-name')
     if (user_link) {
       user_link.style.display = ''
-      user_link.childNodes[1].innerText = user.user_metadata.full_name
+      user_link.childNodes[1].innerText = user.user_metadata.full_name + "的活动";
     }
 
     let user_page_name = document.getElementById('user-name-label')
