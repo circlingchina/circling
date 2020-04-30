@@ -139,9 +139,8 @@ module.exports = {
   getAllEvents: () => {
     return new Promise((resolve, reject) => {
       let allEvents = [];
-      const CATEGORY = '每日Circling';
       base.OpenEvents.select({
-        filterByFormula: `{Category}="${CATEGORY}"`,
+        filterByFormula: `NOT({Category}='新人介绍课程')`,
         view: "Grid view",
       }).eachPage((records, fetchNextPage) => {
         allEvents = allEvents.concat(records);
