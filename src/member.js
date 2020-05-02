@@ -10,21 +10,14 @@ require('dotenv').config();
 function EventRegion() {
   const storedUserId = window.localStorage.getItem("lastUserId");
   const [events, setEvents] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
   const [userId, setUserId] = useState(storedUserId);
   useEffect(() => {
     async function refreshEvents() {
-      if (isLoaded) {
-        return;
-      }
-      
       try {
         const allEvents = await AirtableApi.getAllEvents();
         setEvents(allEvents);
-        setIsLoaded(true);
       } catch (err) {
         console.error(err);
-        setIsLoaded(true);
       }
     }
     refreshEvents();
@@ -36,7 +29,6 @@ function EventRegion() {
     });
     setEvents(newEvents);
   };
-  //TODO update parent when child changes event stuff (joine, unjoin)
   
   //listen to login and logout events
   window.netlifyIdentity.on('login', user => {
@@ -56,17 +48,6 @@ function EventRegion() {
   window.netlifyIdentity.on('logout', () => {
     setUserId(null);
   });
-
-  if (!isLoaded) {return (
-    <div style={{
-      margin: "0 auto",
-      maxWidth: "fit-content",
-      textAlign: "right"
-    }}>
-      <span>给自己几次深呼吸吧!</span><br/>
-      <span> - Milk </span>
-    </div>
-  );}
 
   return (
     <>
