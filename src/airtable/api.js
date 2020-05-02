@@ -86,7 +86,6 @@ module.exports = {
 
       eventUsers.push(airbaseUserId);
 
-      // call api
       base.OpenEvents.update([
         {
           id: event.id,

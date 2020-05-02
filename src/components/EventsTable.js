@@ -89,7 +89,12 @@ class EventRow extends React.Component {
   };
 
   _updateStates(updatedEvent) {
-    const joined = updatedEvent.fields.Users.includes(airbaseUserId);
+    // After the final user unjoin the event, the updated event doesn't have the 'Users' property.
+    // So make the joined false by default.
+    let joined = false;
+    if (updatedEvent.fields.hasOwnProperty('Users')){
+      joined = updatedEvent.fields.Users.includes(airbaseUserId);
+    }
     this.setState({
       attendees: updatedEvent.fields.Attendees,
       joined,
