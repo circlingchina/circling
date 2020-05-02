@@ -42,20 +42,27 @@ module.exports = {
 
   getUserByEmail: (email) => {
     // TODO: check when does the select call return an error
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (!email) {
         resolve();
       }
       base.Users.select({
         maxRecords: 1,
         filterByFormula: `{email}="${email}"`
-      }).eachPage((records, fetchNextPage) => {
+      }).eachPage((records) => {
         if (records.length == 0) {
           resolve();
         }
         resolve(records[0]);
       });
     });
+  },
+
+  getAirtableUserId: (email) => {
+    return base.Users.select({
+      maxRecords: 1,
+      filterByFormula: `{email}="${email}"`
+    }).firstPage();
   },
 
   getEvent: (id) => {

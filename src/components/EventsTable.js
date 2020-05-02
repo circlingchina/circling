@@ -8,10 +8,6 @@ import Event from '../models/Event';
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from 'react-loader-spinner';
 
-function getAirbaseUserId() {
-  return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
-}
-
 function EventsTable(props) {
   const futureEvents = props.events.filter((eventJson) => {
     const event = new Event(eventJson);
@@ -23,6 +19,7 @@ function EventsTable(props) {
       key={eventJson.id}
       eventJson={eventJson}
       onEventChanged={props.onEventChanged}
+      userId={props.userId}
     />
   ));
   
@@ -60,15 +57,13 @@ class EventRow extends React.Component {
       return;
     }
 
-    const airbaseUserId = getAirbaseUserId();
-    //can't join unless logged in
-    if (!airbaseUserId) {
+    if (!this.props.userId) {
       return;
     }
 
     this.setState({ isLoading: true });
   
-    joinEvent(this.props.eventJson, airbaseUserId).then((updatedEvents) => {
+    joinEvent(this.props.eventJson, this.props.userId).then((updatedEvents) => {
       if (updatedEvents && updatedEvents[0]) {
         this.props.onEventChanged(updatedEvents[0]);
       }
@@ -87,14 +82,13 @@ class EventRow extends React.Component {
     }
 
     //can't unjoin unless logged in
-    const airbaseUserId = getAirbaseUserId();
-    if (!airbaseUserId) {
+    if (!this.props.userId) {
       return;
     }
 
     this.setState({ isLoading: true });
 
-    unjoinEvent(this.props.eventJson, airbaseUserId).then((updatedEvent) => {
+    unjoinEvent(this.props.eventJson, this.props.userId).then((updatedEvent) => {
       if (updatedEvent) {
         this.props.onEventChanged(updatedEvent);
         this.setState({ isLoading: false });
@@ -119,7 +113,7 @@ class EventRow extends React.Component {
     let cancelButton;
     const event = new Event(this.props.eventJson);
 
-    if (!event.containsUser(getAirbaseUserId())) {
+    if (!event.containsUser(this.props.userId)) {
       if (event.isFull()) {
         joinButton = (
           <span className="join-button cancel w-button">报名已满</span>

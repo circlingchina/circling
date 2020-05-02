@@ -7,15 +7,11 @@ import AirtableApi from "./airtable/api";
 import moment from "moment";
 require('dotenv').config();
 
-
-function getAirbaseUserId() {
-  return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
-}
-
 function EventRegion() {
+  const storedUserId = window.localStorage.getItem("lastUserId");
   const [events, setEvents] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  
+  const [userId, setUserId] = useState(storedUserId);
   useEffect(() => {
     async function refreshEvents() {
       if (isLoaded) {
@@ -41,6 +37,25 @@ function EventRegion() {
     setEvents(newEvents);
   };
   //TODO update parent when child changes event stuff (joine, unjoin)
+  
+  //listen to login and logout events
+  window.netlifyIdentity.on('login', user => {
+    //new users should have airtable_id saved in metadata from the netlify function
+    //development HACK: skip this step because the development airtable.base has a different set of IDs, so we always have to fetch
+    if(user && user.user_metadata.airtable_id && process.env.NODE_ENV == "production") {
+      setUserId(user.user_metadata.airtable_id);
+    } else {
+      // back-compat: grab from airtable
+      const records = AirtableApi.getAirtableUserId(user.email);
+      if(records.length > 0) {
+        setUserId(records[0].id);
+      }
+    }
+  });
+
+  window.netlifyIdentity.on('logout', () => {
+    setUserId(null);
+  });
 
   if (!isLoaded) {return (
     <div style={{
@@ -57,7 +72,7 @@ function EventRegion() {
     <>
       <div className="section">
         <div className="container w-container">
-          <UpcomingEvent events={events} />
+          <UpcomingEvent events={events} userId={userId} />
         </div>
         <div className="page-divider">
           <div className="page-divider-white down" />
@@ -69,7 +84,7 @@ function EventRegion() {
             本周会员Circling
             <br />
           </div>
-          <EventsTable events={events} onEventChanged={updateEvents} />
+          <EventsTable events={events} userId={userId} onEventChanged={updateEvents} />
         </div>
         <div className="page-divider">
           <div className="page-divider-white down" />
@@ -79,9 +94,9 @@ function EventRegion() {
   );
 }
 
-function UpcomingEvent({events}) {
+function UpcomingEvent({events, userId}) {
   const myEvents = events.filter((event) => {
-    const userId = getAirbaseUserId();
+
     const eventUsers = event.fields.Users;
 
     const eventDate = new Date(event.get("Time"));
@@ -104,7 +119,7 @@ function UpcomingEvent({events}) {
         <div className="sub-text black">{startingSoonEvent.fields.Name}</div>
         <div className="sub-text black">开始时间：{moment(startingSoonEvent.fields.Time).format("YYYY年M月D日 Ah点mm分")}</div>
         <div className="sub-text black">带领者：{startingSoonEvent.fields.Host}</div>
-        <a href={startingSoonEvent.fields.EventLink} className="button w-button" target="_blank">
+        <a href={startingSoonEvent.fields.EventLink} className="button w-button" target="_blank" rel="noopener noreferrer">
           点击进入
         </a>
         <a href="/pages/whatiscircling2">查看我需要准备什么</a>
@@ -113,4 +128,8 @@ function UpcomingEvent({events}) {
   );
 }
 
-ReactDOM.render(<EventRegion />, document.getElementById("event-region"));
+
+(()=>{
+  ReactDOM.render(<EventRegion />, document.getElementById("event-region"));
+})();
+

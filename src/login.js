@@ -1,39 +1,34 @@
 /* eslint-disable no-undef */
-let base = require("./airtable/base");
+let airtable = require("./airtable/api");
 
-function getAirbaseUid(user) {
-  if (!user) {
-    return;
-  }
-  base.Users.select({
-    maxRecords: 1,
-    filterByFormula: '{email} = \"' + user.email + '\"'
-  }).eachPage((records) => {
-    // This function (`page`) will get called for each page of records.
-    records.forEach((record) => {
-      window.airbaseUserId = record.id;
-      window.localStorage.setItem('airbaseUserId', record.id);
-    });
-  });
+
+function clearUserIdCache() {
+  window.localStorage.removeItem('lastUserId');
 }
 
 function attachIdentityListern() {
   let isSigningIn = false;
-  netlifyIdentity.on('init', user => {
-    getAirbaseUid(user);
+  
+  netlifyIdentity.on('init', (user) => {
     updateNav(user);
   });
-  netlifyIdentity.on('login', user => {
+
+  netlifyIdentity.on('login', async (user) => {
     updateNav(user);
     if (isSigningIn) {
       window.location.replace("/pages/memberpage");
     }
+    const records = await airtable.getAirtableUserId(user.email);
+    if(records.length > 0) {
+      window.localStorage.setItem('lastUserId', records[0].id);
+    }
+
     netlifyIdentity.close();
   });
 
   netlifyIdentity.on('logout', () => {
-    console.log('Logged out');
     logoutHook();
+    clearUserIdCache();
     window.location.replace("/");
   });
 
