@@ -57,6 +57,10 @@ export default class Event {
     }
     return Event.Status.FINISHED;
   }
+
+  toJSON() {
+    return this.rawJson;
+  }
 }
 
 Event.Status =  {

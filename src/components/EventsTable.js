@@ -1,60 +1,31 @@
 import React from 'react';
-
 // import {joinEvent, unjoinEvent} from '../circling-api/index';
 import {joinEvent, unjoinEvent} from '../circling-api/serverless';
 import moment from 'moment';
 import locale from 'moment/src/locale/zh-cn';
+import Event from '../models/Event';
+
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import Loader from 'react-loader-spinner';
 
 function getAirbaseUserId() {
   return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
 }
 
-function getTimeUntil(event) {
-  let timeUntil = false;
-  const dateNow = new Date();
-  const eventDate = new Date(event.fields.Time);
-  const msDiff = eventDate - dateNow;
-  const diffMin = msDiff / 1000 / 60;
-  const diffHour = diffMin / 60;
-
-  if (diffHour > 2) {
-    timeUntil = "before";
-  } else {
-    if (diffMin > 15) {
-      timeUntil = "soon";
-    } else {
-      if (diffMin < 15 && diffHour > -2) {
-        timeUntil = "now";
-      } else {
-        timeUntil = "past";
-      }
-    }
-  }
-
-  return timeUntil;
-}
-
-// events table in member page
 function EventsTable(props) {
-  const futureEvents = props.events.filter((event) => {
-    const timeUntil = getTimeUntil(event);
-    // if event.date is in the future
-    if (timeUntil == "past") {
-      return false;
-    } 
-    return true;
-    
+  const futureEvents = props.events.filter((eventJson) => {
+    const event = new Event(eventJson);
+    return event.startingStatus() != Event.Status.FINISHED;    
   });
 
-
-  // if (futureEvents){
-  const eventRows = futureEvents.map((event) => (
+  const eventRows = futureEvents.map((eventJson) => (
     <EventRow
-      key={event.id}
-      event={event}
+      key={eventJson.id}
+      eventJson={eventJson}
       onEventChanged={props.onEventChanged}
     />
   ));
+  
   return (
     <div className="div-block-11">
       <div>
@@ -63,7 +34,6 @@ function EventsTable(props) {
       </div>
     </div>
   );
-  // } else;
 }
 
 function TableHeader() {
@@ -80,49 +50,8 @@ function TableHeader() {
 
 class EventRow extends React.Component {
   state = {
-    joined: false,
-    full: false,
-    timeUntil: false,
-    attendees: this.props.event.fields.Attendees,
     isLoading: false,
   };
-
-  _updateStates(updatedEvent) {
-    // After the final user unjoin the event, the updated event doesn't have the 'Users' property.
-    // So make the joined false by default.
-    let joined = false;
-    console.log(updatedEvent);
-    if (updatedEvent.fields.Users){
-      joined = updatedEvent.fields.Users.includes(airbaseUserId);
-    }
-    this.setState({
-      attendees: updatedEvent.fields.Attendees,
-      joined,
-      full: updatedEvent.fields.Attendees >= updatedEvent.fields.MaxAttendees,
-    });
-  }
-
-  componentDidMount() {
-    //1. check if user is already in this event
-    let userJoined = false;
-    if (this.props.event.fields.Users) {
-      if (this.props.event.fields.Users.includes(getAirbaseUserId())) {
-        userJoined = true;
-      }
-    }
-
-    //2. check if event is full
-    // this.props.event attendees and max attendees , if equal, full
-    const roomfull = this.props.event.fields.Attendees >= this.props.event.fields.MaxAttendees;
-
-    const timeUntil = getTimeUntil(this.props.event);
-
-    this.setState({
-      joined: userJoined,
-      full: roomfull,
-      timeUntil: timeUntil,
-    });
-  }
 
   handleJoinEvent = async (e) => {
     e.preventDefault();
@@ -131,27 +60,20 @@ class EventRow extends React.Component {
       return;
     }
 
-    this.setState({ isLoading: true });
-
     const airbaseUserId = getAirbaseUserId();
     //can't join unless logged in
     if (!airbaseUserId) {
       return;
     }
 
-    const oldJoinState = this.state.joined;
-
-    joinEvent(this.props.event, airbaseUserId).then((updatedEvents) => {
+    this.setState({ isLoading: true });
+  
+    joinEvent(this.props.eventJson, airbaseUserId).then((updatedEvents) => {
       if (updatedEvents && updatedEvents[0]) {
-        this._updateStates(updatedEvents[0]);
         this.props.onEventChanged(updatedEvents[0]);
       }
-      this.setState({ isLoading: false });
-    }, (error) => {
-      console.error("error joining event", error);
-      //reset the join state
+    }).finally(() => {
       this.setState({
-        joined: oldJoinState,
         isLoading: false,
       });
     });
@@ -164,27 +86,21 @@ class EventRow extends React.Component {
       return;
     }
 
-    this.setState({ isLoading: true });
-
+    //can't unjoin unless logged in
     const airbaseUserId = getAirbaseUserId();
-    //can't join unless logged in
     if (!airbaseUserId) {
       return;
     }
 
-    const oldJoinState = this.state.joined;
+    this.setState({ isLoading: true });
 
-    unjoinEvent(this.props.event, airbaseUserId).then((updatedEvent) => {
-      console.log("unjoin", updatedEvent);
+    unjoinEvent(this.props.eventJson, airbaseUserId).then((updatedEvent) => {
       if (updatedEvent) {
-        this._updateStates(updatedEvent);
         this.props.onEventChanged(updatedEvent);
         this.setState({ isLoading: false });
       }
-    }, (error) => {
-      console.log(error);
+    }).finally(() => {
       this.setState({
-        joined: oldJoinState,
         isLoading: false,
       });
     });
@@ -197,20 +113,19 @@ class EventRow extends React.Component {
 
   render() {
     moment.locale("zh-cn", locale);
-    const timeStr = moment(this.props.event.fields.Time)
+    const timeStr = moment(this.props.eventJson.fields.Time)
       .format("YYYY年M月D日 Ah点mm分");   //based on state, render the correct UI element
     let joinButton;
     let cancelButton;
+    const event = new Event(this.props.eventJson);
 
-
-    // TODO test animation
-    if (!this.state.joined) {
-      if (this.state.full) {
+    if (!event.containsUser(getAirbaseUserId())) {
+      if (event.isFull()) {
         joinButton = (
           <span className="join-button cancel w-button">报名已满</span>
         );
       } else {
-        if (this.state.timeUntil == "soon" || this.state.timeUntil == "before") {
+        if (event.startingStatus() == Event.Status.STARTING_SOON || event.startingStatus() == Event.Status.NOT_STARTED) {
           joinButton = (
             <span className="join-button w-button" onClick={this.handleJoinEvent}>报名</span>
           );
@@ -223,12 +138,12 @@ class EventRow extends React.Component {
     } else {
       joinButton = (
         <span className="join-button w-button"
-          onClick={(e) => this.handleOpenMeetingRoom(this.props.event.fields.EventLink, e)}>
+          onClick={(e) => this.handleOpenMeetingRoom(this.props.eventJson.fields.EventLink, e)}>
 
         进入房间</span>
       );
 
-      if ((this.state.timeUntil == "before")) {
+      if (event.startingStatus() == Event.Status.NOT_STARTED) {
         cancelButton = (
           <span className="join-button w-button" onClick={this.handleUnjoinEvent}>
             取消报名</span>
@@ -238,6 +153,15 @@ class EventRow extends React.Component {
       }
     }
 
+    if(this.state.isLoading) {
+      joinButton = (<Loader
+        type="Puff"
+        color="#00BFFF"
+        height={32}
+        width={32}
+      />);
+      cancelButton = null;
+    }
     return (
       <div className="schedule-columns w-row">
         <div className="w-col w-col-3">
@@ -246,16 +170,16 @@ class EventRow extends React.Component {
           </div>
         </div>
         <div className="w-col w-col-3">
-          <div>{this.props.event.fields.Category}</div>
+          <div>{this.props.eventJson.fields.Category}</div>
         </div>
         <div className="w-col w-col-3">
-          <a href={"/pages/leaders/#" + this.props.event.fields.Host}
-            className="join-button host">{this.props.event.fields.Host}
+          <a href={"/pages/leaders/#" + this.props.eventJson.fields.Host}
+            className="join-button host">{this.props.eventJson.fields.Host}
           </a>
         </div>
         <div className="w-col w-col-3">
           <div>
-            {this.state.attendees}/{this.props.event.fields.MaxAttendees}
+            {event.getUsers().length}/{this.props.eventJson.fields.MaxAttendees}
           </div>
         </div>
         <div className="w-col w-col-3">

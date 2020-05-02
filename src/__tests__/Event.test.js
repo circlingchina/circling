@@ -60,8 +60,8 @@ const minutesFromNow = (minutes) => {
 };
 
 test('event.startingStatus() returns NOT_STARTED for events 2 hours into future', () => {
-  let isoStr = minutesFromNow(300).toISOString();
-  let event = new Event({
+  const isoStr = minutesFromNow(300).toISOString();
+  const event = new Event({
     id: "abc",
     fields: { Time: isoStr }
   });
@@ -71,8 +71,8 @@ test('event.startingStatus() returns NOT_STARTED for events 2 hours into future'
 
 
 test('event.startingStatus() returns STARTING_SOON for events within 2 hours', () => {
-  let isoStr = minutesFromNow(60).toISOString();
-  let event = new Event({
+  const isoStr = minutesFromNow(60).toISOString();
+  const event = new Event({
     id: "abc",
     fields: { Time: isoStr }
   });
@@ -81,8 +81,8 @@ test('event.startingStatus() returns STARTING_SOON for events within 2 hours', (
 });
 
 test('event.startingStatus() returns ONGOING for events between 15 min to 2 hours running', () => {
-  let isoStr = minutesFromNow(10).toISOString();
-  let event = new Event({
+  const isoStr = minutesFromNow(10).toISOString();
+  const event = new Event({
     id: "abc",
     fields: { Time: isoStr }
   });
@@ -90,8 +90,8 @@ test('event.startingStatus() returns ONGOING for events between 15 min to 2 hour
 });
 
 test('event.startingStatus() returns ONGOING for events between 15 min to 2 hours running', () => {
-  let isoStr = minutesFromNow(-60).toISOString();
-  let event = new Event({
+  const isoStr = minutesFromNow(-60).toISOString();
+  const event = new Event({
     id: "abc",
     fields: { Time: isoStr }
   });
@@ -99,10 +99,18 @@ test('event.startingStatus() returns ONGOING for events between 15 min to 2 hour
 });
 
 test('event.startingStatus() returns PAST for events 2 hours ago or longer', () => {
-  let isoStr = minutesFromNow(-180).toISOString();
-  let event = new Event({
+  const isoStr = minutesFromNow(-180).toISOString();
+  const event = new Event({
     id: "abc",
     fields: { Time: isoStr }
   });
   expect(event.startingStatus()).toBe(Event.Status.FINISHED);
+});
+
+test('event.toJSON() faithfully returns original JSON', ()=> {
+  const json = {
+    id: "abc",
+    fields: { MaxAttendees: 5 }
+  };
+  expect(new Event(json).toJSON()).toBe(json);
 });
