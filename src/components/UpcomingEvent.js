@@ -6,12 +6,12 @@ function UpcomingEvent({events, userId}) {
 
     const eventUsers = event.fields.Users;
 
-    const eventDate = new Date(event.get("Time"));
+    const eventDate = new Date(event.fields.Time);
     const diffHour = (eventDate - new Date()) / (1000 * 60 * 60);
 
     return userId && eventUsers && eventUsers.includes(userId) && (diffHour < 280 & diffHour > 0);
   })
-    .sort((a, b) => new Date(a.get("Time")) - new Date(b.get("Time")));
+    .sort((a, b) => new Date(a.fields.Time) - new Date(b.fields.Time));
 
   let startingSoonEvent = myEvents.length > 0 ? myEvents[0] : null;
 

@@ -5,13 +5,14 @@
 
 
 // endpoint /api/events/:event_id/join?user_id=user_id
-export const joinEvent = async (event_id, user_id) => {
-  const route = `${process.env.API_HOST}:${process.env.API_PORT}/api/events/${event_id}/join?user_id=${user_id}`;
-  return fetch(route).then((res)=> res.json());
+export const joinEvent = async (event, user_id) => {
+  const route = `${process.env.API_HOST}:${process.env.API_PORT}/api/events/${event.id}/join?user_id=${user_id}`;
+  return fetch(route).then((res)=> res.json())
+    .then((res)=> [res]); // wrap in array to match old client API, should refactor later
 };
 
 // endpoint /api/events/:event_id/unjoin?user_id=user_id
-export const unjoinEvent = async (event_id, user_id) => {
-  const route = `${process.env.API_HOST}:${process.env.API_PORT}/api/events/${event_id}/unjoin?user_id=${user_id}`;
+export const unjoinEvent = async (event, user_id) => {
+  const route = `${process.env.API_HOST}:${process.env.API_PORT}/api/events/${event.id}/unjoin?user_id=${user_id}`;
   return fetch(route).then((res)=> res.json());
 };

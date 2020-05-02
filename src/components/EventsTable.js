@@ -1,6 +1,6 @@
 import React from 'react';
-// import {joinEvent, unjoinEvent} from '../circling-api/index';
-import {joinEvent, unjoinEvent} from '../circling-api/serverless';
+import {joinEvent, unjoinEvent} from '../circling-api/index';
+// import {joinEvent, unjoinEvent} from '../circling-api/serverless';
 import moment from 'moment';
 import locale from 'moment/src/locale/zh-cn';
 import Event from '../models/Event';
