@@ -81,25 +81,17 @@ function EventRegion() {
 
 function UpcomingEvent({events}) {
   const myEvents = events.filter((event) => {
-    const userId = getAirbaseUserId()
-    const eventUsers = event.fields.Users
-    return userId && eventUsers && eventUsers.includes(userId)
+    const userId = getAirbaseUserId();
+    const eventUsers = event.fields.Users;
+
+    const eventDate = new Date(event.get("Time"));
+    const diffHour = (eventDate - new Date()) / (1000 * 60 * 60);
+
+    return userId && eventUsers && eventUsers.includes(userId) && (diffHour < 280 & diffHour > 0);
   })
-  console.log("my events", myEvents)
+  .sort((a, b) => new Date(a.get("Time")) - new Date(b.get("Time")));
 
-  let startingSoonEvent = null;
-
-  if(myEvents.length > 0) {
-    const nextEvent = myEvents[0]
-    
-    const dateNow = new Date();
-    const eventDate = new Date(nextEvent.get("Time"));
-    const diffHour = (eventDate - new Date()) / (1000 * 60 * 60)
-    console.log("diffHour", diffHour)
-    if (diffHour < 280) {
-      startingSoonEvent = nextEvent
-    }
-  }
+  let startingSoonEvent = myEvents.length > 0 ? myEvents[0] : null;
 
   if(!startingSoonEvent) {
     return <div className="sub-text red">没有即将开始的活动</div>
