@@ -58,6 +58,7 @@ class EventRow extends React.Component {
     }
 
     if (!this.props.userId) {
+      window.netlifyIdentity.open();
       return;
     }
 

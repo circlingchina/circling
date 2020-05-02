@@ -15,8 +15,11 @@ function attachIdentityListern() {
 
   netlifyIdentity.on('login', async (user) => {
     updateNav(user);
-    if (isSigningIn) {
-      window.location.replace("/pages/memberpage");
+
+    //redirect if not already on memberpage
+    const memberPagePath = "/pages/memberpage/";
+    if (isSigningIn && !(window.location.pathname == memberPagePath)) {
+      window.location.replace(memberPagePath);
     }
     const records = await airtable.getAirtableUserId(user.email);
     if(records.length > 0) {

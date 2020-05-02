@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import EventsTable from "./components/EventsTable";
 import UpcomingEvent from "./components/UpcomingEvent";
 import AirtableApi from "./airtable/api";
-import moment from "moment";
+
 require('dotenv').config();
 
 function EventRegion() {
@@ -32,14 +32,14 @@ function EventRegion() {
   };
   
   //listen to login and logout events
-  window.netlifyIdentity.on('login', user => {
+  window.netlifyIdentity.on('login', async (user) => {
     //new users should have airtable_id saved in metadata from the netlify function
     //development HACK: skip this step because the development airtable.base has a different set of IDs, so we always have to fetch
     if(user && user.user_metadata.airtable_id && process.env.NODE_ENV == "production") {
       setUserId(user.user_metadata.airtable_id);
     } else {
       // back-compat: grab from airtable
-      const records = AirtableApi.getAirtableUserId(user.email);
+      const records = await AirtableApi.getAirtableUserId(user.email);
       if(records.length > 0) {
         setUserId(records[0].id);
       }
