@@ -4,6 +4,7 @@ module.exports = {
     "es6": true,
     "node": true,
     "browser": true,
+    "jest/globals": true
   },
   parser: "babel-eslint",
   extends: ["eslint:recommended", "plugin:react/recommended"],
@@ -14,7 +15,7 @@ module.exports = {
     },
     sourceType: "module",
   },
-  plugins: ["react"],
+  plugins: ["react", "jest"],
   rules: {
     "react/prop-types": ["off"],
     "react/display-name": ["off"],
