@@ -4,6 +4,9 @@ const bodyParser = require('body-parser');
 const airbaseApi = require('../src/airtable/api');
 const cors = require('cors');
 const app = express();
+let helmet = require('helmet');
+
+app.use(helmet());
 app.use(bodyParser.json());
 
 //TODO - restrict origin to a few servers
