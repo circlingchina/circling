@@ -49,7 +49,7 @@ module.exports = {
       base.Users.select({
         maxRecords: 1,
         filterByFormula: `{email}="${email}"`
-      }).eachPage(function page(records, fetchNextPage) {
+      }).eachPage((records, fetchNextPage) => {
         if (records.length == 0) {
           resolve();
         }
@@ -59,56 +59,39 @@ module.exports = {
   },
 
   getEvent: (id) => {
-    return new Promise((resolve, reject) => {
-      if (!id) {
-        resolve();
-      }
-      base.OpenEvents.find(id, (err, record) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(record);
-      });
-    });
+    return base.OpenEvents.find(id);
   },
 
-  join: (event, userId) => {
-    return new Promise((resolve, reject) => {
-      //prepare eventUsers array
-      const eventUsers = event.fields.Users ? event.fields.Users : [];
-      if (eventUsers.includes(userId)) {
-        resolve(event); //already joined
-      }
+  join: async (event, userId) => {
+    const eventUsers = event.fields.Users ? event.fields.Users : [];
+    if (eventUsers.includes(userId)) {
+      return event; //already joined
+    }
 
-      if (event.fields.Attendees >= event.fields.MaxAttendees) {
-        reject('MaxAttendees limit!');
-      }
+    if (event.fields.Attendees >= event.fields.MaxAttendees) {
+      return Promise.reject(new Error('Event is full!'));
+    }
 
-      eventUsers.push(airbaseUserId);
+    eventUsers.push(userId);
 
-      base.OpenEvents.update([
-        {
-          id: event.id,
-          fields: {
-            Users: eventUsers,
-          },
+
+    // call api
+    const params = [
+      {
+        id: event.id,
+        fields: {
+          Users: eventUsers,
         },
-      ], (err, records) => {
-        if (err) {
-          reject(err.message);
-        } else {
-          console.log("records", records);
-          resolve(records[0]);
-        }
-      });
-    });
+      },
+    ];
+    return base.OpenEvents.update(params);
   },
 
   unjoin: (event, userId) => {
     return new Promise((resolve, reject) => {
       //prepare eventUser Array
       let eventUsers = event.fields.Users ? event.fields.Users : [];
-      const index = eventUsers.indexOf(airbaseUserId);
+      const index = eventUsers.indexOf(userId);
       if (index < 0) {
         //user is not in this event
         resolve();
@@ -123,14 +106,13 @@ module.exports = {
           },
         },
       ],
-        (err, records) => {
-          if (err) {
-            reject(err);
-          } else {
-            console.log("records", records);
-            resolve(records[0]);
-          }
+      (err, records) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(records[0]);
         }
+      }
       );
     });
   },

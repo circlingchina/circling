@@ -1,6 +1,8 @@
 import React from 'react';
-import AirtableApi from '../airtable/api';
-import moment from 'moment'
+
+// import {joinEvent, unjoinEvent} from '../circling-api/index';
+import {joinEvent, unjoinEvent} from '../circling-api/serverless';
+import moment from 'moment';
 import locale from 'moment/src/locale/zh-cn';
 
 function getAirbaseUserId() {
@@ -10,7 +12,7 @@ function getAirbaseUserId() {
 function getTimeUntil(event) {
   let timeUntil = false;
   const dateNow = new Date();
-  const eventDate = new Date(event.get("Time"));
+  const eventDate = new Date(event.fields.Time);
   const msDiff = eventDate - dateNow;
   const diffMin = msDiff / 1000 / 60;
   const diffHour = diffMin / 60;
@@ -25,28 +27,25 @@ function getTimeUntil(event) {
         timeUntil = "now";
       } else {
         timeUntil = "past";
-      };
-    };
-  };
+      }
+    }
+  }
 
-  return timeUntil
+  return timeUntil;
 }
 
 // events table in member page
 function EventsTable(props) {
   const futureEvents = props.events.filter((event) => {
-    const timeUntil = getTimeUntil(event)
-    console.log(event.get("Time"))
-    console.log("timeUntil", timeUntil)
+    const timeUntil = getTimeUntil(event);
     // if event.date is in the future
     if (timeUntil == "past") {
-      return false
-    } else {
-      return true
-    }
-  })
+      return false;
+    } 
+    return true;
+    
+  });
 
-  console.log(futureEvents);
 
   // if (futureEvents){
   const eventRows = futureEvents.map((event) => (
@@ -92,7 +91,8 @@ class EventRow extends React.Component {
     // After the final user unjoin the event, the updated event doesn't have the 'Users' property.
     // So make the joined false by default.
     let joined = false;
-    if (updatedEvent.fields.hasOwnProperty('Users')){
+    console.log(updatedEvent);
+    if (updatedEvent.fields.Users){
       joined = updatedEvent.fields.Users.includes(airbaseUserId);
     }
     this.setState({
@@ -105,7 +105,6 @@ class EventRow extends React.Component {
   componentDidMount() {
     //1. check if user is already in this event
     let userJoined = false;
-    // window.airbaseUserId = "recwLANU5KpoOSinS"
     if (this.props.event.fields.Users) {
       if (this.props.event.fields.Users.includes(getAirbaseUserId())) {
         userJoined = true;
@@ -116,7 +115,7 @@ class EventRow extends React.Component {
     // this.props.event attendees and max attendees , if equal, full
     const roomfull = this.props.event.fields.Attendees >= this.props.event.fields.MaxAttendees;
 
-    const timeUntil = getTimeUntil(this.props.event)
+    const timeUntil = getTimeUntil(this.props.event);
 
     this.setState({
       joined: userJoined,
@@ -142,23 +141,20 @@ class EventRow extends React.Component {
 
     const oldJoinState = this.state.joined;
 
-    try {
-      const updatedEvent = await AirtableApi.join(this.props.event, airbaseUserId);
-
-      if (updatedEvent) {
-        this._updateStates(updatedEvent);
-        this.props.onEventChanged(updatedEvent);
+    joinEvent(this.props.event, airbaseUserId).then((updatedEvents) => {
+      if (updatedEvents && updatedEvents[0]) {
+        this._updateStates(updatedEvents[0]);
+        this.props.onEventChanged(updatedEvents[0]);
       }
       this.setState({ isLoading: false });
-    }
-    catch (err) {
-      console.log(err);
+    }, (error) => {
+      console.error("error joining event", error);
       //reset the join state
       this.setState({
         joined: oldJoinState,
         isLoading: false,
       });
-    }
+    });
   };
 
   handleUnjoinEvent = async (e) => {
@@ -178,22 +174,20 @@ class EventRow extends React.Component {
 
     const oldJoinState = this.state.joined;
 
-    try {
-      const updatedEvent = await AirtableApi.unjoin(
-        this.props.event, airbaseUserId);
-
+    unjoinEvent(this.props.event, airbaseUserId).then((updatedEvent) => {
+      console.log("unjoin", updatedEvent);
       if (updatedEvent) {
         this._updateStates(updatedEvent);
         this.props.onEventChanged(updatedEvent);
         this.setState({ isLoading: false });
       }
-    } catch (err) {
-      console.log(err);
+    }, (error) => {
+      console.log(error);
       this.setState({
         joined: oldJoinState,
         isLoading: false,
       });
-    }
+    });
   };
 
   handleOpenMeetingRoom = (url, e) => {
@@ -203,7 +197,7 @@ class EventRow extends React.Component {
 
   render() {
     moment.locale("zh-cn", locale);
-    const timeStr = moment(this.props.event.get("Time"))
+    const timeStr = moment(this.props.event.fields.Time)
       .format("YYYY年M月D日 Ah点mm分");   //based on state, render the correct UI element
     let joinButton;
     let cancelButton;
@@ -230,10 +224,11 @@ class EventRow extends React.Component {
       joinButton = (
         <span className="join-button w-button"
           onClick={(e) => this.handleOpenMeetingRoom(this.props.event.fields.EventLink, e)}>
-          进入房间</span>
+
+        进入房间</span>
       );
 
-      if ((this.state.timeUntil = "before")) {
+      if ((this.state.timeUntil == "before")) {
         cancelButton = (
           <span className="join-button w-button" onClick={this.handleUnjoinEvent}>
             取消报名</span>

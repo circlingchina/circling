@@ -37,3 +37,21 @@ For localhost development, setup a [.env](.env) file:
 The `staging` branch is configured to auto-deploy to https://staging.circlingchina.org/ and can be used to test and demo experimental features
   
 
+## API Server
+
+There is a standalone nodejs server for emails, payments, and scheduling jobs. To deploy the server:
+
+```
+cd server
+npm install
+npm start
+```
+
+The server also has its own environment file, which can hold secrets not avaliable to the client(i.e aws SES credentials)
+
+```
+cd server
+cp .env.sample .env
+```
+
+The server and client can both utilize modules in the /lib folder. So in theory, we should keep code in the lib folder isomorphic(able to run on both brower and node environment).

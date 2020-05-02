@@ -82,3 +82,7 @@ js/*.js*
 .netlify
 
 /func/
+
+# AWS config file
+
+/server/config.json

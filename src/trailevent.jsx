@@ -64,21 +64,21 @@ class EnrollForm extends React.Component {
 
     let btn = (
       <div className="top-margin">
-            <div className="algin-center"><input type="submit" 
-            onClick={this.handleSubmit} 
-            value="预留席位" data-wait="Please wait..." className="button w-button"/></div>
-          </div>
+        <div className="algin-center"><input type="submit" 
+          onClick={this.handleSubmit} 
+          value="预留席位" data-wait="Please wait..." className="button w-button"/></div>
+      </div>
     );
     let notification;
 
     if (submitted) {
       btn = null;
       notification = (
-      <div data-w-id="event-form" className="form-block w-form">
-        <div className="success-message w-form-done" style={{display: 'block'}}>
-          <div>感谢报名！具体参与方式会通过邮件发送给你</div>
-        </div>
-      </div> 
+        <div data-w-id="event-form" className="form-block w-form">
+          <div className="success-message w-form-done" style={{display: 'block'}}>
+            <div>感谢报名！具体参与方式会通过邮件发送给你</div>
+          </div>
+        </div> 
       );
     }
 
@@ -101,7 +101,7 @@ class EnrollForm extends React.Component {
           { btn }
         </form>
         {notification}
-        </div>
+      </div>
     );
   }
 }
