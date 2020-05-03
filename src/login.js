@@ -21,7 +21,7 @@ function attachIdentityListern() {
     if (isSigningIn && !(window.location.pathname == memberPagePath)) {
       window.location.replace(memberPagePath);
     }
-    const records = await airtable.getAirtableUserId(user.email);
+    const records = await airtable.getAirtableUser(user.email);
     if(records.length > 0) {
       window.localStorage.setItem('lastUserId', records[0].id);
     }

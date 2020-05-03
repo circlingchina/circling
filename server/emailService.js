@@ -19,7 +19,7 @@ let ses = new aws.SES();
 const sendWelcomeMail = (userName, toEmail) => {
   
   const sender = "Jess <jess@circlingchina.org>"; // This address must be verified with Amazon SES.
-  const subject = "Jess 给新用户的一封信";
+  const subject = "给新用户的一封信";
 
   //compile body from template
   const compiledFunction = pug.compileFile('./emails/welcome.pug');
@@ -28,7 +28,22 @@ const sendWelcomeMail = (userName, toEmail) => {
     name: userName
   });
 
-  sendMail(sender, toEmail, subject, body_html);
+  return sendMail(sender, toEmail, subject, body_html);
+};
+
+const sentFirstEventEmail = (userName, toEmail) => {
+  
+  const sender = "Jess <jess@circlingchina.org>"; // This address must be verified with Amazon SES.
+  const subject = "这封信帮你准备好第一次Circling";
+
+  //compile body from template
+  const compiledFunction = pug.compileFile('./emails/firstEvent.pug');
+  // Render a set of data
+  const body_html = compiledFunction({
+    name: userName
+  });
+
+  return sendMail(sender, toEmail, subject, body_html);
 };
 
 //Try to send the email.
@@ -56,14 +71,19 @@ const sendMail = (sender, recipient, subject, body_html) => {
   // ConfigurationSetName: configuration_set
   };
 
-  ses.sendEmail(params, (err, data) => {
+  return new Promise((resolve, reject) => {
+    ses.sendEmail(params, (err, data) => {
     // If something goes wrong, print an error message.
-    if(err) {
-      console.log("Error", err.message);
-    } else {
-      console.log("Email sent! Message ID: ", data.MessageId);
-    }
-  });
+      if(err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  }); 
 };
 
-sendWelcomeMail("Rachel", "wongr11@gmail.com");
+
+
+exports.sendWelcomeMail = sendWelcomeMail;
+exports.sentFirstEventEmail = sentFirstEventEmail;

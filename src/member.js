@@ -39,7 +39,7 @@ function EventRegion() {
       setUserId(user.user_metadata.airtable_id);
     } else {
       // back-compat: grab from airtable
-      const records = await AirtableApi.getAirtableUserId(user.email);
+      const records = await AirtableApi.getAirtableUser(user.email);
       if(records.length > 0) {
         setUserId(records[0].id);
       }

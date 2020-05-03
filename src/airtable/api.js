@@ -58,11 +58,15 @@ module.exports = {
     });
   },
 
-  getAirtableUserId: (email) => {
+  getAirtableUser: (email) => {
     return base.Users.select({
       maxRecords: 1,
       filterByFormula: `{email}="${email}"`
     }).firstPage();
+  },
+
+  getUser: (userId) => {
+    return base.Users.find(userId);
   },
 
   getEvent: (id) => {
