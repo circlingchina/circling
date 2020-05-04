@@ -123,6 +123,7 @@ module.exports = {
       base.OpenEvents.select({
         filterByFormula: `NOT({Category}='新人介绍课程')`,
         view: "Grid view",
+        sort: [{field: "Time", direction: "asc"}]
       }).eachPage((records, fetchNextPage) => {
         allEvents = allEvents.concat(records);
         fetchNextPage();
