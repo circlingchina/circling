@@ -6808,6 +6808,7 @@ figure {
   padding-bottom: 15px;
   text-align: center;
   height: auto;
+  border-bottom: thin solid #cc333f;
 }
 
 .schedule-title {
@@ -6819,10 +6820,13 @@ figure {
   -webkit-align-items: center;
   -ms-flex-align: center;
   align-items: center;
-  background-color: #e1e7eb;
-  font-size: 15px;
+  background-color: #cc333f;
+  color: white;
+  font-size: 16px;
   font-weight: 500;
   text-align: center;
+  font-family: Roboto Slab;
+  border-radius: 1em 1em 0 0;
 }
 
 .column {
