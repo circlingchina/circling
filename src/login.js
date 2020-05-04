@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 let base = require("./airtable/base");
+require('dotenv').config();
 
 function getAirbaseUid(user) {
   if (!user) {
