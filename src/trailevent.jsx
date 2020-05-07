@@ -25,6 +25,11 @@ class EnrollForm extends React.Component {
   }
 
   validate = () => {
+    if (isEmpty(this.state.name)) {
+      this.setState({error: '姓名或昵称未填写'});
+      return false;
+    }
+
     if (!isEmail(this.state.email)) {
       this.setState({error: 'Email 格式不正确'});
       return false;
@@ -50,7 +55,7 @@ class EnrollForm extends React.Component {
       const trailEvent = await AirtableAPI.getEvent(process.env.TRAIL_EVENT_ID);
       
       if (user) {
-        // udate user wechat
+        // Udate user wechat, but do not overwrite the name and email at the moment.
         const userId = user.id;
         const fields = user.fields;
         fields.WechatUserName = this.state.wechatUserName;
