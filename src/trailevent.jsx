@@ -1,8 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import AirtableAPI from "./airtable/api";
+import isEmail from 'validator/es/lib/isEmail';
+import isMobilePhone from 'validator/es/lib/isMobilePhone';
+import isWechatHandle from "./utils/isWechatHandle";
+import isEmpty from 'validator/es/lib/isEmpty';
+
 require('dotenv').config();
 
+
+// TODO: Test
 class EnrollForm extends React.Component {
 
   constructor(props) {
@@ -13,15 +20,28 @@ class EnrollForm extends React.Component {
       name: '',
       email: '',
       wechatUserName: '',
+      error: ''
     };
   }
 
-  handleSubmit = async event => {
-    // TODO 1. validate user's wechat and email format
-    //      2. display error message when the user email doesn't exist
+  validate = () => {
+    if (!isEmail(this.state.email)) {
+      this.setState({error: 'Email 格式不正确'});
+      return false;
+    }
+    // Assuming that wechat handle accepts mobile with formats of multiple countries
+    if (!isMobilePhone(this.state.wechatUserName, 'any') && 
+        !isWechatHandle(this.state.wechatUserName)) {
+      this.setState({error: '微信用户名格式不正确'});
+      return false;
+    }
+    
+    this.setState({error: ''});
+    return true;
+  }
 
-    event.preventDefault();
-    this.setState({ submitted: true });
+  doSubmit = async () => {
+    this.setState({ submitted:  true });
     
     try {
       const user = await AirtableAPI.getUserByEmail(this.state.email);
@@ -48,6 +68,15 @@ class EnrollForm extends React.Component {
     }
   }
 
+  handleSubmit = async event => {
+    event.preventDefault();
+
+    const ralidateResult = this.validate();
+    if (ralidateResult) {
+      await this.doSubmit();
+    }
+  }
+
   handleChange = (event)=> {
     const name = event.target.name;
     
@@ -64,6 +93,7 @@ class EnrollForm extends React.Component {
 
   render() {
     const submitted = this.state.submitted;
+    const hasError = !isEmpty(this.state.error);
 
     let btn = (
       <div className="top-margin">
@@ -74,15 +104,25 @@ class EnrollForm extends React.Component {
     );
     let notification;
 
-    if (submitted) {
-      btn = null;
+    if (hasError) {
       notification = (
         <div data-w-id="event-form" className="form-block w-form">
-          <div className="success-message w-form-done" style={{display: 'block'}}>
-            <div>感谢报名！具体参与方式会通过邮件发送给你</div>
+          <div className="error-message w-form-done" style={{display: 'block'}}>
+            <div>{this.state.error}</div>
           </div>
         </div> 
       );
+    } else {
+      if (submitted) {
+        btn = null;
+        notification = (
+          <div data-w-id="event-form" className="form-block w-form">
+            <div className="success-message w-form-done" style={{display: 'block'}}>
+              <div>感谢报名！具体参与方式会通过邮件发送给你</div>
+            </div>
+          </div>
+        );
+      }
     }
 
     return (
@@ -101,9 +141,10 @@ class EnrollForm extends React.Component {
           <div>
             <label htmlFor="wechat" className="field-label">微信号</label>
             <input type="text" value={this.state.wechatUserName} onChange={this.handleChange} className="text-field-form w-input" max-length="256" name="wechat" placeholder="请输入微信号" required="" readOnly={this.props.submitted}/></div>
+          { notification }
           { btn }
         </form>
-        {notification}
+        
       </div>
     );
   }
