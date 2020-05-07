@@ -1,7 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import AirtableAPI from "./airtable/api";
+import isEmail from 'validator/es/lib/isEmail';
+import isMobilePhone from 'validator/es/lib/isMobilePhone';
+import isWechatHandle from "./utils/isWechatHandle";
+import isEmpty from 'validator/es/lib/isEmpty';
 
+require('dotenv').config();
+
+
+// TODO: Test
 class EnrollForm extends React.Component {
 
   constructor(props) {
@@ -12,22 +20,42 @@ class EnrollForm extends React.Component {
       name: '',
       email: '',
       wechatUserName: '',
+      error: ''
     };
   }
 
-  handleSubmit = async event => {
-    this.setState({ submitted: true });
-    event.preventDefault();
+  validate = () => {
+    if (isEmpty(this.state.name)) {
+      this.setState({error: '姓名或昵称未填写'});
+      return false;
+    }
 
+    if (!isEmail(this.state.email)) {
+      this.setState({error: 'Email 格式不正确'});
+      return false;
+    }
+    // Assuming that wechat handle accepts mobile with formats of multiple countries
+    if (!isMobilePhone(this.state.wechatUserName, 'any') && 
+        !isWechatHandle(this.state.wechatUserName)) {
+      this.setState({error: '微信用户名格式不正确'});
+      return false;
+    }
+    
+    this.setState({error: ''});
+    return true;
+  }
+
+  doSubmit = async () => {
+    this.setState({ submitted:  true });
+    
     try {
       const user = await AirtableAPI.getUserByEmail(this.state.email);
       console.log(user);
 
-      const TRAIL_EVENT_ID = 'recXx8gFGJ6c9fC2R';
-      const trailEvent = await AirtableAPI.getEvent(TRAIL_EVENT_ID);
-
+      const trailEvent = await AirtableAPI.getEvent(process.env.TRAIL_EVENT_ID);
+      
       if (user) {
-        // udate user wechat
+        // Udate user wechat, but do not overwrite the name and email at the moment.
         const userId = user.id;
         const fields = user.fields;
         fields.WechatUserName = this.state.wechatUserName;
@@ -42,6 +70,15 @@ class EnrollForm extends React.Component {
       }
     } catch (err) {
       console.log(err);
+    }
+  }
+
+  handleSubmit = async event => {
+    event.preventDefault();
+
+    const ralidateResult = this.validate();
+    if (ralidateResult) {
+      await this.doSubmit();
     }
   }
 
@@ -61,6 +98,7 @@ class EnrollForm extends React.Component {
 
   render() {
     const submitted = this.state.submitted;
+    const hasError = !isEmpty(this.state.error);
 
     let btn = (
       <div className="top-margin">
@@ -71,15 +109,25 @@ class EnrollForm extends React.Component {
     );
     let notification;
 
-    if (submitted) {
-      btn = null;
+    if (hasError) {
       notification = (
         <div data-w-id="event-form" className="form-block w-form">
-          <div className="success-message w-form-done" style={{display: 'block'}}>
-            <div>感谢报名！具体参与方式会通过邮件发送给你</div>
+          <div className="error-message w-form-done" style={{display: 'block'}}>
+            <div>{this.state.error}</div>
           </div>
         </div> 
       );
+    } else {
+      if (submitted) {
+        btn = null;
+        notification = (
+          <div data-w-id="event-form" className="form-block w-form">
+            <div className="success-message w-form-done" style={{display: 'block'}}>
+              <div>感谢报名！具体参与方式会通过邮件发送给你</div>
+            </div>
+          </div>
+        );
+      }
     }
 
     return (
@@ -98,9 +146,10 @@ class EnrollForm extends React.Component {
           <div>
             <label htmlFor="wechat" className="field-label">微信号</label>
             <input type="text" value={this.state.wechatUserName} onChange={this.handleChange} className="text-field-form w-input" max-length="256" name="wechat" placeholder="请输入微信号" required="" readOnly={this.props.submitted}/></div>
+          { notification }
           { btn }
         </form>
-        {notification}
+        
       </div>
     );
   }
