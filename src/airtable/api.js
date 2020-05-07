@@ -40,22 +40,25 @@ module.exports = {
     });
   },
 
-  getUserByEmail: (email) => {
+  getUserByEmail: async (email) => {
     // TODO: check when does the select call return an error
-    return new Promise((resolve, reject) => {
-      if (!email) {
-        resolve();
-      }
-      base.Users.select({
-        maxRecords: 1,
-        filterByFormula: `{email}="${email}"`
-      }).eachPage((records, fetchNextPage) => {
-        if (records.length == 0) {
-          resolve();
-        }
-        resolve(records[0]);
-      });
-    });
+    let ret = null;
+
+    if (!email) {
+      return ret;
+    }
+    const users = await base.Users.select({
+      maxRecords: 1,
+      filterByFormula: `{email}="${email}"`
+    }).firstPage();
+    
+    if (users.length === 0) {
+      return ret;
+    }
+
+    ret = users[0];
+    
+    return ret;
   },
 
   getEvent: (id) => {
@@ -87,34 +90,26 @@ module.exports = {
     return base.OpenEvents.update(params);
   },
 
-  unjoin: (event, userId) => {
-    return new Promise((resolve, reject) => {
-      //prepare eventUser Array
-      let eventUsers = event.fields.Users ? event.fields.Users : [];
-      const index = eventUsers.indexOf(userId);
-      if (index < 0) {
-        //user is not in this event
-        resolve();
-      }
-      eventUsers.splice(index, 1);
+  unjoin: async (event, userId) => {
+  
+    //prepare eventUser Array
+    let eventUsers = event.fields.Users ? event.fields.Users : [];
+    const index = eventUsers.indexOf(userId);
+    if (index < 0) {
+      //user is not in this event
+      return new Promise.reject(new Error('User is not joined!'));
+    }
+    eventUsers.splice(index, 1);
 
-      base.OpenEvents.update([
-        {
-          id: event.id,
-          fields: {
-            Users: eventUsers,
-          },
+    const params = [
+      {
+        id: event.id,
+        fields: {
+          Users: eventUsers,
         },
-      ],
-      (err, records) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(records[0]);
-        }
-      }
-      );
-    });
+      },
+    ];
+    return base.OpenEvents.update(params);
   },
 
   getAllEvents: () => {

@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import AirtableAPI from "./airtable/api";
+require('dotenv').config();
 
 class EnrollForm extends React.Component {
 
@@ -16,16 +17,18 @@ class EnrollForm extends React.Component {
   }
 
   handleSubmit = async event => {
-    this.setState({ submitted: true });
-    event.preventDefault();
+    // TODO 1. validate user's wechat and email format
+    //      2. display error message when the user email doesn't exist
 
+    event.preventDefault();
+    this.setState({ submitted: true });
+    
     try {
       const user = await AirtableAPI.getUserByEmail(this.state.email);
       console.log(user);
 
-      const TRAIL_EVENT_ID = 'recXx8gFGJ6c9fC2R';
-      const trailEvent = await AirtableAPI.getEvent(TRAIL_EVENT_ID);
-
+      const trailEvent = await AirtableAPI.getEvent(process.env.TRAIL_EVENT_ID);
+      
       if (user) {
         // udate user wechat
         const userId = user.id;
