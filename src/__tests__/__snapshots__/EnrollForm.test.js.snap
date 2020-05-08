@@ -1,0 +1,428 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EnrollForm renders error when email is not valid, but name is valid 1`] = `
+<div
+  className="submit-project-wrapper"
+>
+  <form
+    className="form"
+    data-name="Email Form"
+    data-netlify="true"
+    id="email-form"
+    name="email-form"
+  >
+    <div>
+      <label
+        className="field-label-2"
+        htmlFor="Timeline"
+      >
+        下一次新人课程将会在2020年6月14日北京时间下午2点—4点在线上进行
+        <br />
+        请提前报名，我们会通过邮件和微信告知参与方式
+      </label>
+    </div>
+    <div>
+      <label
+        className="field-label"
+        htmlFor="name"
+      >
+        你的名字或昵称
+      </label>
+      <input
+        className="text-field-form w-input"
+        max-length="256"
+        name="name"
+        onChange={[Function]}
+        placeholder="请输入姓名"
+        required=""
+        type="text"
+        value="Name"
+      />
+    </div>
+    <div>
+      <label
+        className="field-label"
+        htmlFor="email"
+      >
+        邮箱地址
+      </label>
+      <input
+        className="text-field-form w-input"
+        max-length="256"
+        name="email"
+        onChange={[Function]}
+        placeholder="mail@company.com"
+        required=""
+        type="email"
+        value="wrongemail"
+      />
+    </div>
+    <div>
+      <label
+        className="field-label"
+        htmlFor="wechat"
+      >
+        微信号
+      </label>
+      <input
+        className="text-field-form w-input"
+        max-length="256"
+        name="wechat"
+        onChange={[Function]}
+        placeholder="请输入微信号"
+        required=""
+        type="text"
+        value="correctwechat"
+      />
+    </div>
+    <div
+      className="form-block w-form"
+      data-w-id="event-form"
+    >
+      <div
+        className="error-message w-form-done"
+        style={
+          Object {
+            "display": "block",
+          }
+        }
+      >
+        <div>
+          Email 格式不正确
+        </div>
+      </div>
+    </div>
+    <div
+      className="top-margin"
+    >
+      <div
+        className="algin-center"
+      >
+        <input
+          className="button w-button"
+          data-wait="Please wait..."
+          onClick={[Function]}
+          type="submit"
+          value="预留席位"
+        />
+      </div>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`EnrollForm renders error when wechat is not valid, but name and email are valid 1`] = `
+<div
+  className="submit-project-wrapper"
+>
+  <form
+    className="form"
+    data-name="Email Form"
+    data-netlify="true"
+    id="email-form"
+    name="email-form"
+  >
+    <div>
+      <label
+        className="field-label-2"
+        htmlFor="Timeline"
+      >
+        下一次新人课程将会在2020年6月14日北京时间下午2点—4点在线上进行
+        <br />
+        请提前报名，我们会通过邮件和微信告知参与方式
+      </label>
+    </div>
+    <div>
+      <label
+        className="field-label"
+        htmlFor="name"
+      >
+        你的名字或昵称
+      </label>
+      <input
+        className="text-field-form w-input"
+        max-length="256"
+        name="name"
+        onChange={[Function]}
+        placeholder="请输入姓名"
+        required=""
+        type="text"
+        value="Name"
+      />
+    </div>
+    <div>
+      <label
+        className="field-label"
+        htmlFor="email"
+      >
+        邮箱地址
+      </label>
+      <input
+        className="text-field-form w-input"
+        max-length="256"
+        name="email"
+        onChange={[Function]}
+        placeholder="mail@company.com"
+        required=""
+        type="email"
+        value="valid@email.com"
+      />
+    </div>
+    <div>
+      <label
+        className="field-label"
+        htmlFor="wechat"
+      >
+        微信号
+      </label>
+      <input
+        className="text-field-form w-input"
+        max-length="256"
+        name="wechat"
+        onChange={[Function]}
+        placeholder="请输入微信号"
+        required=""
+        type="text"
+        value="!@#$"
+      />
+    </div>
+    <div
+      className="form-block w-form"
+      data-w-id="event-form"
+    >
+      <div
+        className="error-message w-form-done"
+        style={
+          Object {
+            "display": "block",
+          }
+        }
+      >
+        <div>
+          微信用户名格式不正确
+        </div>
+      </div>
+    </div>
+    <div
+      className="top-margin"
+    >
+      <div
+        className="algin-center"
+      >
+        <input
+          className="button w-button"
+          data-wait="Please wait..."
+          onClick={[Function]}
+          type="submit"
+          value="预留席位"
+        />
+      </div>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`EnrollForm renders name error when everything is empty 1`] = `
+<div
+  className="submit-project-wrapper"
+>
+  <form
+    className="form"
+    data-name="Email Form"
+    data-netlify="true"
+    id="email-form"
+    name="email-form"
+  >
+    <div>
+      <label
+        className="field-label-2"
+        htmlFor="Timeline"
+      >
+        下一次新人课程将会在2020年6月14日北京时间下午2点—4点在线上进行
+        <br />
+        请提前报名，我们会通过邮件和微信告知参与方式
+      </label>
+    </div>
+    <div>
+      <label
+        className="field-label"
+        htmlFor="name"
+      >
+        你的名字或昵称
+      </label>
+      <input
+        className="text-field-form w-input"
+        max-length="256"
+        name="name"
+        onChange={[Function]}
+        placeholder="请输入姓名"
+        required=""
+        type="text"
+        value=""
+      />
+    </div>
+    <div>
+      <label
+        className="field-label"
+        htmlFor="email"
+      >
+        邮箱地址
+      </label>
+      <input
+        className="text-field-form w-input"
+        max-length="256"
+        name="email"
+        onChange={[Function]}
+        placeholder="mail@company.com"
+        required=""
+        type="email"
+        value=""
+      />
+    </div>
+    <div>
+      <label
+        className="field-label"
+        htmlFor="wechat"
+      >
+        微信号
+      </label>
+      <input
+        className="text-field-form w-input"
+        max-length="256"
+        name="wechat"
+        onChange={[Function]}
+        placeholder="请输入微信号"
+        required=""
+        type="text"
+        value=""
+      />
+    </div>
+    <div
+      className="form-block w-form"
+      data-w-id="event-form"
+    >
+      <div
+        className="error-message w-form-done"
+        style={
+          Object {
+            "display": "block",
+          }
+        }
+      >
+        <div>
+          姓名或昵称未填写
+        </div>
+      </div>
+    </div>
+    <div
+      className="top-margin"
+    >
+      <div
+        className="algin-center"
+      >
+        <input
+          className="button w-button"
+          data-wait="Please wait..."
+          onClick={[Function]}
+          type="submit"
+          value="预留席位"
+        />
+      </div>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`EnrollForm renders the initial view 1`] = `
+<div
+  className="submit-project-wrapper"
+>
+  <form
+    className="form"
+    data-name="Email Form"
+    data-netlify="true"
+    id="email-form"
+    name="email-form"
+  >
+    <div>
+      <label
+        className="field-label-2"
+        htmlFor="Timeline"
+      >
+        下一次新人课程将会在2020年6月14日北京时间下午2点—4点在线上进行
+        <br />
+        请提前报名，我们会通过邮件和微信告知参与方式
+      </label>
+    </div>
+    <div>
+      <label
+        className="field-label"
+        htmlFor="name"
+      >
+        你的名字或昵称
+      </label>
+      <input
+        className="text-field-form w-input"
+        max-length="256"
+        name="name"
+        onChange={[Function]}
+        placeholder="请输入姓名"
+        required=""
+        type="text"
+        value=""
+      />
+    </div>
+    <div>
+      <label
+        className="field-label"
+        htmlFor="email"
+      >
+        邮箱地址
+      </label>
+      <input
+        className="text-field-form w-input"
+        max-length="256"
+        name="email"
+        onChange={[Function]}
+        placeholder="mail@company.com"
+        required=""
+        type="email"
+        value=""
+      />
+    </div>
+    <div>
+      <label
+        className="field-label"
+        htmlFor="wechat"
+      >
+        微信号
+      </label>
+      <input
+        className="text-field-form w-input"
+        max-length="256"
+        name="wechat"
+        onChange={[Function]}
+        placeholder="请输入微信号"
+        required=""
+        type="text"
+        value=""
+      />
+    </div>
+    <div
+      className="top-margin"
+    >
+      <div
+        className="algin-center"
+      >
+        <input
+          className="button w-button"
+          data-wait="Please wait..."
+          onClick={[Function]}
+          type="submit"
+          value="预留席位"
+        />
+      </div>
+    </div>
+  </form>
+</div>
+`;

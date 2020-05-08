@@ -1,4 +1,4 @@
-import assertString from "validator/es/lib/util/assertString";
+import assertString from "validator/lib/util/assertString";
 
 const wxReg = /^[a-zA-Z]{1}[-_a-zA-Z0-9]{5,19}$/;
 
