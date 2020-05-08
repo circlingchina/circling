@@ -46,7 +46,7 @@ const handler = async function (event, context, callback) {
       body: JSON.stringify(responseBody),
     });
   } catch (err) {
-    console.log("error", err)
+    console.log("error", err);
   }
 };
 

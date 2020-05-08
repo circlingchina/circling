@@ -1,5 +1,5 @@
 // Use common js as it might be imported in Node (netlify functions)
-const _ = require('lodash');
+const pick = require('lodash/pick');
 const base = require('./base.js');
 
 // Promisify the AirTable api so the caller don't have to
@@ -26,7 +26,7 @@ module.exports = {
       const fieldList = ['Name', 'WechatUserName', 'email'];
       const userObjToUpdate = {
         id,
-        fields: _.pick(fieldsObj, fieldList),
+        fields: pick(fieldsObj, fieldList),
       };
 
       base.Users.update([
