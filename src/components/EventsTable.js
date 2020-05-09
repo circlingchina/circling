@@ -35,12 +35,14 @@ function EventsTable(props) {
 
 function TableHeader() {
   return (
-    <div className="schedule-title w-row events-table-header">
-      <div className="column w-col w-col-3">时间</div>
-      <div className="w-col w-col-3">活动</div>
-      <div className="w-col w-col-3">带领者</div>
-      <div className="w-col w-col-3">人数</div>
-      <div className="w-col w-col-3">报名</div>
+    <div className="schedule-title w-row events-table-header w-hidden-small">
+      <div className="column w-col w-col-9 w-col-small-6">
+        <div className="w-col w-col-4 w-col-medium-4">时间</div>
+        <div className="w-col w-col-3 w-col-medium-3">活动</div>
+        <div className="w-col w-col-3 w-col-medium-3">带领者</div>
+        <div className="w-col w-col-2 w-col-medium-2">人数</div>
+      </div>
+      <div className="w-col w-col-3 w-col-medium-3">报名</div>
     </div>
   );
 }
@@ -151,7 +153,7 @@ class EventRow extends React.Component {
     if(this.state.isLoading) {
       joinButton = (<Loader
         type="Puff"
-        color="#00BFFF"
+        color="#CC333F"
         height={32}
         width={32}
       />);
@@ -159,31 +161,28 @@ class EventRow extends React.Component {
     }
     return (
       <div className="schedule-columns w-row">
-        <div className="w-col w-col-3">
-          <div>
+        <div className="w-col w-col-9 w-col-small-6 w-col-tiny-6 w-col-medium-9">
+          <div className="w-col w-col-4 w-col-medium-4">
             <div>{timeStr}</div>
           </div>
-        </div>
-        <div className="w-col w-col-3">
-          <div>{this.props.eventJson.fields.Category}</div>
-        </div>
-        <div className="w-col w-col-3">
-          <a href={"/pages/leaders/#" + this.props.eventJson.fields.Host}
-            className="join-button host">{this.props.eventJson.fields.Host}
-          </a>
-        </div>
-        <div className="w-col w-col-3">
-          <div>
+          <div className="w-col w-col-3 w-col-medium-3">
+            {this.props.eventJson.fields.Category}
+          </div>
+          <div className="w-col w-col-3 w-col-medium-3">
+            <a href={"/pages/leaders/#" + this.props.eventJson.fields.Host}
+              className="join-button host">{this.props.eventJson.fields.Host}
+            </a>
+          </div>
+          <div className="w-col w-col-2 w-col-medium-2">
             {event.getUsers().length}/{this.props.eventJson.fields.MaxAttendees}
           </div>
         </div>
-        <div className="w-col w-col-3">
+        <div className="w-col w-col-3 w-col-medium-3 w-col-small-5 w-col-tiny-5 align-middle">
           {joinButton}
           {cancelButton}
         </div>
       </div>
     );
   }
-
 }
 export default EventsTable;

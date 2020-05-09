@@ -1,5 +1,5 @@
 // Use common js as it might be imported in Node (netlify functions)
-const _ = require('lodash');
+const pick = require('lodash/pick');
 const base = require('./base.js');
 
 // Promisify the AirTable api so the caller don't have to
@@ -26,7 +26,7 @@ module.exports = {
       const fieldList = ['Name', 'WechatUserName', 'email'];
       const userObjToUpdate = {
         id,
-        fields: _.pick(fieldsObj, fieldList),
+        fields: pick(fieldsObj, fieldList),
       };
 
       base.Users.update([
@@ -40,22 +40,25 @@ module.exports = {
     });
   },
 
-  getUserByEmail: (email) => {
+  getUserByEmail: async (email) => {
     // TODO: check when does the select call return an error
-    return new Promise((resolve) => {
-      if (!email) {
-        resolve();
-      }
-      base.Users.select({
-        maxRecords: 1,
-        filterByFormula: `{email}="${email}"`
-      }).eachPage((records) => {
-        if (records.length == 0) {
-          resolve();
-        }
-        resolve(records[0]);
-      });
-    });
+    let ret = null;
+
+    if (!email) {
+      return ret;
+    }
+    const users = await base.Users.select({
+      maxRecords: 1,
+      filterByFormula: `{email}="${email}"`
+    }).firstPage();
+    
+    if (users.length === 0) {
+      return ret;
+    }
+
+    ret = users[0];
+    
+    return ret;
   },
 
   getAirtableUser: (email) => {
@@ -98,34 +101,26 @@ module.exports = {
     return base.OpenEvents.update(params);
   },
 
-  unjoin: (event, userId) => {
-    return new Promise((resolve, reject) => {
-      //prepare eventUser Array
-      let eventUsers = event.fields.Users ? event.fields.Users : [];
-      const index = eventUsers.indexOf(userId);
-      if (index < 0) {
-        //user is not in this event
-        resolve();
-      }
-      eventUsers.splice(index, 1);
+  unjoin: async (event, userId) => {
+  
+    //prepare eventUser Array
+    let eventUsers = event.fields.Users ? event.fields.Users : [];
+    const index = eventUsers.indexOf(userId);
+    if (index < 0) {
+      //user is not in this event
+      return new Promise.reject(new Error('User is not joined!'));
+    }
+    eventUsers.splice(index, 1);
 
-      base.OpenEvents.update([
-        {
-          id: event.id,
-          fields: {
-            Users: eventUsers,
-          },
+    const params = [
+      {
+        id: event.id,
+        fields: {
+          Users: eventUsers,
         },
-      ],
-      (err, records) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(records[0]);
-        }
-      }
-      );
-    });
+      },
+    ];
+    return base.OpenEvents.update(params);
   },
 
   getAllEvents: () => {
@@ -134,6 +129,7 @@ module.exports = {
       base.OpenEvents.select({
         filterByFormula: `NOT({Category}='新人介绍课程')`,
         view: "Grid view",
+        sort: [{field: "Time", direction: "asc"}]
       }).eachPage((records, fetchNextPage) => {
         allEvents = allEvents.concat(records);
         fetchNextPage();

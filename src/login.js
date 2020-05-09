@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
-let airtable = require("./airtable/api");
-
+let base = require("./airtable/base");
+require('dotenv').config();
 
 function clearUserIdCache() {
   window.localStorage.removeItem('lastUserId');

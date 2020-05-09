@@ -3,6 +3,7 @@
     "@babel/preset-react",
     "@babel/preset-env"
   ],
+  "sourceType": "unambiguous",
   "plugins": [
     [
       "@babel/plugin-proposal-class-properties"
