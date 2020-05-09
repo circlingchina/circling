@@ -5,7 +5,7 @@ const airtable = require('../src/airtable/api');
 const cors = require('cors');
 const app = express();
 let helmet = require('helmet');
-const {sendWelcomeMail, sentFirstEventEmail} = require('./emailService');
+const {sentFirstEventEmail} = require('./emailService');
 
 app.use(helmet());
 app.use(bodyParser.json());
@@ -18,7 +18,10 @@ const port = process.env.API_PORT || 3000;
 app.get('/api/events/:event_id/join', async (req, res) => {
   const event_id = req.params.event_id;
   const user_id = req.query.user_id; // TODO authenticate the user
+  
+  // Step 1: retrieve the full event info, which contains list of users
   airtable.getEvent(event_id)
+    // Step 2: join event by appending user to event.users list
     .then((event)=> {
       if(event) {
         airtable.join(event._rawJson, user_id).then((events) => {
@@ -30,27 +33,25 @@ app.get('/api/events/:event_id/join', async (req, res) => {
       }
       return user_id;
     })
+    // Step 3: retrieve the full user object, so we can execute email logic
     .then(async () => {
-      console.log("userId", user_id);
       const user = await airtable.getUser(user_id);
       
       return user;
     })
+    // Step 4: conditionally send the first event instructional email to user
     .then(async (user) => {
-      let sentEmail = false;
-      console.log("got back user", user);
+      let sentMessageId = null;
       if(user.fields.sentFirstEventEmail == 0) {
-        console.log("send AWS email to", user.fields.email);
         const data = await sentFirstEventEmail(user.fields.Name, user.fields.email);
-        console.log("data", data.MessageId);
-        sentEmail = true;
+        sentMessageId = data.MessageId;
       }
-      return sentEmail;
+      return {sentMessageId, sentFirstEventEmail: user.fields.sentFirstEventEmail+1};
     })
-    .then((sentEmail) => {
-      console.log("sentEmail", sentEmail);
+    // Step 5: update the user.sentFirstEventEmail state
+    .then(({sentEmail, sentFirstEventEmail}) => {
       if(sentEmail) {
-        console.log("update airtable recored");
+        return airtable.updateUser(user_id, {sentFirstEventEmail});
       }
     })
     .catch((error) => {
@@ -65,9 +66,9 @@ app.get('/api/events/:event_id/unjoin', async (req, res) => {
   const user_id = req.query.user_id; // TODO authenticate the user
   airtable.getEvent(event_id).then((event)=> {
     if(event) {
-      airtable.unjoin(event._rawJson, user_id).then((result) => {
+      airtable.unjoin(event._rawJson, user_id).then((events) => {
         //pick the min amount of useful info to send back
-        const responseJson = {id: result.id, fields: result.fields};
+        const responseJson = {id: events[0].id, fields: events[0].fields};
         res.status(200).end(JSON.stringify(responseJson));
       });
     }
