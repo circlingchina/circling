@@ -3,7 +3,7 @@
 let aws = require('aws-sdk');
 const pug = require ('pug');
 // Provide the full path to your config.json file. 
-aws.config.loadFromPath('./config.json');
+aws.config.update({region: 'us-west-2'});
 
 // Specify a configuration set. If you do not want to use a configuration
 // set, comment the following variable, and the 
@@ -73,8 +73,9 @@ const sendMail = (sender, recipient, subject, body_html) => {
 
   return new Promise((resolve, reject) => {
     ses.sendEmail(params, (err, data) => {
-    // If something goes wrong, print an error message.
+      // If something goes wrong, print an error message.
       if(err) {
+        console.error(err);
         reject(err);
       } else {
         resolve(data);
