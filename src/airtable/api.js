@@ -23,7 +23,7 @@ module.exports = {
   updateUser: (id, fieldsObj) => {
     return new Promise((resolve, reject) => {
       // fields white list
-      const fieldList = ['Name', 'WechatUserName', 'email'];
+      const fieldList = ['Name', 'WechatUserName', 'email', 'sentFirstEventEmail'];
       const userObjToUpdate = {
         id,
         fields: pick(fieldsObj, fieldList),
@@ -108,7 +108,7 @@ module.exports = {
     const index = eventUsers.indexOf(userId);
     if (index < 0) {
       //user is not in this event
-      return new Promise.reject(new Error('User is not joined!'));
+      return Promise.reject(new Error('User is not joined!'));
     }
     eventUsers.splice(index, 1);
 
