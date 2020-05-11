@@ -15,7 +15,7 @@ module.exports = function(eleventyConfig) {
   });
  
   eleventyConfig.addFilter('dateReadable', date => {
-    return moment(date).format("YYYY年M月D日 Ah点mm分");  
+    return moment(date).format("YYYY年M月D日（ddd）H点");
   });
 
   return {
