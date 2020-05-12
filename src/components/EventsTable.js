@@ -1,12 +1,15 @@
 import React from 'react';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
 // import {joinEvent, unjoinEvent} from '../circling-api/index';
 import {joinEvent, unjoinEvent} from '../circling-api/serverless';
-import moment from 'moment';
-import locale from 'moment/src/locale/zh-cn';
 import Event from '../models/Event';
 
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from 'react-loader-spinner';
+import ReactTooltip from "react-tooltip";
+
+moment.locale('zh-cn');
 
 function getAirbaseUserId() {
   return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
@@ -96,9 +99,9 @@ class EventRow extends React.Component {
 
     this.setState({ isLoading: true });
 
-    unjoinEvent(this.props.eventJson, airbaseUserId).then((updatedEvent) => {
-      if (updatedEvent) {
-        this.props.onEventChanged(updatedEvent);
+    unjoinEvent(this.props.eventJson, airbaseUserId).then((updatedEvents) => {
+      if (updatedEvents) {
+        this.props.onEventChanged(updatedEvents[0]);
         this.setState({ isLoading: false });
       }
     }).finally(() => {
@@ -114,9 +117,8 @@ class EventRow extends React.Component {
   }
 
   render() {
-    moment.locale("zh-cn", locale);
     const timeStr = moment(this.props.eventJson.fields.Time)
-      .format("YYYY年M月D日 Ah点mm分");   //based on state, render the correct UI element
+      .format("YYYY年M月D日（ddd）H点");
     let joinButton;
     let cancelButton;
     const event = new Event(this.props.eventJson);
@@ -164,6 +166,7 @@ class EventRow extends React.Component {
       />);
       cancelButton = null;
     }
+    
     return (
       <div className="schedule-columns w-row">
         <div className="w-col w-col-9 w-col-small-6 w-col-tiny-6 w-col-medium-9">
@@ -179,7 +182,9 @@ class EventRow extends React.Component {
             </a>
           </div>
           <div className="w-col w-col-2 w-col-medium-2">
-            {event.getUsers().length}/{this.props.eventJson.fields.MaxAttendees}
+            <span data-tip={this.props.eventJson.fields.UsersDisplay} data-iscapture='true' data-for='joinedUsersTooltip'
+            >{event.getUsers().length}/{this.props.eventJson.fields.MaxAttendees}</span>
+            <ReactTooltip id='joinedUsersTooltip' place='right' type='light' />
           </div>
         </div>
         <div className="w-col w-col-3 w-col-medium-3 w-col-small-5 w-col-tiny-5 align-middle">

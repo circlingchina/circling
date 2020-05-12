@@ -23,7 +23,7 @@ function EventRegion() {
       }
       
       try {
-        const allEvents = await AirtableApi.getAllEvents();
+        const allEvents = await AirtableApi.getAllEventsWithUsers();
         setEvents(allEvents);
         setIsLoaded(true);
       } catch (err) {
