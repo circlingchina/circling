@@ -22,6 +22,21 @@ npm start
 This starts a server on port 4567. The client should be setup to connect to this port by default.
 
 
+## Docker Builds
+
+[Dockerfile] builds an image that can be ran in either development or production
+
+Building an image
+
+```
+docker build -t circling-server .
+```
+
+Running the image
+
+```
+docker run --name circling-server -p 4567:4567 -d circling-server
+```
 
 ## Production Deployment
 
