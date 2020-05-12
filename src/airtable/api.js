@@ -5,6 +5,87 @@ const base = require('./base.js');
 // Promisify the AirTable api so the caller don't have to
 // follow the callback style.
 
+function recordIdsFilterFormular(recordIds) {
+  return 'OR(' + recordIds.map(e => `RECORD_ID()="${e}"`) + ')';
+}
+
+function getAllEvents() {
+  return new Promise((resolve, reject) => {
+    let allEvents = [];
+    base.OpenEvents.select({
+      filterByFormula: `NOT({Category}='新人介绍课程')`,
+      view: "Grid view",
+      sort: [{field: "Time", direction: "asc"}]
+    }).eachPage((records, fetchNextPage) => {
+      // Fix the link record issue from Airtable
+      records.forEach(r => {
+        r.fields.Users = r.fields.Users || [];
+      });
+
+      allEvents = allEvents.concat(records);
+      fetchNextPage();
+    }, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(allEvents);
+      }
+    });
+  });
+}
+
+function getUsersByIds(userIds, fields) {
+  return new Promise((resolve, reject) => {
+    let allUsers = [];
+
+    const params = {
+      filterByFormula: recordIdsFilterFormular(userIds)
+    };
+    if (fields) {
+      params.fields = fields;
+    }
+
+    base.Users.select(
+      params
+    ).eachPage((records, fetchNextPage) => {
+      allUsers = allUsers.concat(records);
+      fetchNextPage();
+    }, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(allUsers);
+      }
+    });
+  });
+}
+
+async function _addUserInfoIntoEvents(events) {
+  const userIdSet = new Set();
+  const userMap = new Map();
+
+  events.forEach(e => {
+    e.fields.Users = e.fields.Users || [];
+    e.fields.Users.forEach(userIdSet.add, userIdSet);
+  });
+
+  let users = await getUsersByIds([...userIdSet], ['Name', '_recordId']);
+
+  users.forEach(user => {
+    userMap.set(user.id, user.fields.Name);
+  });
+
+  events.forEach(event => {
+    event.fields.Users = event.fields.Users || [];
+    event.fields.UsersExtra = event.fields.Users.map(userId => { 
+      return {id: userId, 'Name': userMap.get(userId)};
+    });
+    event.fields.UsersDisplay = (event.fields.UsersExtra.map(e => e.Name)).join(', ');
+  });
+
+  return events;
+}
+
 module.exports = {
   createUser: (email, name, cb) => {
     base.Users.create(
@@ -77,7 +158,6 @@ module.exports = {
 
     eventUsers.push(userId);
 
-
     // call api
     const params = [
       {
@@ -87,11 +167,12 @@ module.exports = {
         },
       },
     ];
-    return base.OpenEvents.update(params);
+    const records = await base.OpenEvents.update(params);
+    
+    return await _addUserInfoIntoEvents(records);
   },
 
   unjoin: async (event, userId) => {
-  
     //prepare eventUser Array
     let eventUsers = event.fields.Users ? event.fields.Users : [];
     const index = eventUsers.indexOf(userId);
@@ -109,26 +190,17 @@ module.exports = {
         },
       },
     ];
-    return base.OpenEvents.update(params);
+    const records = await base.OpenEvents.update(params);
+
+    return await _addUserInfoIntoEvents(records);
   },
 
-  getAllEvents: () => {
-    return new Promise((resolve, reject) => {
-      let allEvents = [];
-      base.OpenEvents.select({
-        filterByFormula: `NOT({Category}='新人介绍课程')`,
-        view: "Grid view",
-        sort: [{field: "Time", direction: "asc"}]
-      }).eachPage((records, fetchNextPage) => {
-        allEvents = allEvents.concat(records);
-        fetchNextPage();
-      }, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(allEvents);
-        }
-      });
-    });
-  },
+  getAllEvents,
+
+  getUsersByIds,
+
+  getAllEventsWithUsers: async () => {
+    let events = await getAllEvents();
+    return await _addUserInfoIntoEvents(events);
+  }
 };
