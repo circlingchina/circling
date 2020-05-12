@@ -5,8 +5,41 @@ const base = require('./base.js');
 // Promisify the AirTable api so the caller don't have to
 // follow the callback style.
 
-function recordIdsFilterFormular(recordIds) {
+function _recordIdsFilterFormular(recordIds) {
   return 'OR(' + recordIds.map(e => `RECORD_ID()="${e}"`) + ')';
+}
+
+async function _addUserInfoIntoEvents(events) {
+  const userIdSet = new Set();
+  const userMap = new Map();
+
+  events.forEach(e => {
+    e.fields.Users = e.fields.Users || [];
+    e.fields.Users.forEach(userIdSet.add, userIdSet);
+  });
+
+  // filter the fields to fetch
+  let users = await getUsersByIds([...userIdSet], ['Name', '_recordId']);
+
+  users.forEach(user => {
+    userMap.set(user.id, user.fields.Name);
+  });
+
+  events.forEach(event => {
+    event.fields.Users = event.fields.Users || [];
+
+    // TODO (yiliang): consider using User model if needed
+    event.fields.UsersExtra = event.fields.Users.map(userId => { 
+      return {
+        id: userId,
+        Name: userMap.get(userId)};
+    });
+
+    // functional field for displaying joined usernames
+    event.fields.UsersDisplay = (event.fields.UsersExtra.map(e => e.Name)).join(', ');
+  });
+
+  return events;
 }
 
 function getAllEvents() {
@@ -39,9 +72,10 @@ function getUsersByIds(userIds, fields) {
     let allUsers = [];
 
     const params = {
-      filterByFormula: recordIdsFilterFormular(userIds)
+      filterByFormula: _recordIdsFilterFormular(userIds)
     };
-    if (fields) {
+
+    if(Array.isArray(fields)) {
       params.fields = fields;
     }
 
@@ -60,147 +94,127 @@ function getUsersByIds(userIds, fields) {
   });
 }
 
-async function _addUserInfoIntoEvents(events) {
-  const userIdSet = new Set();
-  const userMap = new Map();
+function createUser(email, name, cb) {
+  base.Users.create(
+    [
+      {
+        fields: {
+          email: email,
+          Name: name,
+        },
+      },
+    ],
+    cb
+  );
+}
 
-  events.forEach(e => {
-    e.fields.Users = e.fields.Users || [];
-    e.fields.Users.forEach(userIdSet.add, userIdSet);
-  });
+function updateUser(id, fieldsObj) {
+  return new Promise((resolve, reject) => {
+    // fields white list
+    const fieldList = ['Name', 'WechatUserName', 'email'];
+    const userObjToUpdate = {
+      id,
+      fields: pick(fieldsObj, fieldList),
+    };
 
-  let users = await getUsersByIds([...userIdSet], ['Name', '_recordId']);
-
-  users.forEach(user => {
-    userMap.set(user.id, user.fields.Name);
-  });
-
-  events.forEach(event => {
-    event.fields.Users = event.fields.Users || [];
-    event.fields.UsersExtra = event.fields.Users.map(userId => { 
-      return {id: userId, 'Name': userMap.get(userId)};
+    base.Users.update([
+      userObjToUpdate
+    ], (err, records) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(records[0]);
     });
-    event.fields.UsersDisplay = (event.fields.UsersExtra.map(e => e.Name)).join(', ');
   });
+}
 
-  return events;
+async function getUserByEmail (email) {
+  // TODO: check when does the select call return an error
+  let ret = null;
+
+  if (!email) {
+    return ret;
+  }
+  const users = await base.Users.select({
+    maxRecords: 1,
+    filterByFormula: `{email}="${email}"`
+  }).firstPage();
+  
+  if (users.length === 0) {
+    return ret;
+  }
+
+  ret = users[0];
+  
+  return ret;
+}
+
+function getEvent (id)  {
+  return base.OpenEvents.find(id);
+}
+
+async function join(event, userId) {
+  const eventUsers = event.fields.Users ? event.fields.Users : [];
+  if (eventUsers.includes(userId)) {
+    return event; //already joined
+  }
+
+  if (event.fields.Attendees >= event.fields.MaxAttendees) {
+    return Promise.reject(new Error('Event is full!'));
+  }
+
+  eventUsers.push(userId);
+
+  // call api
+  const params = [
+    {
+      id: event.id,
+      fields: {
+        Users: eventUsers,
+      },
+    },
+  ];
+  const records = await base.OpenEvents.update(params);
+  
+  return _addUserInfoIntoEvents(records);
+}
+
+async function unjoin(event, userId) {
+  //prepare eventUser Array
+  let eventUsers = event.fields.Users ? event.fields.Users : [];
+  const index = eventUsers.indexOf(userId);
+  if (index < 0) {
+    //user is not in this event
+    return new Promise.reject(new Error('User is not joined!'));
+  }
+  eventUsers.splice(index, 1);
+
+  const params = [
+    {
+      id: event.id,
+      fields: {
+        Users: eventUsers,
+      },
+    },
+  ];
+  const records = await base.OpenEvents.update(params);
+
+  return _addUserInfoIntoEvents(records);
+}
+
+async function getAllEventsWithUsers() {
+  let events = await getAllEvents();
+  return _addUserInfoIntoEvents(events);
 }
 
 module.exports = {
-  createUser: (email, name, cb) => {
-    base.Users.create(
-      [
-        {
-          fields: {
-            email: email,
-            Name: name,
-          },
-        },
-      ],
-      cb
-    );
-  },
-
-  updateUser: (id, fieldsObj) => {
-    return new Promise((resolve, reject) => {
-      // fields white list
-      const fieldList = ['Name', 'WechatUserName', 'email'];
-      const userObjToUpdate = {
-        id,
-        fields: pick(fieldsObj, fieldList),
-      };
-
-      base.Users.update([
-        userObjToUpdate
-      ], (err, records) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(records[0]);
-      });
-    });
-  },
-
-  getUserByEmail: async (email) => {
-    // TODO: check when does the select call return an error
-    let ret = null;
-
-    if (!email) {
-      return ret;
-    }
-    const users = await base.Users.select({
-      maxRecords: 1,
-      filterByFormula: `{email}="${email}"`
-    }).firstPage();
-    
-    if (users.length === 0) {
-      return ret;
-    }
-
-    ret = users[0];
-    
-    return ret;
-  },
-
-  getEvent: (id) => {
-    return base.OpenEvents.find(id);
-  },
-
-  join: async (event, userId) => {
-    const eventUsers = event.fields.Users ? event.fields.Users : [];
-    if (eventUsers.includes(userId)) {
-      return event; //already joined
-    }
-
-    if (event.fields.Attendees >= event.fields.MaxAttendees) {
-      return Promise.reject(new Error('Event is full!'));
-    }
-
-    eventUsers.push(userId);
-
-    // call api
-    const params = [
-      {
-        id: event.id,
-        fields: {
-          Users: eventUsers,
-        },
-      },
-    ];
-    const records = await base.OpenEvents.update(params);
-    
-    return await _addUserInfoIntoEvents(records);
-  },
-
-  unjoin: async (event, userId) => {
-    //prepare eventUser Array
-    let eventUsers = event.fields.Users ? event.fields.Users : [];
-    const index = eventUsers.indexOf(userId);
-    if (index < 0) {
-      //user is not in this event
-      return new Promise.reject(new Error('User is not joined!'));
-    }
-    eventUsers.splice(index, 1);
-
-    const params = [
-      {
-        id: event.id,
-        fields: {
-          Users: eventUsers,
-        },
-      },
-    ];
-    const records = await base.OpenEvents.update(params);
-
-    return await _addUserInfoIntoEvents(records);
-  },
-
+  createUser,
+  updateUser,
+  getUserByEmail,
+  getEvent,
+  join,
+  unjoin,
   getAllEvents,
-
   getUsersByIds,
-
-  getAllEventsWithUsers: async () => {
-    let events = await getAllEvents();
-    return await _addUserInfoIntoEvents(events);
-  }
+  getAllEventsWithUsers
 };
