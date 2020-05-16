@@ -8,6 +8,8 @@ import Event from '../models/Event';
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from 'react-loader-spinner';
 import ReactTooltip from "react-tooltip";
+import classNames from 'classnames';
+
 
 moment.locale('zh-cn');
 
@@ -174,7 +176,7 @@ class EventRow extends React.Component {
             <div>{timeStr}</div>
           </div>
           <div className="w-col w-col-3 w-col-medium-3">
-            {this.props.eventJson.fields.Category}
+            {this.props.eventJson.fields.Name}
           </div>
           <div className="w-col w-col-3 w-col-medium-3">
             <a href={"/pages/leaders/#" + this.props.eventJson.fields.Host}
@@ -182,7 +184,9 @@ class EventRow extends React.Component {
             </a>
           </div>
           <div className="w-col w-col-2 w-col-medium-2">
-            <span data-tip={this.props.eventJson.fields.UsersDisplay} data-iscapture='true' data-for='joinedUsersTooltip'
+            <span data-tip={this.props.eventJson.fields.UsersDisplay}
+              className={classNames({underline: !event.isEmpty()})}
+              data-iscapture='true' data-for='joinedUsersTooltip'
             >{event.getUsers().length}/{this.props.eventJson.fields.MaxAttendees}</span>
             <ReactTooltip id='joinedUsersTooltip' place='right' type='light' />
           </div>

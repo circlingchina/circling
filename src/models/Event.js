@@ -33,6 +33,10 @@ export default class Event {
     return isFull;
   }
 
+  isEmpty() {
+    return  this.getUsers().length === 0;
+  }
+
   //the field may not exist, return empty array instead of null
   getUsers() {
     return this.rawJson.fields.Users || [];

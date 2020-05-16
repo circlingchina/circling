@@ -1,3 +1,7 @@
+.underline {
+  text-decoration: underline;
+}
+
 .w-commerce-commercepaypalcheckoutformcontainer {
   width: 100%;
   min-height: 100vh;
