@@ -1,0 +1,21 @@
+- hosts: ali
+  gather_facts: yes
+  become: yes
+  vars:
+    NODEJS_VERSION: "14"
+  tasks:
+    # curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+    - name: Install the gpg key for nodejs LTS
+      apt_key:
+        url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+        state: present
+    - name: Install the nodejs LTS repos
+      apt_repository:
+        repo: "deb https://deb.nodesource.com/node_{{ NODEJS_VERSION }}.x xenial main"
+        state: present
+        update_cache: yes
+
+    - name: Install the nodejs
+      apt:
+        name: nodejs
+        state: present
