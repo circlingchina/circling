@@ -1,17 +1,13 @@
 import React from 'react';
-import moment from 'moment';
-import 'moment/locale/zh-cn';
-// import {joinEvent, unjoinEvent} from '../circling-api/index';
-import {joinEvent, unjoinEvent} from '../circling-api/serverless';
-import Event from '../models/Event';
 
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from 'react-loader-spinner';
 import ReactTooltip from "react-tooltip";
 import classNames from 'classnames';
 
-
-moment.locale('zh-cn');
+// import {joinEvent, unjoinEvent} from '../circling-api/index';
+import {joinEvent, unjoinEvent} from '../circling-api/serverless';
+import Event from '../models/Event';
 
 function getAirbaseUserId() {
   return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
@@ -20,7 +16,7 @@ function getAirbaseUserId() {
 function EventsTable(props) {
   const futureEvents = props.events.filter((eventJson) => {
     const event = new Event(eventJson);
-    return event.startingStatus() != Event.Status.FINISHED;    
+    return event.startingStatus() != Event.Status.FINISHED;
   });
 
   const eventRows = futureEvents.map((eventJson) => (
@@ -30,7 +26,7 @@ function EventsTable(props) {
       onEventChanged={props.onEventChanged}
     />
   ));
-  
+
   return (
     <div className="div-block-11">
       <div>
@@ -74,7 +70,7 @@ class EventRow extends React.Component {
     }
 
     this.setState({ isLoading: true });
-  
+
     joinEvent(this.props.eventJson, airbaseUserId).then((updatedEvents) => {
       if (updatedEvents && updatedEvents[0]) {
         this.props.onEventChanged(updatedEvents[0]);
@@ -119,8 +115,6 @@ class EventRow extends React.Component {
   }
 
   render() {
-    const timeStr = moment(this.props.eventJson.fields.Time)
-      .format("YYYY年M月D日（ddd）H点");
     let joinButton;
     let cancelButton;
     const event = new Event(this.props.eventJson);
@@ -168,12 +162,12 @@ class EventRow extends React.Component {
       />);
       cancelButton = null;
     }
-    
+
     return (
       <div className="schedule-columns w-row">
         <div className="w-col w-col-9 w-col-small-6 w-col-tiny-6 w-col-medium-9">
           <div className="w-col w-col-4 w-col-medium-4">
-            <div>{timeStr}</div>
+            <div>{event.startTimeDisplay()}</div>
           </div>
           <div className="w-col w-col-3 w-col-medium-3">
             {this.props.eventJson.fields.Name}

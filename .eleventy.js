@@ -1,5 +1,5 @@
 const moment = require('moment');
- 
+
 moment.locale('zh-cn');
 
 module.exports = function(eleventyConfig) {
@@ -13,9 +13,9 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addFilter('dateIso', date => {
     return moment(date).toISOString();
   });
- 
+
   eleventyConfig.addFilter('dateReadable', date => {
-    return moment(date).format("YYYY年M月D日（ddd）H点");
+    return moment(date).format("YYYY年M月D日（ddd）H点m分").replace(/点0分$/, '点');
   });
 
   return {

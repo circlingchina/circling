@@ -17,6 +17,8 @@
     }
  */
 
+import readableTimeString from "../utils/readableTimeString";
+
 export default class Event {
   constructor(rawJson) {
     if(!('id' in rawJson)) {
@@ -41,9 +43,13 @@ export default class Event {
   getUsers() {
     return this.rawJson.fields.Users || [];
   }
-  
+
   containsUser(userId) {
     return this.getUsers().includes(userId);
+  }
+
+  startTimeDisplay() {
+    return readableTimeString(this.rawJson.fields.Time);
   }
 
   startingStatus() {
