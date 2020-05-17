@@ -1,13 +1,14 @@
 import React from 'react';
 
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-import Loader from 'react-loader-spinner';
-import ReactTooltip from "react-tooltip";
 import classNames from 'classnames';
+import Spinner from 'react-bootstrap/Spinner';
+import Popover from 'react-bootstrap/Popover';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
 // import {joinEvent, unjoinEvent} from '../circling-api/index';
 import {joinEvent, unjoinEvent} from '../circling-api/serverless';
 import Event from '../models/Event';
+import OfflineEventModal from './OfflineEventsModal';
 
 function getAirbaseUserId() {
   return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
@@ -51,14 +52,79 @@ function TableHeader() {
   );
 }
 
+function JoinerCountCell(props) {
+  const spanEl = (
+    <span className={classNames({underline: !props.event.isEmpty()})}>
+      {props.event.getUsers().length}/{props.event.toJSON().fields.MaxAttendees}
+    </span>
+  );
+
+  let joinedUsers = props.event.toJSON().fields.UsersExtra;
+
+  let needEllipses = false;
+  if (joinedUsers.length > props.displayLength) {
+    joinedUsers = joinedUsers.slice(0, props.displayLength);
+    needEllipses = true;
+  }
+
+  const userList = [];
+  for (const user of joinedUsers) {
+    userList.push(<span key={user.id}>{user.Name}<br /></span>);
+  }
+  if (needEllipses) {
+    userList.push('...');
+  }
+
+  const popover = (
+    <Popover id={'popover-joiners-' + props.event.toJSON().id}>
+      <Popover.Content>
+        {userList}
+      </Popover.Content>
+    </Popover>
+  );
+
+  let spanWrapper;
+  if (props.event.isEmpty()) {
+    spanWrapper = spanEl;
+  } else {
+    spanWrapper = (
+      <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={popover}>
+        {spanEl}
+      </OverlayTrigger>
+    );
+  }
+
+  return(
+    <div className="w-col w-col-2 w-col-medium-2">
+      {spanWrapper}
+    </div>
+  );
+}
+
 class EventRow extends React.Component {
   state = {
     isLoading: false,
+    showOfflineEventModal: false
   };
 
-  handleJoinEvent = async (e) => {
+  handelJoinEventGateway = async (e) => {
     e.preventDefault();
+    const event = new Event(this.props.eventJson);
+    
+    if (event.isOfflineEvent()) {
+      return this.toggleShowOfflineEventModal();
+    } 
+    return this.handleJoinEvent();
+  };
 
+  toggleShowOfflineEventModal = () => {
+    this.setState({showOfflineEventModal: !this.state.showOfflineEventModal});
+  };
+
+
+
+  handleJoinEvent = async () => {
+    
     if (this.state.isLoading) {
       return;
     }
@@ -127,7 +193,7 @@ class EventRow extends React.Component {
       } else {
         if (event.startingStatus() == Event.Status.STARTING_SOON || event.startingStatus() == Event.Status.NOT_STARTED) {
           joinButton = (
-            <span className="join-button w-button" onClick={this.handleJoinEvent}>报名</span>
+            <span className="join-button w-button" onClick={this.handelJoinEventGateway}>报名</span>
           );
         } else {
           joinButton = (
@@ -154,42 +220,39 @@ class EventRow extends React.Component {
     }
 
     if(this.state.isLoading) {
-      joinButton = (<Loader
-        type="Puff"
-        color="#CC333F"
-        height={32}
-        width={32}
-      />);
+      joinButton = (
+        <Spinner animation="border" variant="danger" />
+      );
       cancelButton = null;
     }
 
+
     return (
-      <div className="schedule-columns w-row">
-        <div className="w-col w-col-9 w-col-small-6 w-col-tiny-6 w-col-medium-9">
-          <div className="w-col w-col-4 w-col-medium-4">
-            <div>{event.startTimeDisplay()}</div>
+      <>
+        <OfflineEventModal event={event} show={this.state.showOfflineEventModal}
+          onHide={this.toggleShowOfflineEventModal}
+        />
+        <div className="schedule-columns w-row">
+          <div className="w-col w-col-9 w-col-small-6 w-col-tiny-6 w-col-medium-9">
+            <div className="w-col w-col-4 w-col-medium-4">
+              <div>{event.startTimeDisplay()}</div>
+            </div>
+            <div className="w-col w-col-3 w-col-medium-3">
+              {this.props.eventJson.fields.Name}
+            </div>
+            <div className="w-col w-col-3 w-col-medium-3">
+              <a href={"/pages/leaders/#" + this.props.eventJson.fields.Host}
+                className="join-button host">{this.props.eventJson.fields.Host}
+              </a>
+            </div>
+            <JoinerCountCell event={event} displayLength={10} />
           </div>
-          <div className="w-col w-col-3 w-col-medium-3">
-            {this.props.eventJson.fields.Name}
-          </div>
-          <div className="w-col w-col-3 w-col-medium-3">
-            <a href={"/pages/leaders/#" + this.props.eventJson.fields.Host}
-              className="join-button host">{this.props.eventJson.fields.Host}
-            </a>
-          </div>
-          <div className="w-col w-col-2 w-col-medium-2">
-            <span data-tip={this.props.eventJson.fields.UsersDisplay}
-              className={classNames({underline: !event.isEmpty()})}
-              data-iscapture='true' data-for='joinedUsersTooltip'
-            >{event.getUsers().length}/{this.props.eventJson.fields.MaxAttendees}</span>
-            <ReactTooltip id='joinedUsersTooltip' place='right' type='light' />
+          <div className="w-col w-col-3 w-col-medium-3 w-col-small-5 w-col-tiny-5 align-middle">
+            {joinButton}
+            {cancelButton}
           </div>
         </div>
-        <div className="w-col w-col-3 w-col-medium-3 w-col-small-5 w-col-tiny-5 align-middle">
-          {joinButton}
-          {cancelButton}
-        </div>
-      </div>
+      </>
     );
   }
 }

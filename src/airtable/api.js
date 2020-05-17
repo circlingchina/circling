@@ -29,14 +29,11 @@ async function _addUserInfoIntoEvents(events) {
     event.fields.Users = event.fields.Users || [];
 
     // TODO (yiliang): consider using User model if needed
-    event.fields.UsersExtra = event.fields.Users.map(userId => { 
+    event.fields.UsersExtra = event.fields.Users.map(userId => {
       return {
         id: userId,
         Name: userMap.get(userId)};
     });
-
-    // functional field for displaying joined usernames
-    event.fields.UsersDisplay = (event.fields.UsersExtra.map(e => e.Name)).join(', ');
   });
 
   return events;
@@ -139,13 +136,13 @@ async function getUserByEmail (email) {
     maxRecords: 1,
     filterByFormula: `{email}="${email}"`
   }).firstPage();
-  
+
   if (users.length === 0) {
     return ret;
   }
 
   ret = users[0];
-  
+
   return ret;
 }
 
@@ -175,7 +172,7 @@ async function join(event, userId) {
     },
   ];
   const records = await base.OpenEvents.update(params);
-  
+
   return _addUserInfoIntoEvents(records);
 }
 
