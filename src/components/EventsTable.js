@@ -2,8 +2,9 @@ import React from 'react';
 
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from 'react-loader-spinner';
-import ReactTooltip from "react-tooltip";
 import classNames from 'classnames';
+import Popover from 'react-bootstrap/Popover';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
 // import {joinEvent, unjoinEvent} from '../circling-api/index';
 import {joinEvent, unjoinEvent} from '../circling-api/serverless';
@@ -47,6 +48,55 @@ function TableHeader() {
         <div className="w-col w-col-2 w-col-medium-2">人数</div>
       </div>
       <div className="w-col w-col-3 w-col-medium-3">报名</div>
+    </div>
+  );
+}
+
+function JoinerCountCell(props) {
+  const spanEl = (
+    <span className={classNames({underline: !props.event.isEmpty()})}>
+      {props.event.getUsers().length}/{props.event.toJSON().fields.MaxAttendees}
+    </span>
+  );
+
+  let joinedUsers = props.event.toJSON().fields.UsersExtra;
+
+  let needEllipses = false;
+  if (joinedUsers.length > props.displayLength) {
+    joinedUsers = joinedUsers.slice(0, props.displayLength);
+    needEllipses = true;
+  }
+
+  const userList = [];
+  for (const user of joinedUsers) {
+    userList.push(<span key={user.id}>{user.Name}<br /></span>);
+  }
+  if (needEllipses) {
+    userList.push('...');
+  }
+
+  const popover = (
+    <Popover id={'popover-joiners-' + props.event.toJSON().id}>
+      <Popover.Content>
+        {userList}
+      </Popover.Content>
+    </Popover>
+  );
+
+  let spanWrapper;
+  if (props.event.isEmpty()) {
+    spanWrapper = spanEl;
+  } else {
+    spanWrapper = (
+      <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={popover}>
+        {spanEl}
+      </OverlayTrigger>
+    );
+  }
+
+  return(
+    <div className="w-col w-col-2 w-col-medium-2">
+      {spanWrapper}
     </div>
   );
 }
@@ -177,13 +227,7 @@ class EventRow extends React.Component {
               className="join-button host">{this.props.eventJson.fields.Host}
             </a>
           </div>
-          <div className="w-col w-col-2 w-col-medium-2">
-            <span data-tip={this.props.eventJson.fields.UsersDisplay}
-              className={classNames({underline: !event.isEmpty()})}
-              data-iscapture='true' data-for='joinedUsersTooltip'
-            >{event.getUsers().length}/{this.props.eventJson.fields.MaxAttendees}</span>
-            <ReactTooltip id='joinedUsersTooltip' place='right' type='light' />
-          </div>
+          <JoinerCountCell event={event} displayLength={10} />
         </div>
         <div className="w-col w-col-3 w-col-medium-3 w-col-small-5 w-col-tiny-5 align-middle">
           {joinButton}
