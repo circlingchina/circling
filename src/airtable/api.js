@@ -151,29 +151,33 @@ function getEvent (id)  {
 }
 
 async function join(event, userId) {
-  const eventUsers = event.fields.Users ? event.fields.Users : [];
-  if (eventUsers.includes(userId)) {
-    return event; //already joined
+  // already joined remotely
+  const remoteEvent = await getEvent(event.id);
+
+  const remoteEventUsers = remoteEvent.fields.Users ? remoteEvent.fields.Users : [];
+
+  if (remoteEventUsers.includes(userId)) {
+    return _addUserInfoIntoEvents([event])[0]; //already joined locally
   }
 
-  if (event.fields.Attendees >= event.fields.MaxAttendees) {
+  if (remoteEvent.fields.Attendees >= remoteEvent.fields.MaxAttendees) {
     return Promise.reject(new Error('Event is full!'));
   }
 
-  eventUsers.push(userId);
+  remoteEventUsers.push(userId);
 
   // call api
   const params = [
     {
-      id: event.id,
+      id: remoteEvent.id,
       fields: {
-        Users: eventUsers,
+        Users: remoteEventUsers,
       },
     },
   ];
-  const records = await base.OpenEvents.update(params);
+  const updatedRecords = await base.OpenEvents.update(params);
 
-  return _addUserInfoIntoEvents(records);
+  return _addUserInfoIntoEvents(updatedRecords);
 }
 
 async function unjoin(event, userId) {

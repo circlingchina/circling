@@ -11,6 +11,7 @@ require('dotenv').config();
 function getAirbaseUserId() {
   return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
 }
+// TODO (Yiliang): move components to separate files
 
 function EventRegion() {
   const [events, setEvents] = useState([]);
@@ -18,9 +19,6 @@ function EventRegion() {
   
   useEffect(() => {
     async function refreshEvents() {
-      if (isLoaded) {
-        return;
-      }
       
       try {
         const allEvents = await AirtableApi.getAllEventsWithUsers();
@@ -32,6 +30,10 @@ function EventRegion() {
       }
     }
     refreshEvents();
+
+    // Polling for latest states
+    const interval = setInterval(async() => await refreshEvents(), 10000);
+    return (() => clearInterval(interval));
   }, []);
   
   const updateEvents = (changedEvent) => {
