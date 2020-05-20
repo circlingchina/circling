@@ -10,8 +10,17 @@ import {joinEvent, unjoinEvent} from '../circling-api/serverless';
 import Event from '../models/Event';
 import OfflineEventModal from './OfflineEventsModal';
 
+import isMobilePhone from 'validator/lib/isMobilePhone';
+import isWechatHandle from '../utils/isWechatHandle';
+
+import AirtableAPI from "../airtable/api";
+
 function getAirbaseUserId() {
   return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
+}
+
+function getAirbaseUserRecord() {
+  return window.airbaseUserRecord|| window.localStorage.getItem("airbaseUserRecord");
 }
 
 function EventsTable(props) {
@@ -25,6 +34,7 @@ function EventsTable(props) {
       key={eventJson.id}
       eventJson={eventJson}
       onEventChanged={props.onEventChanged}
+      userWechatUserName={getAirbaseUserRecord().fields.WechatUserName}
     />
   ));
 
@@ -102,29 +112,78 @@ function JoinerCountCell(props) {
 }
 
 class EventRow extends React.Component {
-  state = {
-    isLoading: false,
-    showOfflineEventModal: false
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: false,
+      showOfflineEventModal: false,
+      wechatUserName: props.userWechatUserName,
+      showModalAlert: false,
+    };
+  }
 
   handelJoinEventGateway = async (e) => {
     e.preventDefault();
+
     const event = new Event(this.props.eventJson);
     
     if (event.isOfflineEvent()) {
       return this.toggleShowOfflineEventModal();
     } 
+
     return this.handleJoinEvent();
   };
 
   toggleShowOfflineEventModal = () => {
-    this.setState({showOfflineEventModal: !this.state.showOfflineEventModal});
+    this.setState({showOfflineEventModal: !this.state.showOfflineEventModal, showModalAlert: false});
   };
 
+  handleWechatUserNameChange = (e) => {
+    e.preventDefault();
+    this.setState({ wechatUserName: event.target.value });  
+  }
 
+  handleJoinOfflineEvent = async() => {
+    if (this.state.isLoading) {
+      return;
+    }
+
+    const airbaseUserId = getAirbaseUserId();
+    //can't join unless logged in
+    if (!airbaseUserId) {
+      return;
+    }
+
+    if (!isMobilePhone(this.state.wechatUserName, 'any') && 
+        !isWechatHandle(this.state.wechatUserName)) {
+      this.setState({ showModalAlert: true });
+      return;
+    }
+
+    this.setState({ isLoading: true });
+
+    const user = await AirtableAPI.getUser(airbaseUserId);
+ 
+    const event = this.props.eventJson;
+
+    const fields = user.fields;
+    fields.WechatUserName = this.state.wechatUserName;
+
+    const [_, updatedEvents] = await Promise.all([
+      AirtableAPI.updateUser(airbaseUserId, fields),
+      joinEvent(event, airbaseUserId),
+    ]); 
+
+    this.props.onEventChanged(updatedEvents[0]);
+
+    this.setState({ 
+      isLoading: false,
+      showModalAlert: false, 
+      showOfflineEventModal: false 
+    });
+  }
 
   handleJoinEvent = async () => {
-    
     if (this.state.isLoading) {
       return;
     }
@@ -202,7 +261,7 @@ class EventRow extends React.Component {
         }
       }
     } else {
-      joinButton = (
+      joinButton = event.isOfflineEvent() ? null : (
         <span className="join-button w-button"
           onClick={(e) => this.handleOpenMeetingRoom(this.props.eventJson.fields.EventLink, e)}>
 
@@ -226,12 +285,18 @@ class EventRow extends React.Component {
       cancelButton = null;
     }
 
-
     return (
       <>
-        <OfflineEventModal event={event} show={this.state.showOfflineEventModal}
+        <OfflineEventModal 
+          eventJson={event.toJSON()} 
+          show={this.state.showOfflineEventModal}
+          showAlert={this.state.showModalAlert}
           onHide={this.toggleShowOfflineEventModal}
+          wechatUserName={this.state.wechatUserName}
+          onWechatUserNameChange={this.handleWechatUserNameChange}
+          onJoinOfflineEvent={this.handleJoinOfflineEvent}
         />
+
         <div className="schedule-columns w-row">
           <div className="w-col w-col-9 w-col-small-6 w-col-tiny-6 w-col-medium-9">
             <div className="w-col w-col-4 w-col-medium-4">
