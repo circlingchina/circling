@@ -31,8 +31,7 @@ export default class Event {
   }
 
   isFull() {
-    const isFull = this.getUsers().length >= this.rawJson.fields.MaxAttendees;
-    return isFull;
+    return this.getUsers().length >= this.rawJson.fields.MaxAttendees;
   }
 
   isEmpty() {
@@ -50,6 +49,10 @@ export default class Event {
 
   startTimeDisplay() {
     return readableTimeString(this.rawJson.fields.Time);
+  }
+
+  isOfflineEvent() {
+    return this.toJSON().fields.Category === '线下活动';
   }
 
   startingStatus() {

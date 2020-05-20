@@ -16,6 +16,12 @@ async function _addUserInfoIntoEvents(events) {
   events.forEach(e => {
     e.fields.Users = e.fields.Users || [];
     e.fields.Users.forEach(userIdSet.add, userIdSet);
+    
+    // only for offline event
+    if (e.fields.OfflineEventContact) {
+
+      userIdSet.add(e.fields.OfflineEventContact[0]);
+    }
   });
 
   // filter the fields to fetch
@@ -34,6 +40,13 @@ async function _addUserInfoIntoEvents(events) {
         id: userId,
         Name: userMap.get(userId)};
     });
+
+    if (event.fields.OfflineEventContact) {
+      event.fields.OfflineEventContactExtra = {
+        id: event.fields.OfflineEventContact[0],
+        Name: userMap.get(event.fields.OfflineEventContact[0]),
+      };
+    }
   });
 
   return events;
@@ -150,6 +163,10 @@ function getEvent (id)  {
   return base.OpenEvents.find(id);
 }
 
+function getUser(id) {
+  return base.Users.find(id);
+}
+
 async function join(event, userId) {
   // already joined remotely
   const remoteEvent = await getEvent(event.id);
@@ -175,9 +192,10 @@ async function join(event, userId) {
       },
     },
   ];
-  const updatedRecords = await base.OpenEvents.update(params);
 
-  return _addUserInfoIntoEvents(updatedRecords);
+  const records = await base.OpenEvents.update(params);
+
+  return _addUserInfoIntoEvents(records);
 }
 
 async function unjoin(event, userId) {
@@ -211,6 +229,7 @@ async function getAllEventsWithUsers() {
 module.exports = {
   createUser,
   updateUser,
+  getUser,
   getUserByEmail,
   getEvent,
   join,

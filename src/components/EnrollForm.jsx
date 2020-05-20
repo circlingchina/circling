@@ -48,7 +48,6 @@ export default class EnrollForm extends React.Component {
     
     try {
       const user = await AirtableAPI.getUserByEmail(this.state.email);
-      console.log(user);
 
       const trailEvent = await AirtableAPI.getEvent(process.env.TRAIL_EVENT_ID);
       
@@ -59,12 +58,12 @@ export default class EnrollForm extends React.Component {
         fields.WechatUserName = this.state.wechatUserName;
 
         const updatedUser = await AirtableAPI.updateUser(userId, fields);
-        console.log("user wechat update success", updatedUser);
+        // console.log("user wechat update success", updatedUser);
       }
 
       if (user && trailEvent) {
         const updatedTrailEvent = await AirtableAPI.join(trailEvent, user.id);
-        console.log("joined with event", updatedTrailEvent);
+        // console.log("joined with event", updatedTrailEvent);
       }
     } catch (err) {
       console.log(err);
@@ -137,13 +136,16 @@ export default class EnrollForm extends React.Component {
           </div>
           <div>
             <label htmlFor="name" className="field-label">你的名字或昵称</label>
-            <input type="text" value={this.state.name} onChange={this.handleChange} className="text-field-form w-input" max-length="256" name="name" placeholder="请输入姓名"  required="" readOnly={this.props.submitted}/></div>
+            <input type="text" value={this.state.name} onChange={this.handleChange} className="text-field-form w-input" max-length="256" name="name" placeholder="请输入姓名"  required="" readOnly={this.props.submitted}/>
+          </div>
           <div>
             <label htmlFor="email" className="field-label">邮箱地址</label>
-            <input type="email" value={this.state.email} onChange={this.handleChange} className="text-field-form w-input" max-length="256" name="email" placeholder="mail@company.com" required="" readOnly={this.props.submitted}/></div>
+            <input type="email" value={this.state.email} onChange={this.handleChange} className="text-field-form w-input" max-length="256" name="email" placeholder="mail@company.com" required="" readOnly={this.props.submitted}/>
+          </div>
           <div>
             <label htmlFor="wechat" className="field-label">微信号</label>
-            <input type="text" value={this.state.wechatUserName} onChange={this.handleChange} className="text-field-form w-input" max-length="256" name="wechat" placeholder="请输入微信号" required="" readOnly={this.props.submitted}/></div>
+            <input type="text" value={this.state.wechatUserName} onChange={this.handleChange} className="text-field-form w-input" max-length="256" name="wechat" placeholder="请输入微信号" required="" readOnly={this.props.submitted}/>
+          </div>
           { notification }
           { btn }
         </form>

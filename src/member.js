@@ -57,6 +57,7 @@ function EventRegion() {
 
   return (
     <>
+      <div id='modal-root'></div>
       <div className="section">
         <div className="container w-container">
           <UpcomingEvent events={events} />
@@ -106,7 +107,7 @@ function UpcomingEvent({events}) {
         <div className="sub-text black">{startingSoonEvent.fields.Name}</div>
         <div className="sub-text black">开始时间：{moment(startingSoonEvent.fields.Time).format("YYYY年M月D日 Ah点mm分")}</div>
         <div className="sub-text black">带领者：{startingSoonEvent.fields.Host}</div>
-        <a href={startingSoonEvent.fields.EventLink} className="button w-button" target="_blank">
+        <a href={startingSoonEvent.fields.EventLink} className="button w-button" target="_blank" rel="noopener noreferrer">
           点击进入
         </a>
         <a href="/pages/whatiscircling2">查看我需要准备什么</a>
