@@ -1,0 +1,47 @@
+# Install necessary tools for setting up a circling web server 
+# One time tasks go here. Tasks done on every deployment goes in deploy-web-server.yml
+- hosts: circling-web
+  gather_facts: yes
+  become: yes
+  vars:
+    NODEJS_VERSION: "14"
+  tasks:
+    # curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+    - name: Install the gpg key for nodejs LTS
+      apt_key:
+        url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    - name: Install the nodejs LTS repos
+      apt_repository:
+        repo: "deb https://deb.nodesource.com/node_{{ NODEJS_VERSION }}.x xenial main"
+        update_cache: yes
+    - name: Install the nodejs
+      apt:
+        name: nodejs
+    # Install build essentials
+    - name: install build-essentials
+      apt:
+        name: build-essential
+    # Install git
+    - name: install git
+      apt:
+        name: git
+    - name: create the directory '/var/www'
+      become: yes
+      file:
+        path: /var/www
+        owner: circling
+        group: circling
+        state: directory
+    - name: ensure SSH key is generated
+      command: ssh-keygen -t rsa -b 4096 -C "{{ ansible_default_ipv4.address }}" -f "$HOME/.ssh/id_rsa" -q -N ''
+      args:
+        creates: $HOME/.ssh/id_rsa
+  roles:
+    - role: jdauphant.nginx
+      nginx_http_params:
+        - sendfile "on"
+        - access_log "/var/log/nginx/access.log"
+      nginx_sites:
+        circling:
+          - listen 80
+          - location / { proxy_pass http://localhost:8080; }

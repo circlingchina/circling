@@ -1,0 +1,19 @@
+- hosts: circling-web
+  tasks:
+    - name: checkout from git
+      git:
+        repo: git@github.com:esquaredly/circling.git
+        dest: /var/www/circling
+        force: yes
+    - name: install npm packages
+      npm:
+        path: /var/www/circling
+    - name: build
+      command: npm run build
+      args:
+          chdir: /var/www/circling
+    - name: execute pm2
+      command: npx pm2 serve _site
+      args:
+          chdir: /var/www/circling
+      
