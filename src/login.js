@@ -1,7 +1,6 @@
-/* eslint-disable no-undef */
-let base = require("./airtable/base");
-require('dotenv').config();
+import airtable from "./airtable/api";
 
+/* eslint-disable no-undef */
 function clearUserIdCache() {
   window.localStorage.removeItem('lastUserId');
 }
@@ -61,7 +60,6 @@ function attachIdentityListern() {
   netlifyIdentity.on('close', () => {
     isSigningIn = false;
   });
-
 }
 
 attachIdentityListern();

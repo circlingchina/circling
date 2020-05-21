@@ -2,11 +2,8 @@ import React from "react";
 import isEmail from 'validator/lib/isEmail';
 import isMobilePhone from 'validator/lib/isMobilePhone';
 import isEmpty from 'validator/lib/isEmpty';
-
 import AirtableAPI from "../airtable/api";
 import isWechatHandle from '../utils/isWechatHandle';
-
-require('dotenv').config();
 
 export default class EnrollForm extends React.Component {
 

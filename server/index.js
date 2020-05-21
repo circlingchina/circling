@@ -1,4 +1,8 @@
-require('dotenv').config();
+const result =require('dotenv').config();
+if(result.error) {
+  throw result.error
+}
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const airtable = require('../src/airtable/api');
