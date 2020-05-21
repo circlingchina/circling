@@ -2,45 +2,6 @@
 const pick = require('lodash/pick');
 const base = require('./base.js');
 
-// Promisify the AirTable api so the caller don't have to
-// follow the callback style.
-
-module.exports = {
-  createUser: (email, name, cb) => {
-    base.Users.create(
-      [
-        {
-          fields: {
-            email: email,
-            Name: name,
-          },
-        },
-      ],
-      cb
-    );
-  },
-
-  updateUser: (id, fieldsObj) => {
-    return new Promise((resolve, reject) => {
-      // fields white list
-      const fieldList = ['Name', 'WechatUserName', 'email', 'sentFirstEventEmail'];
-      const userObjToUpdate = {
-        id,
-        fields: pick(fieldsObj, fieldList),
-      };
-
-      base.Users.update([
-        userObjToUpdate
-      ], (err, records) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(records[0]);
-      });
-    });
-  },
-}
-
 function _recordIdsFilterFormular(recordIds) {
   return 'OR(' + recordIds.map(e => `RECORD_ID()="${e}"`) + ')';
 }
