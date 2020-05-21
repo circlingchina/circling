@@ -40,7 +40,7 @@
     "eslint-plugin-jest": "^23.8.2",
     "eslint-plugin-react": "^7.19.0",
     "jest": "^25.5.4",
-    "moment": "^2.24.0",
+    "moment": "^2.25.3",
     "parcel-bundler": "^1.12.4",
     "react-test-renderer": "^16.13.1"
   },
@@ -48,12 +48,14 @@
     "airtable": "^0.8.1",
     "babel-cli": "^6.26.0",
     "babel-preset-react-app": "^3.1.2",
+    "bootstrap": "^4.5.0",
+    "classnames": "^2.2.6",
     "helmet": "^3.22.0",
     "lodash": "^4.17.15",
     "netlify-lambda": "^1.6.3",
     "react": "^16.13.1",
+    "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
-    "react-loader-spinner": "^3.1.14",
     "validator": "^13.0.0"
   },
   "jest": {

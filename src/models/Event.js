@@ -17,6 +17,8 @@
     }
  */
 
+import readableTimeString from "../utils/readableTimeString";
+
 export default class Event {
   constructor(rawJson) {
     if(!('id' in rawJson)) {
@@ -29,17 +31,28 @@ export default class Event {
   }
 
   isFull() {
-    const isFull = this.getUsers().length >= this.rawJson.fields.MaxAttendees;
-    return isFull;
+    return this.getUsers().length >= this.rawJson.fields.MaxAttendees;
+  }
+
+  isEmpty() {
+    return  this.getUsers().length === 0;
   }
 
   //the field may not exist, return empty array instead of null
   getUsers() {
     return this.rawJson.fields.Users || [];
   }
-  
+
   containsUser(userId) {
     return this.getUsers().includes(userId);
+  }
+
+  startTimeDisplay() {
+    return readableTimeString(this.rawJson.fields.Time);
+  }
+
+  isOfflineEvent() {
+    return this.toJSON().fields.Category === '线下活动';
   }
 
   startingStatus() {
