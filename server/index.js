@@ -84,7 +84,7 @@ app.get('/api/events/:event_id/unjoin', async (req, res) => {
 });
 
 app.get('/api/healthcheck', async (req, res) => {
-  res.end(JSON.stringify({healthy: true, message: "Hello Circling"}));
+  res.end(JSON.stringify({healthy: true, version: "1.0.0"}));
 });
 
 app.listen(port, () => {
