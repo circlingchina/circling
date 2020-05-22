@@ -10,9 +10,11 @@ export default function OfflineEventsModal(props) {
   const eventName = props.eventJson.fields.Name;
 
   let contactName = '';
+  let contactWechatUserName = '';
   if (Array.isArray(props.eventJson.fields.OfflineEventContact) && 
         props.eventJson.fields.OfflineEventContactExtra) {
     contactName = props.eventJson.fields.OfflineEventContactExtra.Name;
+    contactWechatUserName = props.eventJson.fields.OfflineEventContactExtra.WechatUserName;
   }
 
   const offlineEventAddress = props.eventJson.fields.OfflineEventAddress;
@@ -38,19 +40,31 @@ export default function OfflineEventsModal(props) {
         <p>
           在报名参加线下活动之前，<br />
           请确认你的微信号或手机号，这样{contactName}就可以联系到你啦。 <br /><br />
-          线下地址：{offlineEventAddress} <br /><br />
+          {contactName}的微信号：{contactWechatUserName} <br /><br />
           {offlientEventExtraInfo} <br />
         </p>
         <br/>
         <InputGroup size="sm" className="mb-3">
           <InputGroup.Prepend>
-            <InputGroup.Text>我的微信号（手机号）是</InputGroup.Text>
+            <InputGroup.Text>我的微信号是</InputGroup.Text>
           </InputGroup.Prepend>
           <FormControl
             aria-label="wechatUserName" 
             aria-describedby="wechatUserName" 
             value={props.wechatUserName}
             onChange={props.onWechatUserNameChange}
+          />
+        </InputGroup>
+
+        <InputGroup size="sm" className="mb-3">
+          <InputGroup.Prepend>
+            <InputGroup.Text>我的手机号是</InputGroup.Text>
+          </InputGroup.Prepend>
+          <FormControl
+            aria-label="mobileNumber" 
+            aria-describedby="mobileNumber" 
+            value={props.mobileNumber}
+            onChange={props.onMobileNumberChange}
           />
         </InputGroup>
 

@@ -19,16 +19,18 @@ async function _addUserInfoIntoEvents(events) {
     
     // only for offline event
     if (e.fields.OfflineEventContact) {
-
       userIdSet.add(e.fields.OfflineEventContact[0]);
     }
   });
 
   // filter the fields to fetch
-  let users = await getUsersByIds([...userIdSet], ['Name', '_recordId']);
+  let users = await getUsersByIds([...userIdSet], ['Name', '_recordId', 'WechatUserName']);
 
   users.forEach(user => {
-    userMap.set(user.id, user.fields.Name);
+    userMap.set(user.id, {
+      Name: user.fields.Name,
+      WechatUserName: user.fields.WechatUserName
+    });
   });
 
   events.forEach(event => {
@@ -38,13 +40,14 @@ async function _addUserInfoIntoEvents(events) {
     event.fields.UsersExtra = event.fields.Users.map(userId => {
       return {
         id: userId,
-        Name: userMap.get(userId)};
+        Name: userMap.get(userId).Name};
     });
 
     if (event.fields.OfflineEventContact) {
       event.fields.OfflineEventContactExtra = {
         id: event.fields.OfflineEventContact[0],
-        Name: userMap.get(event.fields.OfflineEventContact[0]),
+        Name: userMap.get(event.fields.OfflineEventContact[0]).Name,
+        WechatUserName: userMap.get(event.fields.OfflineEventContact[0]).WechatUserName
       };
     }
   });
@@ -121,7 +124,7 @@ function createUser(email, name, cb) {
 function updateUser(id, fieldsObj) {
   return new Promise((resolve, reject) => {
     // fields white list
-    const fieldList = ['Name', 'WechatUserName', 'email'];
+    const fieldList = ['Name', 'WechatUserName', 'email', 'Mobile'];
     const userObjToUpdate = {
       id,
       fields: pick(fieldsObj, fieldList),

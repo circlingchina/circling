@@ -35,6 +35,7 @@ function EventsTable(props) {
       eventJson={eventJson}
       onEventChanged={props.onEventChanged}
       userWechatUserName={getAirbaseUserRecord().fields.WechatUserName}
+      mobileNumber={getAirbaseUserRecord().fields.Mobile}
     />
   ));
 
@@ -117,7 +118,8 @@ class EventRow extends React.Component {
     this.state = {
       isLoading: false,
       showOfflineEventModal: false,
-      wechatUserName: props.userWechatUserName,
+      wechatUserName: props.userWechatUserName || '',
+      mobileNumber: props.mobileNumber || '',
       showModalAlert: false,
     };
   }
@@ -143,6 +145,11 @@ class EventRow extends React.Component {
     this.setState({ wechatUserName: event.target.value });  
   }
 
+  handleMobileNumberChange = (e) => {
+    e.preventDefault();
+    this.setState({ mobileNumber: event.target.value });  
+  }
+
   handleJoinOfflineEvent = async() => {
     if (this.state.isLoading) {
       return;
@@ -155,7 +162,7 @@ class EventRow extends React.Component {
     }
 
     if (!isMobilePhone(this.state.wechatUserName, 'any') && 
-        !isWechatHandle(this.state.wechatUserName)) {
+        !isWechatHandle(this.state.wechatUserName) || (!isMobilePhone(this.state.mobileNumber)))  {
       this.setState({ showModalAlert: true });
       return;
     }
@@ -168,8 +175,9 @@ class EventRow extends React.Component {
 
     const fields = user.fields;
     fields.WechatUserName = this.state.wechatUserName;
+    fields.Mobile = this.state.mobileNumber;
 
-    const [_, updatedEvents] = await Promise.all([
+    const [updatedUser, updatedEvents] = await Promise.all([
       AirtableAPI.updateUser(airbaseUserId, fields),
       joinEvent(event, airbaseUserId),
     ]); 
@@ -294,6 +302,8 @@ class EventRow extends React.Component {
           onHide={this.toggleShowOfflineEventModal}
           wechatUserName={this.state.wechatUserName}
           onWechatUserNameChange={this.handleWechatUserNameChange}
+          mobileNumber={this.state.mobileNumber}
+          onMobileNumberChange={this.handleMobileNumberChange}
           onJoinOfflineEvent={this.handleJoinOfflineEvent}
         />
 
