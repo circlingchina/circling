@@ -7,6 +7,7 @@
 // endpoint /api/events/:event_id/join?user_id=user_id
 export const joinEvent = async (event, user_id) => {
   const route = `${process.env.API_HOST}:${process.env.API_PORT}/api/events/${event.id}/join?user_id=${user_id}`;
+  console.info("NODE_ENV", process.env.NODE_ENV);
   return fetch(route).then((res)=> res.json())
     .then((res)=> [res]); // wrap in array to match old client API, should refactor later
 };

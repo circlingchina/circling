@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  client:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.client
+      args:
+        - DOCKER_ENV=development
+    networks:
+      - circling-network
+    ports:
+      - "8080:80"
+
+  server:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.server
+    networks:
+      - circling-network
+    env_file:
+      - server/.env
+    ports:
+      - "4567:4567"
+
+networks:
+  circling-network:
+    driver: bridge
