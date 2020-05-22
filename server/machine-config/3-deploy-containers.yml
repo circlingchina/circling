@@ -5,6 +5,7 @@
   vars:
     gcloud_token_file: ~/.gcr/keyfile.json
     gcloud_token: " {{ lookup('file', gcloud_token_file)}}"
+    image_tag: latest
   tasks:
     - name: log into docker
       docker_login:
@@ -15,7 +16,7 @@
     - name: create circling-server
       docker_container:
         name: circling-server
-        image: gcr.io/circling-deploy/circling-server
+        image: "gcr.io/circling-deploy/circling-server:{{image_tag}}"
         recreate: yes
         ports:
           - "80:4567"

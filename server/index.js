@@ -4,6 +4,7 @@ if(result.error) {
 }
 
 const express = require('express');
+const os = require('os');
 const bodyParser = require('body-parser');
 const airtable = require('../src/airtable/api');
 const cors = require('cors');
@@ -84,7 +85,7 @@ app.get('/api/events/:event_id/unjoin', async (req, res) => {
 });
 
 app.get('/api/healthcheck', async (req, res) => {
-  res.end(JSON.stringify({healthy: true, version: "1.0.0"}));
+  res.end(JSON.stringify({healthy: true, hostname: os.hostname()}));
 });
 
 app.listen(port, () => {
