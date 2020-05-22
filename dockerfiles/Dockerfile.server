@@ -1,6 +1,6 @@
 FROM node:alpine
+RUN apk add --no-cache --virtual .gyp python make g++ 
 
-ENV NODE_ENV=production
 ENV PORT=4567
 
 WORKDIR /app

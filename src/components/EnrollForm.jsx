@@ -63,7 +63,7 @@ export default class EnrollForm extends React.Component {
         // console.log("joined with event", updatedTrailEvent);
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
 

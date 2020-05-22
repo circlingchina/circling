@@ -5,8 +5,8 @@ import Spinner from 'react-bootstrap/Spinner';
 import Popover from 'react-bootstrap/Popover';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
-// import {joinEvent, unjoinEvent} from '../circling-api/index';
-import {joinEvent, unjoinEvent} from '../circling-api/serverless';
+import {joinEvent, unjoinEvent} from '../circling-api/index';
+// import {joinEvent, unjoinEvent} from '../circling-api/serverless';
 import Event from '../models/Event';
 import OfflineEventModal from './OfflineEventsModal';
 

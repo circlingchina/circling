@@ -1,8 +1,27 @@
 import airtable from "./airtable/api";
+import base from "./airtable/base";
 
 /* eslint-disable no-undef */
 function clearUserIdCache() {
   window.localStorage.removeItem('lastUserId');
+}
+
+function getAirbaseUid(user) {
+  if (!user) {
+    return;
+  }
+  base.Users.select({
+    maxRecords: 1,
+    filterByFormula: '{email} = "' + user.email + '"'
+  }).eachPage((records) => {
+    // This function (`page`) will get called for each page of records.
+    records.forEach((record) => {
+      window.airbaseUserId = record.id;
+      window.airbaseUserRecord = record;
+      window.localStorage.setItem('airbaseUserId', record.id);
+      window.localStorage.setItem('airbaseUserRecord', record);
+    });
+  });
 }
 
 function attachIdentityListern() {
@@ -10,6 +29,7 @@ function attachIdentityListern() {
   
   netlifyIdentity.on('init', (user) => {
     updateNav(user);
+    getAirbaseUid(user);
   });
 
   netlifyIdentity.on('login', async (user) => {

@@ -1,0 +1,18 @@
+FROM node
+
+WORKDIR /builder
+COPY package*.json /builder/
+RUN npm install
+
+COPY . /builder/
+
+ARG DOCKER_ENV
+ENV NODE_ENV=${DOCKER_ENV}
+
+RUN npm run build
+
+# mutli-stage
+
+FROM nginx:alpine
+WORKDIR /usr/share/nginx/html
+COPY --from=0 /builder/_site .

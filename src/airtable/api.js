@@ -118,7 +118,7 @@ function createUser(email, name, cb) {
 function updateUser(id, fieldsObj) {
   return new Promise((resolve, reject) => {
     // fields white list
-    const fieldList = ['Name', 'WechatUserName', 'email'];
+    const fieldList = ['Name', 'WechatUserName', 'email', 'sentFirstEventEmail'];
     const userObjToUpdate = {
       id,
       fields: pick(fieldsObj, fieldList),

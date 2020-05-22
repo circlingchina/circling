@@ -5,10 +5,6 @@ import UpcomingEvent from "./components/UpcomingEvent";
 import AirtableApi from "./airtable/api";
 
 
-
-function getAirbaseUserId() {
-  return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
-}
 // TODO (Yiliang): move components to separate files
 
 function EventRegion() {
@@ -46,7 +42,7 @@ function EventRegion() {
       setUserId(user.user_metadata.airtable_id);
     } else {
       // back-compat: grab from airtable
-      const records = await AirtableApi.getAirtableUser(user.email);
+      const records = await AirtableApi.getUserByEmail(user.email);
       if(records.length > 0) {
         setUserId(records[0].id);
       }
@@ -83,3 +79,5 @@ function EventRegion() {
     </>
   );
 }
+
+ReactDOM.render(<EventRegion />, document.getElementById("event-region"));

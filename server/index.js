@@ -1,6 +1,6 @@
 const result =require('dotenv').config();
 if(result.error) {
-  throw result.error
+  throw result.error;
 }
 
 const express = require('express');
@@ -53,9 +53,10 @@ app.get('/api/events/:event_id/join', async (req, res) => {
       return {sentMessageId, sentFirstEventEmail: user.fields.sentFirstEventEmail+1};
     })
     // Step 5: update the user.sentFirstEventEmail state
-    .then(({sentEmail, sentFirstEventEmail}) => {
-      if(sentEmail) {
-        return airtable.updateUser(user_id, {sentFirstEventEmail});
+    .then(({sentMessageId, sentFirstEventEmail}) => {
+      if(sentMessageId) {
+        const awsRet = airtable.updateUser(user_id, {sentFirstEventEmail});
+        return awsRet;
       }
     })
     .catch((error) => {
