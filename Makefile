@@ -12,9 +12,10 @@ build_server:
 	@docker build -t $(FULL_TAG) -f $(SERVER_DOCKERFILE) .
 	@docker tag ${FULL_TAG} ${LATEST_TAG}
 
-push:
+push: build_server
 	@echo pushing to $(REGISTRY)
 	@docker push $(NAME)
 
 deploy: push
+	@echo deploying on remote servers
 	@ansible-playbook server/machine-config/3-deploy-containers.yml --extra-vars "image_tag=$(COMMIT)"
