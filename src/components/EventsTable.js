@@ -130,14 +130,18 @@ class EventRow extends React.Component {
     const event = new Event(this.props.eventJson);
     
     if (event.isOfflineEvent()) {
-      return this.toggleShowOfflineEventModal();
+      return this.showOfflineEventModal();
     } 
 
     return this.handleJoinEvent();
   };
 
-  toggleShowOfflineEventModal = () => {
-    this.setState({showOfflineEventModal: !this.state.showOfflineEventModal, showModalAlert: false});
+  dismissOfflineEventModal = () => {
+    this.setState({showOfflineEventModal: false, showModalAlert: false});
+  };
+
+  showOfflineEventModal = () => {
+    this.setState({showOfflineEventModal: true});
   };
 
   handleWechatUserNameChange = (e) => {
@@ -252,7 +256,9 @@ class EventRow extends React.Component {
     let cancelButton;
     const event = new Event(this.props.eventJson);
 
-    if (!event.containsUser(getAirbaseUserId())) {
+    const joined = event.containsUser(getAirbaseUserId());
+
+    if (!joined) {
       if (event.isFull()) {
         joinButton = (
           <span className="join-button cancel w-button">报名已满</span>
@@ -269,10 +275,11 @@ class EventRow extends React.Component {
         }
       }
     } else {
-      joinButton = event.isOfflineEvent() ? null : (
+      joinButton = event.isOfflineEvent() ? (
+        <span className="join-button w-button" onClick={this.showOfflineEventModal}>活动详情</span>
+      ) : (
         <span className="join-button w-button"
           onClick={(e) => this.handleOpenMeetingRoom(this.props.eventJson.fields.EventLink, e)}>
-
         进入房间</span>
       );
 
@@ -299,12 +306,13 @@ class EventRow extends React.Component {
           eventJson={event.toJSON()} 
           show={this.state.showOfflineEventModal}
           showAlert={this.state.showModalAlert}
-          onHide={this.toggleShowOfflineEventModal}
+          onHide={this.dismissOfflineEventModal}
           wechatUserName={this.state.wechatUserName}
           onWechatUserNameChange={this.handleWechatUserNameChange}
           mobileNumber={this.state.mobileNumber}
           onMobileNumberChange={this.handleMobileNumberChange}
           onJoinOfflineEvent={this.handleJoinOfflineEvent}
+          joined={joined}
         />
 
         <div className="schedule-columns w-row">

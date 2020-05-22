@@ -71,6 +71,7 @@ function EventRegion() {
           <div className="sub-text red">
             本周会员Circling
             <br />
+            (此处时间是您的当地时间)
           </div>
           <EventsTable events={events} onEventChanged={updateEvents} />
         </div>

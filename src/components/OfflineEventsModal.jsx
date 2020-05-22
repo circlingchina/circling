@@ -17,33 +17,25 @@ export default function OfflineEventsModal(props) {
     contactWechatUserName = props.eventJson.fields.OfflineEventContactExtra.WechatUserName;
   }
 
-  const offlineEventAddress = props.eventJson.fields.OfflineEventAddress;
+  // const offlineEventAddress = props.eventJson.fields.OfflineEventAddress;
   const offlientEventExtraInfo = props.eventJson.fields.OfflineEventExtra;
 
   const alert = props.showAlert ? 
     (<Alert variant='danger'>微信号或手机号格式不正确</Alert>) : null;
 
-  return (
-    <Modal
-      show={props.show}
-      onHide={props.onHide}
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-    >
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          {eventName} 
-        </Modal.Title>
-      </Modal.Header>
-     
-      <Modal.Body>
-        <p>
-          在报名参加线下活动之前，<br />
-          请确认你的微信号或手机号，这样{contactName}就可以联系到你啦。 <br /><br />
-          {contactName}的微信号：{contactWechatUserName} <br /><br />
-          {offlientEventExtraInfo} <br />
-        </p>
-        <br/>
+  let userInfoSection;
+  if (props.joined) {
+    userInfoSection = (
+      <p>
+        我的报名的联络方式：<br />
+      微信号: {props.wechatUserName}
+        <br />
+      手机号: {props.mobileNumber}
+      </p>
+    );
+  } else {
+    userInfoSection = (
+      <>
         <InputGroup size="sm" className="mb-3">
           <InputGroup.Prepend>
             <InputGroup.Text>我的微信号是</InputGroup.Text>
@@ -69,11 +61,38 @@ export default function OfflineEventsModal(props) {
         </InputGroup>
 
         { alert }
-          
+      </>
+    );
+  }
+
+  return (
+    <Modal
+      show={props.show}
+      onHide={props.onHide}
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {eventName} 
+        </Modal.Title>
+      </Modal.Header>
+     
+      <Modal.Body>
+        <p>
+          在报名参加线下活动之前，<br />
+          请确认你的微信号或手机号，这样{contactName}就可以联系到你啦。 <br /><br />
+          {contactName}的微信号：{contactWechatUserName} <br /><br />
+          {offlientEventExtraInfo} <br />
+        </p>
+        <br/>
+        {userInfoSection}
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="danger" onClick={props.onJoinOfflineEvent}>参加</Button>
-      </Modal.Footer>
+      {!props.joined && 
+        <Modal.Footer>
+          <Button variant="danger" onClick={props.onJoinOfflineEvent}>参加</Button>
+        </Modal.Footer>
+      }
     </Modal>
   );
 }
