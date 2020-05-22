@@ -1,0 +1,4 @@
+roles:
+  # Install https://github.com/nickjj/ansible-docker
+  - name: nickjj.docker
+  - name: gantsign.oh-my-zsh

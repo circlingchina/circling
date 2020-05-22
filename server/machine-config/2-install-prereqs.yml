@@ -1,0 +1,21 @@
+# Install necessary tools for setting up a circling web server 
+# The main items are docker and pre-requisits
+- hosts: circling-web
+  remote_user: deployer
+  become: yes
+  vars:
+    docker__users: ["deployer"]
+    users:
+      - username: deployer
+  roles:
+    - role: "nickjj.docker"
+    - role: "gantsign.oh-my-zsh"
+  tasks:
+    - name: docker pre-req pip
+      apt:
+        state: latest
+        name: python-pip
+    - name: docker pre-req python library
+      pip:
+        name:
+          - docker

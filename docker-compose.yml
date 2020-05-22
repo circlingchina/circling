@@ -1,11 +1,12 @@
 version: "3.8"
 services:
-  client:
+  web:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.client
       args:
         - DOCKER_ENV=development
+    image: gcr.io/circling-deploy/circling-web
     networks:
       - circling-network
     ports:
@@ -15,6 +16,7 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.server
+    image: gcr.io/circling-deploy/circling-server
     networks:
       - circling-network
     env_file:

@@ -1,0 +1,38 @@
+# Initialize new debian VM with deployer account, ssh key, and firewall
+# specify 'user_pass' in commandline as --extra-vars user_pass=
+- hosts: circling-web
+  remote_user: root
+  vars:
+    user_name: deployer
+  gather_facts: yes
+  become: yes
+
+  tasks:
+    - name: Add the user '{{ user_name }}'
+      user:
+        name: "{{ user_name }}"
+        groups:
+          - sudo
+        password: "{{ user_pass | password_hash('sha512')}}"
+        update_password: on_create
+      when: user_pass is defined
+    - name: Add authorized key
+      authorized_key:
+        user: "{{ user_name }}"
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub')}}"
+    - name: Allow ssh
+      ufw:
+        rule: allow
+        name: OpenSSH
+    - name: Allow http
+      ufw:
+        rule: allow
+        port: "80"
+    - ufw:
+        state: enabled
+        rule: allow
+        port: "443"
+    # run apt-update once
+    - name: run apt-update once
+      apt:
+        update_cache: yes
