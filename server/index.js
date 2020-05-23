@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 //TODO - restrict origin to a few servers
 app.use(cors());
 
-const port = process.env.API_PORT || 3000;
+const port = process.env.API_PORT || 4567;
 
 app.get('/api/events/:event_id/join', async (req, res) => {
   const event_id = req.params.event_id;
