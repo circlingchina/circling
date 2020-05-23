@@ -84,7 +84,11 @@ app.get('/api/events/:event_id/unjoin', async (req, res) => {
 });
 
 app.get('/api/healthcheck', async (req, res) => {
-  res.end(JSON.stringify({healthy: true, hostname: req.headers.host}));
+  res.end(JSON.stringify({
+    healthy: true,
+    hostname: req.headers.host,
+    env: `base:${process.env.SERVER_ENV}`
+  }));
 });
 
 app.listen(port, () => {

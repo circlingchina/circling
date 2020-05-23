@@ -5,6 +5,7 @@
   vars:
     gcloud_token_file: ~/.gcr/keyfile.json
     gcloud_token: " {{ lookup('file', gcloud_token_file)}}"
+    production_env_file: /home/deployer/.env
     image_tag: latest
   tasks:
     - name: log into docker
@@ -20,4 +21,4 @@
         recreate: yes
         ports:
           - "80:4567"
-        
+        env_file: "{{ production_env_file }}"

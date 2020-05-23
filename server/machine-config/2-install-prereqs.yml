@@ -1,12 +1,14 @@
 # Install necessary tools for setting up a circling web server 
 # The main items are docker and pre-requisits
 - hosts: circling-web
-  remote_user: deployer
   become: yes
   vars:
-    docker__users: ["deployer"]
+    username: deployer
+    docker__users: ["{{username}}"]
+    production_env_file: ~/.gcr/production.env
     users:
-      - username: deployer
+      - username: "{{ username }}"
+  remote_user: "{{ username }}"
   roles:
     - role: "nickjj.docker"
     - role: "gantsign.oh-my-zsh"
@@ -19,3 +21,9 @@
       pip:
         name:
           - docker
+    - name: copy over production environment
+      copy:
+        src: "{{ production_env_file }}"
+        dest: /home/{{ username }}/.env
+        owner: "{{ username }}"
+        group: "{{ username }}"
