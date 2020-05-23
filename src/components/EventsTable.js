@@ -36,6 +36,7 @@ function EventsTable(props) {
       onEventChanged={props.onEventChanged}
       userId={props.userId}
       userWechatUserName={getAirbaseUserRecord().fields.WechatUserName}
+      mobileNumber={getAirbaseUserRecord().fields.Mobile}
     />
   ));
 
@@ -118,7 +119,8 @@ class EventRow extends React.Component {
     this.state = {
       isLoading: false,
       showOfflineEventModal: false,
-      wechatUserName: props.userWechatUserName,
+      wechatUserName: props.userWechatUserName || '',
+      mobileNumber: props.mobileNumber || '',
       showModalAlert: false,
     };
   }
@@ -129,19 +131,28 @@ class EventRow extends React.Component {
     const event = new Event(this.props.eventJson);
     
     if (event.isOfflineEvent()) {
-      return this.toggleShowOfflineEventModal();
+      return this.showOfflineEventModal();
     } 
 
     return this.handleJoinEvent();
   };
 
-  toggleShowOfflineEventModal = () => {
-    this.setState({showOfflineEventModal: !this.state.showOfflineEventModal, showModalAlert: false});
+  dismissOfflineEventModal = () => {
+    this.setState({showOfflineEventModal: false, showModalAlert: false});
+  };
+
+  showOfflineEventModal = () => {
+    this.setState({showOfflineEventModal: true});
   };
 
   handleWechatUserNameChange = (e) => {
     e.preventDefault();
     this.setState({ wechatUserName: event.target.value });  
+  }
+
+  handleMobileNumberChange = (e) => {
+    e.preventDefault();
+    this.setState({ mobileNumber: event.target.value });  
   }
 
   handleJoinOfflineEvent = async() => {
@@ -156,7 +167,7 @@ class EventRow extends React.Component {
     }
 
     if (!isMobilePhone(this.state.wechatUserName, 'any') && 
-        !isWechatHandle(this.state.wechatUserName)) {
+        !isWechatHandle(this.state.wechatUserName) || (!isMobilePhone(this.state.mobileNumber)))  {
       this.setState({ showModalAlert: true });
       return;
     }
@@ -169,8 +180,9 @@ class EventRow extends React.Component {
 
     const fields = user.fields;
     fields.WechatUserName = this.state.wechatUserName;
+    fields.Mobile = this.state.mobileNumber;
 
-    const [_, updatedEvents] = await Promise.all([
+    const [updatedUser, updatedEvents] = await Promise.all([
       AirtableAPI.updateUser(airbaseUserId, fields),
       joinEvent(event, airbaseUserId),
     ]); 
@@ -243,7 +255,9 @@ class EventRow extends React.Component {
     let cancelButton;
     const event = new Event(this.props.eventJson);
 
-    if (!event.containsUser(this.props.userId)) {
+    const joined = event.containsUser(getAirbaseUserId());
+
+    if (!joined) {
       if (event.isFull()) {
         joinButton = (
           <span className="join-button cancel w-button">报名已满</span>
@@ -260,10 +274,11 @@ class EventRow extends React.Component {
         }
       }
     } else {
-      joinButton = event.isOfflineEvent() ? null : (
+      joinButton = event.isOfflineEvent() ? (
+        <span className="join-button w-button" onClick={this.showOfflineEventModal}>活动详情</span>
+      ) : (
         <span className="join-button w-button"
           onClick={(e) => this.handleOpenMeetingRoom(this.props.eventJson.fields.EventLink, e)}>
-
         进入房间</span>
       );
 
@@ -290,10 +305,13 @@ class EventRow extends React.Component {
           eventJson={event.toJSON()} 
           show={this.state.showOfflineEventModal}
           showAlert={this.state.showModalAlert}
-          onHide={this.toggleShowOfflineEventModal}
+          onHide={this.dismissOfflineEventModal}
           wechatUserName={this.state.wechatUserName}
           onWechatUserNameChange={this.handleWechatUserNameChange}
+          mobileNumber={this.state.mobileNumber}
+          onMobileNumberChange={this.handleMobileNumberChange}
           onJoinOfflineEvent={this.handleJoinOfflineEvent}
+          joined={joined}
         />
 
         <div className="schedule-columns w-row">
