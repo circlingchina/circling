@@ -66,9 +66,9 @@ The server and client can both utilize modules in the /lib folder. So in theory,
 - ssh access to production servers (i.e put your id_rsa.pub in authorized_keys file)
 - access to circling private repository (acquire a keyfile.json)
 
-## Making Changes
+## Overview
 
-The currently deployment flow is git commit-based (in anticipation of setting up CI/CD later)
+The currently deployment flow is based on docker images with git commits as tags. Although is in anticipation of setting up CI/CD, the images are meant to be built **locally** at this point in time.
 
 For example, let's make a trivia change in [server/index.js]:
 
@@ -81,7 +81,7 @@ git add server/index.js
 git commit -m "incrementing the server version"
 ```
 
-## Building Images Locally
+## Building Images
 
 In the root directory of the project:
 
@@ -99,9 +99,9 @@ docker images
 
 ![make build result](docs/images/make-build-result.png)
 
-## Pushing Builds to Container Repository
+## Pushing to Container Repository
 
-To push builds to gcr(google container repository), you must first login:
+The circling project uses a private container registry (gcr.io). To push and pull you must login once:
 
 ```
 mkdir ~/.gcr
@@ -111,9 +111,9 @@ cat ~/.gcr/keyfile.json | docker login -u _json_key --password-stdin https://gcr
 
 ![docker login](docs/images/docker-login.png)
 
-You only have to login once. For more info see: https://cloud.google.com/container-registry/docs/advanced-authentication#json-key
+For more info see: https://cloud.google.com/container-registry/docs/advanced-authentication#json-key
 
-Once logged in, you can push builds with:
+Once logged in, push builds with:
 
 ```sh
 make push
@@ -123,7 +123,8 @@ make push
 
 ## Deploying Builds
 
-To deploy builds, you need to add machines to ansible hosts(/etc/ansible/hosts on linux):
+To deploy builds, you need to add the following lines to your ansible hosts file:
+
 
 ```sh
 [circling]
@@ -131,7 +132,7 @@ To deploy builds, you need to add machines to ansible hosts(/etc/ansible/hosts o
 138.68.62.169 ansible_user=deployer
 ```
 
-If you can't find or need to customize location of the hosts file, see: https://stackoverflow.com/a/21959961
+Note: The hosts file is located in ```/etc/ansible/hosts``` on linux. If you can't find or need to customize location of the hosts file, see: https://stackoverflow.com/a/21959961
 
 Test your setup by pinging the remote machines:
 
@@ -147,25 +148,27 @@ If the ping works, everything should be properly configured. Deploy via:
 make deploy
 ```
 
-Ansible should deploy the correct image
+Ansible should deploy the correct image:
 
 ![make deploy](docs/images/make-deploy.png)
 
-The change should be live in [the production server](https://api.circlingchina.org/api/healthcheck):
+Verify that the changes are live by visiting https://api.circlingchina.org/api/healthcheck in your browser:
 
 ![live change](docs/images/live-change.png)
 
-## Typical Usage
+## Day to Day Usage
 
-The first time setup is a bit lengthy. But once you get past setting up, you should be able to deploy with:
+The first time setup is a bit lengthy. But once you are set up, simply deploy with:
 
 ```
 make 
 ```
 
-The default make target should bea ble to build, push, and deploy.
+The default make target will build, push, and deploy.
 
-To rollback, you can specify a specific commit hash as a previous image tag. For example
+## Rolling Back
+
+To rollback, specify a specific commit hash with a corresponding image. For example
 
 ```
 make deploy 86d80cb
