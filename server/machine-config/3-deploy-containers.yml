@@ -1,5 +1,5 @@
 # Deploy circling server by pulling an image
-- hosts: circling-web
+- hosts: circling_web
   remote_user: deployer
   gather_facts: yes
   vars:
