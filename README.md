@@ -56,7 +56,7 @@ cp .env.sample .env
 
 The server and client can both utilize modules in the /lib folder. So in theory, we should keep code in the lib folder isomorphic(able to run on both brower and node environment).
 
-# Building and Deploying circling-server
+# Deploying Instructions for circling-server
 
 ## Prerequisits for deploying to production:
 
@@ -154,3 +154,47 @@ Ansible should deploy the correct image
 The change should be live in [the production server](https://api.circlingchina.org/api/healthcheck):
 
 ![live change](docs/images/live-change.png)
+
+## Typical Usage
+
+The first time setup is a bit lengthy. But once you get past setting up, you should be able to deploy with:
+
+```
+make 
+```
+
+The default make target should bea ble to build, push, and deploy.
+
+To rollback, you can specify a specific commit hash as a previous image tag. For example
+
+```
+make deploy 86d80cb
+```
+
+will deploy the image with the tag `86d80cb`
+
+# Provisioning Instructions for circling-server
+
+Since the circling project doesn't have a full time devop team, its best to:
+1) keep the servers stateless
+2) automatically provision a new set of servers on-demand
+
+## Prerequisits for provisioning new web servers:
+
+- install Terraform
+- install Ansible: https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
+- configure access to cloud provider (scripts provided for aws/aliyun/digital-ocean)
+
+## Overview
+- Credential setup
+- provision machines
+- Configure machines
+  - install docker
+  - install nginx
+  - acquire deployment credentials
+  - setup production environment variables
+  - firewall
+  - SSL
+  - load balancer
+
+
