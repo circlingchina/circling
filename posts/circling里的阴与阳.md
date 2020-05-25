@@ -8,7 +8,6 @@ img: /images/uploads/b9b5a21393e758fe4371b226298a91fa.jpg
 tags:
   - post
 ---
-\
 和绝大多数事物一样，Circling作为真实的人际关系场，也兼容着阴与阳两种特质。
 
 \
