@@ -8,7 +8,7 @@ img: /images/uploads/d0c5c42581517bf7a5af5e52f6d1d511.jpg
 tags:
   - post
 ---
-参考书目  Bryan Bayer - The Art of Circling
+
 
 和绝大多数事物一样，Circling作为真实的人际关系场，也兼容着阴与阳两种特质。
 
