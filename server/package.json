@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +23,9 @@
     "pug": "^2.0.4"
   },
   "devDependencies": {
-    "nodemon": "^2.0.3"
+    "jest": "^26.0.1",
+    "nodemon": "^2.0.3",
+    "superagent": "^5.2.2",
+    "supertest": "^4.0.2"
   }
 }
