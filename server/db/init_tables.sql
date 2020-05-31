@@ -15,13 +15,13 @@ CREATE TYPE event_category AS ENUM (
 
 CREATE TABLE events (
 	id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name varchar,
-	max_attendees		int,
-	category	event_category,
-	host varchar,
-  event_link text,
-  start_time timestamp,
-  fields JSONB
+  name varchar NOT NULL,
+	max_attendees		int DEFAULT 1 NOT NULL,
+	category	event_category NOT NULL DEFAULT '线上Circling',
+	host varchar NOT NULL,
+  event_link text NOT NULL DEFAULT '',
+  start_time timestamp NOT NULL,
+  fields JSONB NOT NULL DEFAULT '{}':: jsonb
 );
 
 CREATE TABLE users (
