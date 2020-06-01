@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
+    "dev": "NODE_ENV=development nodemon index.js",
     "start": "node index.js",
-    "test": "jest"
+    "test": "DEBUG=test jest"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +23,7 @@
     "pug": "^2.0.4"
   },
   "devDependencies": {
+    "debug": "^4.1.1",
     "jest": "^26.0.1",
     "nodemon": "^2.0.3",
     "superagent": "^5.2.2",

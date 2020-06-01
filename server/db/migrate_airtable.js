@@ -63,7 +63,7 @@ async function joinEvent(user_uuid, event_uuid) {
 
 async function loadEvents() {
   const records = await base('OpenEvents')
-    .select({ maxRecords: LIMIT, filterByFormula: "Category='线下活动'" }).all();
+    .select({ maxRecords: LIMIT }).all();
   
   try {
     for (const record of records) {

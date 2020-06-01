@@ -1,5 +1,5 @@
-const events = require ('./events');
+const mountEvents = require ('./events');
 
 module.exports = (app) => {
-  app.use('/events', events);
+  mountEvents(app);
 };
