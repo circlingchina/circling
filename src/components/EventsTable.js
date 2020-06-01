@@ -24,6 +24,7 @@ function getAirbaseUserRecord() {
 }
 
 function EventsTable(props) {
+  console.log("table events", props.events[0]);
   const futureEvents = props.events.filter((eventJson) => {
     const event = new Event(eventJson);
     return event.startingStatus() != Event.Status.FINISHED;
@@ -35,10 +36,12 @@ function EventsTable(props) {
       eventJson={eventJson}
       onEventChanged={props.onEventChanged}
       userId={props.userId}
-      userWechatUserName={getAirbaseUserRecord().fields.WechatUserName}
-      mobileNumber={getAirbaseUserRecord().fields.Mobile}
+      // userWechatUserName={getAirbaseUserRecord().fields.WechatUserName}
+      // mobileNumber={getAirbaseUserRecord().fields.Mobile}
     />
   ));
+
+  console.log("rows", eventRows.length);
 
   return (
     <div className="div-block-11">
@@ -67,11 +70,11 @@ function TableHeader() {
 function JoinerCountCell(props) {
   const spanEl = (
     <span className={classNames({underline: !props.event.isEmpty()})}>
-      {props.event.getUsers().length}/{props.event.toJSON().fields.MaxAttendees}
+      {props.event.getUsers().length}/{props.event.toJSON().max_attendees}
     </span>
   );
 
-  let joinedUsers = props.event.toJSON().fields.UsersExtra;
+  let joinedUsers = props.event.users();
 
   let needEllipses = false;
   if (joinedUsers.length > props.displayLength) {
@@ -320,11 +323,11 @@ class EventRow extends React.Component {
               <div>{event.startTimeDisplay()}</div>
             </div>
             <div className="w-col w-col-3 w-col-medium-3">
-              {this.props.eventJson.fields.Name}
+              {this.props.eventJson.name}
             </div>
             <div className="w-col w-col-3 w-col-medium-3">
-              <a href={"/pages/leaders/#" + this.props.eventJson.fields.Host}
-                className="join-button host">{this.props.eventJson.fields.Host}
+              <a href={"/pages/leaders/#" + this.props.eventJson.host}
+                className="join-button host">{this.props.eventJson.host}
               </a>
             </div>
             <JoinerCountCell event={event} displayLength={10} />

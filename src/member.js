@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import EventsTable from "./components/EventsTable";
 import UpcomingEvent from "./components/UpcomingEvent";
+import api from "./circling-api";
 import AirtableApi from "./airtable/api";
 
 
@@ -14,7 +15,9 @@ function EventRegion() {
   useEffect(() => {
     async function refreshEvents() {
       try {
-        const allEvents = await AirtableApi.getAllEventsWithUsers();
+        // const allEvents = await AirtableApi.getAllEventsWithUsers();
+        const allEvents = await api.getEvents();
+        console.log("allEvents",allEvents[0].toString());
         setEvents(allEvents);
       } catch (err) {
         console.error(err);
@@ -23,8 +26,8 @@ function EventRegion() {
     refreshEvents();
 
     // Polling for latest states
-    const interval = setInterval(async() => await refreshEvents(), 10000);
-    return (() => clearInterval(interval));
+    // const interval = setInterval(async() => await refreshEvents(), 10000);
+    // return (() => clearInterval(interval));
   }, []);
   
   const updateEvents = (changedEvent) => {

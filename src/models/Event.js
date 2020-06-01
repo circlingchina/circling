@@ -1,20 +1,15 @@
 /**
  * A wrapper class around the event json object returned from the airtabel API.
  * Example JSON:
- *  {
-      "id": "recKj8lRP6ZSOBfvl",
-      "fields": {
-        "Name": "Circling 周二会员活动",
-        "Time": "2020-05-28T13:00:00.000Z",
-        "MaxAttendees": 7,
-        "Category": "每日Circling",
-        "Host": "Mint (DEV)",
-        "Users": [
-          "recIdsEqRLNV52zPC"
-        ],
-        "EventLink": "https://zhumu.me/j/1516471967"
-      }
+ 
+    {
+      "id": "dd11034a-9e89-4e83-8434-a5df05ddfd92",
+      "name": "杭州线下活动",
+      "max_attendees": 11,
+      "category": "线下活动",
+      "host": "Jess"
     }
+
  */
 
 import readableTimeString from "../utils/readableTimeString";
@@ -24,14 +19,11 @@ export default class Event {
     if(!('id' in rawJson)) {
       throw new Error("event must have id");
     }
-    if(!('fields' in rawJson)) {
-      throw new Error("event must have fields");
-    }
     this.rawJson = rawJson;
   }
 
   isFull() {
-    return this.getUsers().length >= this.rawJson.fields.MaxAttendees;
+    return this.getUsers().length >= this.rawJson.max_attendees;
   }
 
   isEmpty() {
@@ -40,7 +32,7 @@ export default class Event {
 
   //the field may not exist, return empty array instead of null
   getUsers() {
-    return this.rawJson.fields.Users || [];
+    return this.rawJson.users || [];
   }
 
   containsUser(userId) {
@@ -48,15 +40,15 @@ export default class Event {
   }
 
   startTimeDisplay() {
-    return readableTimeString(this.rawJson.fields.Time);
+    return readableTimeString(this.rawJson.start_time);
   }
 
   isOfflineEvent() {
-    return this.toJSON().fields.Category === '线下活动';
+    return this.toJSON().category === '线下活动';
   }
 
   startingStatus() {
-    const msDiff = new Date(this.rawJson.fields.Time) - new Date();
+    const msDiff = new Date(this.rawJson.start_time) - new Date();
     const minutesUntil = msDiff / 1000 / 60;
 
     if(minutesUntil > 2 * 60) {
@@ -70,7 +62,15 @@ export default class Event {
     }
     return Event.Status.FINISHED;
   }
+  
+  users() {
+    return []; // TODO - return users from db 
+  }
 
+  maxAttendees() {
+    return this.rawJson.max_attendees;
+  }
+  
   toJSON() {
     return this.rawJson;
   }
