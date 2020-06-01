@@ -2,11 +2,11 @@ const Event = require("./Event");
 const db = require("../db");
 const debug = require("debug")("test");
 
-async function createTestEvent(name="Test Event") {
+async function createTestEvent(name="Test Event", start_time = new Date()) {
   return db("events").returning('id').insert({
     name: name, 
     host: "tester",
-    start_time: new Date(),
+    start_time,
   }).then(ids=>ids[0]);
 }
 
@@ -16,6 +16,25 @@ async function createTestUser(name="Alice") {
     email: `${name}@test.com`
   }).then(ids=>ids[0]);
 }
+
+test("get all events", async () => {
+  const past = new Date(new Date().getTime() - 60 * 60 * 1000);
+  const eventId = await createTestEvent("Test Event 1", past);
+  const future = new Date(new Date().getTime() + 60 * 60 * 1000);
+  const eventId2 = await createTestEvent("Test Event 2", future);
+  const allEvents = await Event.all();
+  expect(allEvents.map(e => e.id)).toEqual([eventId, eventId2]);
+});
+
+test("get upcoming events", async () => {
+  const past = new Date(new Date().getTime() - 60 * 60 * 1000);
+  await createTestEvent("Test Event 1", past);
+  const future = new Date(new Date().getTime() + 60 * 60 * 1000);
+  const futureEventId = await createTestEvent("Test Event 2", future);
+  const upcomingEvents = await Event.upcoming();
+  expect(upcomingEvents.map(e => e.id)).toEqual([futureEventId]);
+
+});
 
 test("finding an event", async () => {
   const eventId = await createTestEvent("Test Event 1");

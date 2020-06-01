@@ -1,6 +1,14 @@
 const debug = require("debug")("test");
 const db = require("../db");
 
+async function all() {
+  return db.select().from("events");
+}
+
+async function upcoming() {
+  //.where('createdAt', '>=', '2009-01-01T00:00:00Z')
+  return db.select().from("events").where('start_time', '>=', new Date());
+}
 async function join(event_id, user_id) {
   const insertQuery = db("user_event").insert({
     user_id,
@@ -34,6 +42,8 @@ async function attendees(event_id) {
 }
 
 module.exports = {
+  all,
+  upcoming,
   join,
   unjoin,
   find,
