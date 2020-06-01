@@ -26,7 +26,6 @@ test("finding an event", async () => {
 test("finding an non-existing event should return null", async () => {
   const guid = await createTestUser("just-an-guid");
   const event = await Event.find(guid);
-  debug({event});
   expect(event).toBe(null);
 });
 
@@ -45,6 +44,18 @@ test("joining an event twice does not error", async ()=> {
   expect(result1.rowCount).toBe(1);
   const result2 = await Event.join(eventId, userId);
   expect(result2.rowCount).toBe(0);
+
+});
+
+test("event unjoin removes user", async ()=> {
+  const eventId = await createTestEvent();
+  const userId = await createTestUser();
+  await Event.join(eventId, userId);
+
+  const result = await Event.unjoin(eventId, userId);
+  expect(result).toBe(1);
+  const result2 = await Event.unjoin(eventId, userId);
+  expect(result2).toBe(0);
 
 });
 
