@@ -1,16 +1,9 @@
-const debug = require("debug")("test");
-const db = require("../db");
-
+const Event = require('../models/Event');
 const all = async (req, res) => {
-  const events = await db('events').limit(5);
+  const events = await Event.upcoming();
   for (const event of events) {
-    debug("event.id", event.id);
-    const users = await db('user_event')
-      .leftJoin('users', 'users.id', '=', 'user_event.user_id').where({
-        event_id: event.id
-      });
-    debug("users", users);
-    Object.assign(event, {users: users});
+    const attendees = await Event.attendees(event.id);
+    Object.assign(event, {attendees});
   }
   res
     .type('json')
@@ -20,10 +13,7 @@ const all = async (req, res) => {
 const join = async (req, res) => {
   const user_id = req.query.userId;
   const event_id = req.params.id;
-  const insertRes = await db("user_event").insert({
-    user_id,
-    event_id
-  });
+  const insertRes = await Event.join(event_id, user_id);
 
   res
     .status(200)

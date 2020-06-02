@@ -2,14 +2,12 @@ const app = require('./app');
 const request = require('supertest');
 const db = require("./db");
 const debug = require('debug')('test');
+const testUtils = require("./testUtils");
+const Event = require('./models/Event');
 
-test("/events should return list of events", async (done)=> {
-  const eventName = "Test Event 1";
-  await db("events").insert({
-    name: eventName, 
-    host: "tester",
-    start_time: new Date(),
-  });
+test("/events should return list of upcoming events", async (done)=> {
+  await testUtils.createPastEvent();
+  const futureEventId = await testUtils.createUpcomingEvent();
 
   request(app)
     .get("/events")
@@ -19,66 +17,47 @@ test("/events should return list of events", async (done)=> {
       expect(res.body).toMatchObject({events: expect.any(Array)});
       const events = res.body.events;
       expect(events).toHaveLength(1);
-      expect(events[0].name).toBe(eventName);
-      debug("returns events", events[0]);
+      expect(events[0].id).toBe(futureEventId);
     })
     .expect(200, done);
 
 });
 
-test.only("/events/:id/join should let user join event", async ()=> {
-  const eventName = "Test Event 1";
-  const eventIds = await db("events").returning('id').insert({
-    name: eventName, 
-    host: "tester",
-    start_time: new Date(),
-  });
+test("/events/:id/join should let user join event", async ()=> {
+  const eventId = await testUtils.createUpcomingEvent();
+  const userId = await testUtils.createTestUser();
 
-  const userIds = await db("users").returning('id').insert({
-    name: "John",
-    email: "join@test.com"
-  });
-
-  const route = `/events/${eventIds[0]}/join?userId=${userIds[0]}`;
+  const route = `/events/${eventId}/join?userId=${userId}`;
   debug(`GET ${route}`);
 
   await request(app)
     .get(route)
-    // .set('Accept', 'application/json')
+    .set('Accept', 'application/json')
     .expect((res) => {
-      debug("BODY", res.body);
-      // expect(res.body).toMatchObject({events: expect.any(Array)});
-      // const events = res.body.events;
-      // expect(events).toHaveLength(1);
-      // expect(events[0].name).toBe(eventName);
-      // done();
+      expect(res.body.event_id).toBe(eventId);
     })
     .expect(200);
-
-  const joinTable = await db("user_event").limit(5);
-  debug("joinTable", joinTable);
-  const result = await request(app).get('/events');
-  debug("resulting event", result.body.events.users);
+  
+  const users = await Event.attendees(eventId);
+  expect(users.map(u=>u.id)).toEqual([userId]);
 });
 
 
-test("/events should return list of events", async (done)=> {
-  const eventName = "Test Event 1";
-  await db("events").insert({
-    name: eventName, 
-    host: "tester",
-    start_time: new Date(),
-  });
+test("/events result should contain list of attendees", async (done)=> {
+
+  const eventId = await testUtils.createUpcomingEvent();
+  const userId = await testUtils.createTestUser();
+
+  Event.join(eventId, userId);
 
   request(app)
     .get("/events")
     .set('Accept', 'application/json')
-    .expect('Content-Type', /json/)
     .expect((res) => {
       expect(res.body).toMatchObject({events: expect.any(Array)});
       const events = res.body.events;
       expect(events).toHaveLength(1);
-      expect(events[0].name).toBe(eventName);
+      expect(events[0].attendees.map(u=>u.id)).toEqual([userId]);
     })
     .expect(200, done);
 
