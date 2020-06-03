@@ -14,15 +14,17 @@ function EventRegion() {
   const [userId, setUserId] = useState(storedUserId);
   useEffect(() => {
     async function refreshEvents() {
-      try {
-        // const allEvents = await AirtableApi.getAllEventsWithUsers();
-        const allEvents = await api.getEvents();
-        console.log("allEvents",allEvents[0].toString());
-        setEvents(allEvents);
-      } catch (err) {
-        console.error(err);
-      }
+      console.log("use effect");
+      // try {
+      // const allEvents = await AirtableApi.getAllEventsWithUsers();
+      const allEvents = await api.getEvents();
+      console.log("allEvents", allEvents[0].toString());
+      setEvents(allEvents);
+      // } catch (err) {
+      //   console.log(err);
+      // }
     }
+
     refreshEvents();
 
     // Polling for latest states

@@ -7,6 +7,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const airtable = require('../src/airtable/api');
 const cors = require('cors');
+const app2 = require('./app');
 const app = express();
 let helmet = require('helmet');
 const {sentFirstEventEmail} = require('./emailService');
@@ -91,7 +92,7 @@ app.get('/api/healthcheck', async (req, res) => {
   }));
 });
 
-app.listen(port, () => {
+app2.listen(port, () => {
   console.info(`Running on port ${port}`);
 });
 

@@ -32,7 +32,7 @@ export default class Event {
 
   //the field may not exist, return empty array instead of null
   getUsers() {
-    return this.rawJson.users || [];
+    return this.rawJson.attendees || [];
   }
 
   containsUser(userId) {
