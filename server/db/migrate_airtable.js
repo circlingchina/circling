@@ -1,7 +1,10 @@
 require("dotenv").config();
+const debug = require("debug")("test");
+const log = require("debug")("info");
+
 let Airtable = require('airtable');
 const _ = require('lodash');
-console.log("connecting to base ", process.env.AIRTABLE_BASE);
+log("connecting to base ", process.env.AIRTABLE_BASE);
 let base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base(process.env.AIRTABLE_BASE);
 
 let knex = require('knex')({
@@ -27,7 +30,7 @@ async function insertEvent(record) {
   jsonbFields = _.mapKeys(jsonbFields, (v, k) => {
     return _.snakeCase(k);
   });
-  console.log(jsonbFields);
+  
   const query = knex('events').insert({
     name: e.Name,
     max_attendees: e.MaxAttendees,
@@ -37,27 +40,34 @@ async function insertEvent(record) {
     start_time: e.Time,
     fields: JSON.stringify(jsonbFields)
   }).returning('id');
-    // console.log("query=", query);
+    // log("query=", query);
   const res = await query.then();
+
+  debug({jsonbFields, id: res[0]});
   numAttendees[res[0]] = e.Attendees;
   const attending_users = record.fields.Users;
-  // console.log(record.fields.Users);
+  // log(record.fields.Users);
   if(attending_users && LIMIT > 100) {
     for (const user of attending_users) {
-      // console.log(user);
+      // log(user);
       await joinEvent(user_uuids[user], res[0]);
     }
   }
-  // console.log(queryRes);
+  // log(queryRes);
   
 }
 
 async function joinEvent(user_uuid, event_uuid) {
-  // console.log(`user ${typeof user_uuid} joining event ${event_uuid}`);
-  return knex('user_event').insert({
-    user_id: user_uuid,
-    event_id: event_uuid
-  });
+  // log(`user ${typeof user_uuid} joining event ${event_uuid}`);
+  try {
+    knex('user_event').insert({
+      user_id: user_uuid,
+      event_id: event_uuid
+    });
+  } catch (error) {
+    log(error);
+  }
+  
 }
 
 
@@ -71,7 +81,7 @@ async function loadEvents() {
     }
   }
   catch (error) {
-    console.error("error caught", error);
+    console.error("loadEvents Error", error);
   }
 }
 
@@ -85,7 +95,7 @@ async function loadUsers() {
       const user = record._rawJson.fields;
       await insertUser(user);
     }
-    console.log("inserted all users");
+    log("inserted all users");
   }
   catch (error) {
     console.error("error caught", error);
@@ -94,7 +104,7 @@ async function loadUsers() {
 }
 
 async function insertUser(user) {
-  // console.log("insert user", user);
+  // log("insert user", user);
   const query = knex('users').insert({
     name: user.Name,
     email: user.email,
@@ -103,14 +113,20 @@ async function insertUser(user) {
     mobile: user.Mobile,
     wechat_id: user.WechatUserName
   }).returning('id');
-  const uuid = await query.then();
-  user_uuids[user._recordId] = uuid[0];
-  return uuid;
+  try {
+    const uuid = await query.then();
+    user_uuids[user._recordId] = uuid[0];
+    return uuid;
+  
+  } catch (error) {
+    log("error, skipping", error);
+    return null;
+  }
 }
 
 async function checkAttendees() {
   for (const entry in numAttendees) {
-    console.log(entry, numAttendees[entry]);
+    log(entry, numAttendees[entry]);
   }
 }
 

@@ -1,4 +1,4 @@
-const debug = require("debug")("server");
+const debug = require("debug")("server-debug");
 const Event = require('../models/Event');
 
 const upcoming = async (req, res) => {

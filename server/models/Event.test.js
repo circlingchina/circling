@@ -14,7 +14,7 @@ test("get all events", async () => {
 });
 
 test("get upcoming events", async () => {
-  const pastEventId = await testUtils.createPastEvent();
+  await testUtils.createPastEvent();
   const futureEventId = await  testUtils.createUpcomingEvent();
   const upcomingEvents = await Event.upcoming();
   expect(upcomingEvents.map(e => e.id)).toEqual([futureEventId]);
@@ -69,6 +69,18 @@ test("event unjoin removes user", async ()=> {
   const result2 = await Event.unjoin(eventId, userId);
   expect(result2).toBe(0);
 
+});
+
+test("event fields", async ()=> {
+  const extraFields = {a: 5, b: 6};
+  const id = await db("events").returning('id').insert({
+    name: "event with fields",
+    host: "host",
+    start_time: new Date(),
+    fields: JSON.stringify(extraFields)
+  }).then(ids=>ids[0]);
+  const event = await Event.find(id);
+  expect(event.fields).toEqual(extraFields);
 });
 
 beforeEach(async () => {
