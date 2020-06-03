@@ -13,9 +13,7 @@ function EventsTable(props) {
       key={eventJson.id}
       eventJson={eventJson}
       onEventChanged={props.onEventChanged}
-      userId={props.userId}
-      // userWechatUserName={getAirbaseUserRecord().fields.WechatUserName}
-      // mobileNumber={getAirbaseUserRecord().fields.Mobile}
+      user={props.user}
     />
   ));
 

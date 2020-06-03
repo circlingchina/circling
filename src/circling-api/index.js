@@ -35,9 +35,15 @@ export const updateUser = async (userId, params) => {
   return res;
 };
 
+export const findUserByEmail = async(email) => {
+  const route = `${process.env.API_HOST}/users/find?email=${email}`;
+  return fetch(route).then(res=>res.json());
+};
+
 module.exports = {
   getEvents,
   joinEvent,
   unjoinEvent,
-  updateUser
+  updateUser, 
+  findUserByEmail,
 };

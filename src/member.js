@@ -3,24 +3,19 @@ import ReactDOM from "react-dom";
 import EventsTable from "./components/EventsTable";
 import UpcomingEvent from "./components/UpcomingEvent";
 import api from "./circling-api";
-import AirtableApi from "./airtable/api";
-
-
-// TODO (Yiliang): move components to separate files
 
 function EventRegion() {
-  // const storedUserId = window.localStorage.getItem("lastUserId");
-  const storedUserId = "316a914a-156f-40d2-9364-0bf25fd1d52b"; // TEMPORARY HACK
+
   const [events, setEvents] = useState([]);
-  const [userId, setUserId] = useState(storedUserId);
+  const [user, setUser] = useState({}); //empty object to be back-compatible (i.e can always call user.id, even if id is null)
+
   useEffect(() => {
-    async function refreshEvents() {
+    (async () => {
       const allEvents = await api.getEvents();
       setEvents(allEvents);
-    }
+    })();
 
-    refreshEvents();
-
+    // TODO - figure out why we needed polling and elimiate it by providing better backend
     // Polling for latest states
     // const interval = setInterval(async() => await refreshEvents(), 10000);
     // return (() => clearInterval(interval));
@@ -33,23 +28,17 @@ function EventRegion() {
     setEvents(newEvents);
   };
   
-  //listen to login and logout events
-  window.netlifyIdentity.on('login', async (user) => {
-    //new users should have airtable_id saved in metadata from the netlify function
-    //development HACK: skip this step because the development airtable.base has a different set of IDs, so we always have to fetch
-    if(user && user.user_metadata.airtable_id && process.env.NODE_ENV == "production") {
-      setUserId(user.user_metadata.airtable_id);
+  window.netlifyIdentity.on('login', async (netiflyUser) => {
+    const result = await api.findUserByEmail(netiflyUser.email);
+    if(result.user) {
+      setUser(result.user);
     } else {
-      // back-compat: grab from airtable
-      const records = await AirtableApi.getUserByEmail(user.email);
-      if(records.length > 0) {
-        setUserId(records[0].id);
-      }
+      throw Error(`${netiflyUser.email} not found in user db!`);
     }
   });
 
   window.netlifyIdentity.on('logout', () => {
-    setUserId(null);
+    setUser({});
   });
 
   return (
@@ -57,7 +46,7 @@ function EventRegion() {
       <div id='modal-root'></div>
       <div className="section">
         <div className="container w-container">
-          <UpcomingEvent events={events} userId={userId} />
+          <UpcomingEvent events={events} userId={user.id} />
         </div>
         <div className="page-divider">
           <div className="page-divider-white down" />
@@ -70,7 +59,7 @@ function EventRegion() {
             <br />
             (此处时间是您的当地时间)
           </div>
-          <EventsTable events={events} userId={userId} onEventChanged={updateEvents} />
+          <EventsTable events={events} user={user} onEventChanged={updateEvents} />
         </div>
         <div className="page-divider">
           <div className="page-divider-white down" />

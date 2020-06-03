@@ -14,8 +14,8 @@ class EventRow extends React.Component {
     this.state = {
       isLoading: false,
       showOfflineEventModal: false,
-      wechatUserName: props.userWechatUserName || '',
-      mobileNumber: props.mobileNumber || '',
+      wechatUserName: props.user.wechat_id || '', //TODO - check if empty string is necessary
+      mobileNumber: props.user.mobile || '', //TODO - check if empty string is necessary
       showModalAlert: false,
     };
   }
@@ -55,8 +55,9 @@ class EventRow extends React.Component {
       return;
     }
 
+    const userId = this.props.user.id;
     //can't join unless logged in
-    if (!this.props.userId) {
+    if (!userId) {
       return;
     }
 
@@ -76,8 +77,8 @@ class EventRow extends React.Component {
       mobile: this.state.mobileNumber
     };
 
-    await api.updateUser(this.props.userId, userParams);
-    const result = await api.joinEvent(event, this.props.userId);
+    await api.updateUser(userId, userParams);
+    const result = await api.joinEvent(event, userId);
 
     this.props.onEventChanged(result.event);
 
@@ -93,14 +94,15 @@ class EventRow extends React.Component {
       return;
     }
 
-    if (!this.props.userId) {
+    const userId = this.props.user.id;
+    if (!userId) {
       window.netlifyIdentity.open();
       return;
     }
 
     this.setState({ isLoading: true });
   
-    api.joinEvent(this.props.eventJson, this.props.userId)
+    api.joinEvent(this.props.eventJson, userId)
       .then((results) => {
         if (results.event) {
           this.props.onEventChanged(results.event);
@@ -121,13 +123,13 @@ class EventRow extends React.Component {
     }
 
     //can't unjoin unless logged in
-    if (!this.props.userId) {
+    if (!this.props.user.id) {
       return;
     }
 
     this.setState({ isLoading: true });
 
-    api.unjoinEvent(this.props.eventJson, this.props.userId)
+    api.unjoinEvent(this.props.eventJson, this.props.user.id)
       .then((result) => {
         if (result.event) {
           this.props.onEventChanged(result.event);
@@ -150,7 +152,7 @@ class EventRow extends React.Component {
     let cancelButton;
     const event = new Event(this.props.eventJson);
 
-    const joined = event.isUserAttending(this.props.userId);
+    const joined = event.isUserAttending(this.props.user.id);
 
     if (!joined) {
       if (event.isFull()) {
