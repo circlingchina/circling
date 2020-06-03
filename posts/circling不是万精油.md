@@ -15,6 +15,8 @@ tags:
 \
 我们先来谈谈Circling能够带给我们什么。
 
+![](/images/uploads/9dddc36875e5480c6f3239de180658d7.jpg)
+
 \
 **•	快速与陌生人建立真实的联结** 
 
