@@ -23,24 +23,41 @@ const upcoming = async (req, res) => {
 const join = async (req, res) => {
 
   const event_id = req.params.id;
-  // const user_id = req.query.user_id;
-  const user_id = "9ec43eb7-ec08-4584-b2f1-d5d95f92b9ef"; // HACK
+  const user_id = req.query.user_id;
   debug({user_id, event_id});
-  
-  // HACK 
-  const insertRes = await Event.join(event_id, user_id);
-  
+
+  const queryRes = await Event.join(event_id, user_id);
+  const updatedEvent = await Event.find(event_id, {includeAttendees: true});
+
 
   res
     .status(200)
     .type('json')
     .send(JSON.stringify({
-      result: insertRes,
-      event_id: event_id
+      result: queryRes,
+      event: updatedEvent
+    }));
+};
+
+const unjoin = async (req, res) => {
+
+  const event_id = req.params.id;
+  const user_id = req.query.user_id;
+  debug({user_id, event_id});
+  
+  const queryRes = await Event.unjoin(event_id, user_id);
+  const updatedEvent = await Event.find(event_id, {includeAttendees: true});
+  res
+    .status(200)
+    .type('json')
+    .send(JSON.stringify({
+      result: queryRes,
+      event: updatedEvent
     }));
 };
 
 module.exports = (app) => {
   app.get('/events/:id/join', join);
+  app.get('/events/:id/unjoin', unjoin);
   app.get('/events', upcoming);
 };

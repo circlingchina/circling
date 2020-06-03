@@ -1,4 +1,3 @@
-const debug = require("debug")("test");
 const db = require("../db");
 
 async function all() {
@@ -10,26 +9,33 @@ async function upcoming() {
   return db.select().from("events").where('start_time', '>=', new Date());
 }
 async function join(event_id, user_id) {
-  const insertQuery = db("user_event").insert({
-    user_id,
-    event_id
-  });
+  const insertQuery = db("user_event")
+    .insert({
+      user_id,
+      event_id
+    });
   return db.raw(`? ON CONFLICT DO NOTHING`, insertQuery);
 }
 
 async function unjoin(event_id, user_id) {
-  return db("user_event").where({
-    user_id,
-    event_id
-  }).del();
-  // return db.raw(`? ON CONFLICT DO NOTHING`, insertQuery);
+  return db("user_event")
+    .where({
+      user_id,
+      event_id
+    })
+    .del();
 }
 
-async function find(event_id) {
+async function find(event_id, params = {}) {
   const events = await db("events").where({id: event_id});
 
   if(events && events.length > 0) {
-    return events[0];
+    const event = events[0];
+    if(params.includeAttendees) {
+      const eventAttendees = await attendees(event.id);
+      Object.assign(event, {attendees: eventAttendees});
+    }
+    return event;
   } 
   return null;
 }

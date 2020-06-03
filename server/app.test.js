@@ -27,14 +27,14 @@ test("/events/:id/join should let user join event", async ()=> {
   const eventId = await testUtils.createUpcomingEvent();
   const userId = await testUtils.createTestUser();
 
-  const route = `/events/${eventId}/join?userId=${userId}`;
+  const route = `/events/${eventId}/join?user_id=${userId}`;
   debug(`GET ${route}`);
 
   await request(app)
     .get(route)
     .set('Accept', 'application/json')
     .expect((res) => {
-      expect(res.body.event_id).toBe(eventId);
+      expect(res.body.event.id).toBe(eventId);
     })
     .expect(200);
   
@@ -42,6 +42,25 @@ test("/events/:id/join should let user join event", async ()=> {
   expect(users.map(u=>u.id)).toEqual([userId]);
 });
 
+test("/events/:id/unjoin should let user unjoin event", async ()=> {
+  const eventId = await testUtils.createUpcomingEvent();
+  const userId = await testUtils.createTestUser();
+  Event.join(eventId, userId);
+
+  const route = `/events/${eventId}/unjoin?user_id=${userId}`;
+  debug(`GET ${route}`);
+
+  await request(app)
+    .get(route)
+    .set('Accept', 'application/json')
+    .expect((res) => {
+      expect(res.body.event.id).toBe(eventId);
+    })
+    .expect(200);
+  
+  const users = await Event.attendees(eventId);
+  expect(users).toEqual([]);
+});
 
 test("/events result should contain list of attendees", async (done)=> {
 

@@ -9,15 +9,6 @@ import AttendeesCell from './AttendeesCell';
 import {joinEvent, unjoinEvent} from '../circling-api/index';
 import Event from '../models/Event';
 
-function getAirbaseUserId() {
-  return "9ec43eb7-ec08-4584-b2f1-d5d95f92b9ef"; // TEMPORARY HACK
-  // return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
-}
-
-function getAirbaseUserRecord() {
-  return window.airbaseUserRecord|| window.localStorage.getItem("airbaseUserRecord");
-}
-
 class EventRow extends React.Component {
   constructor(props) {
     super(props);
@@ -65,9 +56,9 @@ class EventRow extends React.Component {
       return;
     }
 
-    const airbaseUserId = getAirbaseUserId();
+    const airbaseUserId = "TODO - FIX THIS";
     //can't join unless logged in
-    if (!airbaseUserId) {
+    if (!this.props.userId) {
       return;
     }
 
@@ -113,15 +104,18 @@ class EventRow extends React.Component {
 
     this.setState({ isLoading: true });
   
-    joinEvent(this.props.eventJson, this.props.userId).then((updatedEvents) => {
-      if (updatedEvents && updatedEvents[0]) {
-        this.props.onEventChanged(updatedEvents[0]);
-      }
-    }).finally(() => {
-      this.setState({
-        isLoading: false,
+    joinEvent(this.props.eventJson, this.props.userId)
+      .then((results) => {
+        console.log("join result", results);
+        if (results.event) {
+          this.props.onEventChanged(results.event);
+        }
+      })
+      .finally(() => {
+        this.setState({
+          isLoading: false,
+        });
       });
-    });
   };
 
   handleUnjoinEvent = async (e) => {
@@ -138,16 +132,17 @@ class EventRow extends React.Component {
 
     this.setState({ isLoading: true });
 
-    unjoinEvent(this.props.eventJson, this.props.userId).then((updatedEvent) => {
-      if (updatedEvent) {
-        this.props.onEventChanged(updatedEvent);
-        this.setState({ isLoading: false });
-      }
-    }).finally(() => {
-      this.setState({
-        isLoading: false,
+    unjoinEvent(this.props.eventJson, this.props.userId)
+      .then((result) => {
+        if (result.event) {
+          this.props.onEventChanged(result.event);
+          this.setState({ isLoading: false });
+        }
+      }).finally(() => {
+        this.setState({
+          isLoading: false,
+        });
       });
-    });
   };
 
   handleOpenMeetingRoom = (url, e) => {
@@ -160,7 +155,7 @@ class EventRow extends React.Component {
     let cancelButton;
     const event = new Event(this.props.eventJson);
 
-    const joined = event.containsUser(getAirbaseUserId());
+    const joined = event.isUserAttending(this.props.userId);
 
     if (!joined) {
       if (event.isFull()) {

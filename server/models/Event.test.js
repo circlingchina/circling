@@ -33,6 +33,14 @@ test("finding an non-existing event should return null", async () => {
   expect(event).toBe(null);
 });
 
+test("get all events optionally include attendees", async () => {
+  const eventId = await createTestEvent();
+  const userId = await createTestUser();
+  await Event.join(eventId, userId);
+  const event = await Event.find(eventId, {includeAttendees:true});
+  expect(event.attendees.map(u=>u.id)).toContain(userId);
+});
+
 test("joining an event", async ()=> {
   const eventId = await createTestEvent();
   const userId = await createTestUser();

@@ -9,7 +9,8 @@ import AirtableApi from "./airtable/api";
 // TODO (Yiliang): move components to separate files
 
 function EventRegion() {
-  const storedUserId = window.localStorage.getItem("lastUserId");
+  // const storedUserId = window.localStorage.getItem("lastUserId");
+  const storedUserId = "9ec43eb7-ec08-4584-b2f1-d5d95f92b9ef"; // TEMPORARY HACK
   const [events, setEvents] = useState([]);
   const [userId, setUserId] = useState(storedUserId);
   useEffect(() => {
