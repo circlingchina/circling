@@ -37,7 +37,12 @@ class EventRow extends React.Component {
   };
 
   showOfflineEventModal = () => {
-    this.setState({showOfflineEventModal: true});
+    //show login modal instead of offline prompt if not logged in
+    if(!this.props.user.id) {
+      window.netlifyIdentity.open(); 
+    } else {
+      this.setState({showOfflineEventModal: true});
+    }
   };
 
   handleWechatUserNameChange = (e) => {
@@ -56,6 +61,7 @@ class EventRow extends React.Component {
     }
 
     const userId = this.props.user.id;
+    
     //can't join unless logged in
     if (!userId) {
       return;
@@ -77,9 +83,12 @@ class EventRow extends React.Component {
       mobile: this.state.mobileNumber
     };
 
-    await api.updateUser(userId, userParams);
-    const result = await api.joinEvent(event, userId);
+    //first update the user info
+    const user = await api.updateUser(userId, userParams);
+    this.props.onUserChanged(user);
 
+    //after user is updated, join offline event
+    const result = await api.joinEvent(event, userId);
     this.props.onEventChanged(result.event);
 
     this.setState({ 

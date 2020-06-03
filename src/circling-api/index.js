@@ -30,7 +30,7 @@ export const updateUser = async (userId, params) => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(params)
-  });
+  }).then(res=>res.json());
 
   return res;
 };

@@ -13,6 +13,7 @@ function EventsTable(props) {
       key={eventJson.id}
       eventJson={eventJson}
       onEventChanged={props.onEventChanged}
+      onUserChanged={props.onUserChanged}
       user={props.user}
     />
   ));

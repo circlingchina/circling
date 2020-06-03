@@ -41,6 +41,10 @@ function EventRegion() {
     setUser({});
   });
 
+  const updateUser = (user) => {
+    setUser(user);
+  };
+
   return (
     <>
       <div id='modal-root'></div>
@@ -59,7 +63,7 @@ function EventRegion() {
             <br />
             (此处时间是您的当地时间)
           </div>
-          <EventsTable events={events} user={user} onEventChanged={updateEvents} />
+          <EventsTable events={events} user={user} onEventChanged={updateEvents} onUserChanged={updateUser} />
         </div>
         <div className="page-divider">
           <div className="page-divider-white down" />
