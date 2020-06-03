@@ -2,11 +2,10 @@ import React from 'react';
 import OfflineEventModal from './OfflineEventsModal';
 import isMobilePhone from 'validator/lib/isMobilePhone';
 import isWechatHandle from '../utils/isWechatHandle';
-import AirtableAPI from "../airtable/api";
 import Spinner from 'react-bootstrap/Spinner';
 
 import AttendeesCell from './AttendeesCell';
-import {joinEvent, unjoinEvent} from '../circling-api/index';
+import api from '../circling-api/index';
 import Event from '../models/Event';
 
 class EventRow extends React.Component {
@@ -56,7 +55,6 @@ class EventRow extends React.Component {
       return;
     }
 
-    const airbaseUserId = "TODO - FIX THIS";
     //can't join unless logged in
     if (!this.props.userId) {
       return;
@@ -70,20 +68,18 @@ class EventRow extends React.Component {
 
     this.setState({ isLoading: true });
 
-    const user = await AirtableAPI.getUser(airbaseUserId);
- 
+
     const event = this.props.eventJson;
 
-    const fields = user.fields;
-    fields.WechatUserName = this.state.wechatUserName;
-    fields.Mobile = this.state.mobileNumber;
+    const userParams = {
+      wechat_id: this.state.wechatUserName,
+      mobile: this.state.mobileNumber
+    };
 
-    const [updatedUser, updatedEvents] = await Promise.all([
-      AirtableAPI.updateUser(airbaseUserId, fields),
-      joinEvent(event, airbaseUserId),
-    ]); 
+    await api.updateUser(this.props.userId, userParams);
+    const result = await api.joinEvent(event, this.props.userId);
 
-    this.props.onEventChanged(updatedEvents[0]);
+    this.props.onEventChanged(result.event);
 
     this.setState({ 
       isLoading: false,
@@ -104,9 +100,8 @@ class EventRow extends React.Component {
 
     this.setState({ isLoading: true });
   
-    joinEvent(this.props.eventJson, this.props.userId)
+    api.joinEvent(this.props.eventJson, this.props.userId)
       .then((results) => {
-        console.log("join result", results);
         if (results.event) {
           this.props.onEventChanged(results.event);
         }
@@ -132,7 +127,7 @@ class EventRow extends React.Component {
 
     this.setState({ isLoading: true });
 
-    unjoinEvent(this.props.eventJson, this.props.userId)
+    api.unjoinEvent(this.props.eventJson, this.props.userId)
       .then((result) => {
         if (result.event) {
           this.props.onEventChanged(result.event);

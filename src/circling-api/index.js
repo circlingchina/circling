@@ -7,7 +7,6 @@
 // endpoint /api/events/:event_id/join?user_id=user_id
 export const joinEvent = async (event, user_id) => {
   const route = `${process.env.API_HOST}/events/${event.id}/join?user_id=${user_id}`;
-  console.info("NODE_ENV", process.env.NODE_ENV);
   return fetch(route).then((res)=> res.json());
 };
 
@@ -20,12 +19,25 @@ export const unjoinEvent = async (event, user_id) => {
 export const getEvents = async () => {
   const route = `${process.env.API_HOST}/events`;
   const res = await fetch(route).then((res)=> res.json());
-
   return res.events;
+};
+
+export const updateUser = async (userId, params) => {
+  const route = `${process.env.API_HOST}/users/${userId}`;
+  const res = await fetch(route, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(params)
+  });
+
+  return res;
 };
 
 module.exports = {
   getEvents,
   joinEvent,
-  unjoinEvent
+  unjoinEvent,
+  updateUser
 };

@@ -10,7 +10,7 @@ import AirtableApi from "./airtable/api";
 
 function EventRegion() {
   // const storedUserId = window.localStorage.getItem("lastUserId");
-  const storedUserId = "9ec43eb7-ec08-4584-b2f1-d5d95f92b9ef"; // TEMPORARY HACK
+  const storedUserId = "316a914a-156f-40d2-9364-0bf25fd1d52b"; // TEMPORARY HACK
   const [events, setEvents] = useState([]);
   const [userId, setUserId] = useState(storedUserId);
   useEffect(() => {
