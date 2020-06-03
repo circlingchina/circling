@@ -22,22 +22,29 @@ export default class Event {
     this.rawJson = rawJson;
   }
 
+  id() {
+    return this.rawJson.id;
+  }
+
   isFull() {
-    return this.getUsers().length >= this.rawJson.max_attendees;
+    return this.numAttendees() >= this.rawJson.max_attendees;
   }
 
   isEmpty() {
-    return  this.getUsers().length === 0;
+    return  this.numAttendees() === 0;
   }
 
   //the field may not exist, return empty array instead of null
-  getUsers() {
+  attendees() {
     return this.rawJson.attendees || [];
   }
 
+  numAttendees() {
+    return this.attendees().length;
+  }
+  
   isUserAttending(userId) {
-    console.log({userId, users: this.getUsers()});
-    return this.getUsers().map(u=>u.id).includes(userId);
+    return this.attendees().map(u=>u.id).includes(userId);
   }
 
   startTimeDisplay() {
@@ -45,7 +52,7 @@ export default class Event {
   }
 
   isOfflineEvent() {
-    return this.toJSON().category === '线下活动';
+    return this.rawJson.category === '线下活动';
   }
 
   startingStatus() {
@@ -62,10 +69,6 @@ export default class Event {
       return Event.Status.ONGOING;
     }
     return Event.Status.FINISHED;
-  }
-  
-  users() {
-    return []; // TODO - return users from db 
   }
 
   maxAttendees() {

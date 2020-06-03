@@ -4,43 +4,47 @@ import classNames from 'classnames';
 import Popover from 'react-bootstrap/Popover';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
-function AttendeesCell(props) {
-  const spanEl = (
-    <span className={classNames({underline: !props.event.isEmpty()})}>
-      {props.event.getUsers().length}/{props.event.toJSON().max_attendees}
-    </span>
-  );
-
-  let joinedUsers = props.event.users();
+function AttendeesCell({event, maxLength}) {
+  let attendees = event.attendees();
 
   let needEllipses = false;
-  if (joinedUsers.length > props.displayLength) {
-    joinedUsers = joinedUsers.slice(0, props.displayLength);
+  if (attendees.length > maxLength) {
+    attendees = attendees.slice(0, maxLength);
     needEllipses = true;
   }
 
-  const userList = [];
-  for (const user of joinedUsers) {
-    userList.push(<span key={user.id}>{user.Name}<br /></span>);
-  }
+  const userList = attendees.map((u)=> {
+    return (<span key={u.id}>{u.name}<br /></span>);
+  });
+
   if (needEllipses) {
     userList.push('...');
   }
 
   const popover = (
-    <Popover id={'popover-joiners-' + props.event.toJSON().id}>
+    <Popover id={'popover-joiners-' + event.id()}>
       <Popover.Content>
         {userList}
       </Popover.Content>
     </Popover>
   );
 
+  const spanEl = (
+    <span className={classNames({underline: !event.isEmpty()})}>
+      {event.numAttendees()}/{event.maxAttendees()}
+    </span>
+  );
+
   let spanWrapper;
-  if (props.event.isEmpty()) {
+  if (event.isEmpty()) {
     spanWrapper = spanEl;
   } else {
     spanWrapper = (
-      <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={popover}>
+      <OverlayTrigger
+        trigger={['hover', 'focus']}
+        placement="right"
+        overlay={popover}
+      >
         {spanEl}
       </OverlayTrigger>
     );

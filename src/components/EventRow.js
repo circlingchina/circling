@@ -227,7 +227,7 @@ class EventRow extends React.Component {
                 className="join-button host">{this.props.eventJson.host}
               </a>
             </div>
-            <AttendeesCell event={event} displayLength={10} />
+            <AttendeesCell event={event} maxLength={10} />
           </div>
           <div className="w-col w-col-3 w-col-medium-3 w-col-small-5 w-col-tiny-5 align-middle">
             {joinButton}
