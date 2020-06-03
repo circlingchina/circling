@@ -35,8 +35,9 @@ export default class Event {
     return this.rawJson.attendees || [];
   }
 
-  containsUser(userId) {
-    return this.getUsers().includes(userId);
+  isUserAttending(userId) {
+    console.log({userId, users: this.getUsers()});
+    return this.getUsers().map(u=>u.id).includes(userId);
   }
 
   startTimeDisplay() {
