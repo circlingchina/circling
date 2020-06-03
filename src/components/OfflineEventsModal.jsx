@@ -7,6 +7,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import Alert from 'react-bootstrap/Alert';
 
 export default function OfflineEventsModal(props) {
+  console.log({event:props.eventJson});
   const eventName = props.eventJson.fields.Name;
 
   let contactName = '';

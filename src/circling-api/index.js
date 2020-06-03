@@ -18,10 +18,8 @@ export const unjoinEvent = async (event, user_id) => {
 };
 
 export const getEvents = async () => {
-  console.log("getEvents Result", res);
   const route = `${process.env.API_HOST}/events`;
   const res = await fetch(route).then((res)=> res.json());
-  console.log("getEvents Result", res);
 
   return res.events;
 };
