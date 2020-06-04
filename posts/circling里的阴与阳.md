@@ -1,9 +1,9 @@
 ---
 title: Circling里的阴与阳
-subtitle: 真实联结的艺术——Circling基本技巧
+subtitle: 真实联结的艺术—Circling基本技巧
 date: 2020-05-25T12:39:14.354Z
 author: 编译 静姝
-category: 真实联结的艺术——Circling基本技巧
+category: 真实联结的艺术—Circling基本技巧
 img: /images/uploads/11.jpg
 tags:
   - post
