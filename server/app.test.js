@@ -83,15 +83,13 @@ test("/events result should contain list of attendees", async (done)=> {
 });
 
 beforeEach(async () => {
-  await clearDB();
+  await testUtils.clearDB();
+});
+
+afterEach(async () => {
+  await testUtils.clearDB();
 });
 
 afterAll(async () => {
-  await clearDB();
   return db.destroy();
 });
-
-async function clearDB() {
-  await db("events").del();
-  await db("users").del();
-}

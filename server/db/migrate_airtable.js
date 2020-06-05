@@ -7,16 +7,7 @@ const _ = require('lodash');
 log("connecting to base ", process.env.AIRTABLE_BASE);
 let base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base(process.env.AIRTABLE_BASE);
 
-let knex = require('knex')({
-  client: 'pg',
-  connection: {
-    host : '127.0.0.1',
-    port: '5555',
-    user : 'circling',
-    password : 'circling',
-    database : 'circling_db'
-  }
-});
+let knex = require('./index');
 
 const LIMIT = 500;
 const user_uuids = {};

@@ -24,6 +24,15 @@ services:
     ports:
       - "4567:4567"
 
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: circling
+      POSTGRES_PASSWORD: circling
+      POSTGRES_DB: circling_db
+
 networks:
   circling-network:
     driver: bridge

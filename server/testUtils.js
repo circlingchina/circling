@@ -25,4 +25,9 @@ exports.createUpcomingEvent = async function() {
   return createTestEvent("Future Event", future);
 };
 
+exports.clearDB = async function() {
+  await db("events").del();
+  await db("users").del();
+};
+
 exports.createTestEvent = createTestEvent;

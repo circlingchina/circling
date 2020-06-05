@@ -4,7 +4,7 @@ module.exports = {
     client: 'pg',
     connection: {
       host : '127.0.0.1',
-      port: '5555',
+      port: '5432',
       user : 'circling',
       password : 'circling',
       database : 'circling_db'
@@ -15,7 +15,7 @@ module.exports = {
     client: 'pg',
     connection: {
       host : '127.0.0.1',
-      port: '5555',
+      port: '5432',
       user : 'circling',
       password : 'circling',
       database : 'circling_test_db'
@@ -26,7 +26,7 @@ module.exports = {
     client: 'pg',
     connection: {
       host : '127.0.0.1',
-      port: '5555',
+      port: '5432',
       user : 'circling',
       password : 'circling',
       database : 'circling_test_db'
