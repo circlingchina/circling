@@ -1,5 +1,6 @@
 const debug = require("debug")("server-debug");
 const Event = require('../models/Event');
+const UserModel = require('../models/UserModel');
 
 const upcoming = async (req, res) => {
   try {
@@ -24,11 +25,12 @@ const join = async (req, res) => {
 
   const event_id = req.params.id;
   const user_id = req.query.user_id;
-  debug({user_id, event_id});
 
   const queryRes = await Event.join(event_id, user_id);
-  const updatedEvent = await Event.find(event_id, {includeAttendees: true});
 
+  //optionally see if email needs to be sent
+  await UserModel.handleFirstJoinEmail(user_id);
+  const updatedEvent = await Event.find(event_id, {includeAttendees: true});
 
   res
     .status(200)
@@ -55,6 +57,7 @@ const unjoin = async (req, res) => {
       event: updatedEvent
     }));
 };
+
 
 module.exports = (app) => {
   app.get('/events/:id/join', join);

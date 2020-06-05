@@ -22,7 +22,7 @@ app.get('/api/healthcheck', async (req, res) => {
   res.end(JSON.stringify({
     healthy: true,
     hostname: req.headers.host,
-    env: `v1.0.0:${process.env.SERVER_ENV}`
+    env: `v1.1.0:${process.env.SERVER_ENV}`
   }));
 });
 
