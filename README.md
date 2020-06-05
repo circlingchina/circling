@@ -56,6 +56,35 @@ cp .env.sample .env
 
 The server and client can both utilize modules in the /lib folder. So in theory, we should keep code in the lib folder isomorphic(able to run on both brower and node environment).
 
+## Database
+
+For local development, a postgresql service must be avaliable. The easiest way is via docker.
+
+In the root directory of the project(NOTE: entire project, not /server):
+
+```
+docker-compose up -d db
+```
+
+### Database Initialization
+
+To create the required tables, invoke the script [create_db.sh](server/db/create_db.sh):
+
+```
+db/create_db.sh
+```
+
+### Database: data migration
+
+To copy data from Airtable, invoke the [migrate_airtable.js](server/db/migrate_airtable.js) script:
+
+```
+npm run migrate
+```
+
+Note that by default, NODE_ENV=development. This means the data from the test version of Airtable will be copied. Feel free to overide the base ID in migrate_airtable.js if you want production data in your test pg database.
+
+
 # Deploying Instructions for circling-server
 
 ## Prerequisits for deploying to production:
