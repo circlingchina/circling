@@ -44,8 +44,6 @@ Circling中联结的快速建立依赖于有效的沟通，例如通过观察其
 
 ![](/images/uploads/3268da196e6b3aa4b7fd225064345737.jpg)
 
-
-
 \
 **•	Circling并不保证为问题提供实际解决方案** 
 
