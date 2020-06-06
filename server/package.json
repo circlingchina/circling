@@ -8,7 +8,7 @@
     "console": "NODE_ENV=development node console.js",
     "start": "node index.js",
     "test": "DEBUG=test jest",
-    "migrate": "NODE_ENV=development node db/migrate_airtable.js"
+    "migrate": "DEBUG=* NODE_ENV=development node db/migrate_airtable.js"
   },
   "keywords": [],
   "author": "",

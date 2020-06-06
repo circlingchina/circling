@@ -127,6 +127,10 @@ loadUsers()
   })
   .then(() => {
     checkAttendees();
-  }).finally(()=> {
+  })
+  .catch(err => {
+    log('err', err);
+  })
+  .finally(()=> {
     knex.destroy();
   });
