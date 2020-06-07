@@ -2,14 +2,14 @@ import React from "react";
 import isEmail from 'validator/lib/isEmail';
 import isMobilePhone from 'validator/lib/isMobilePhone';
 import isEmpty from 'validator/lib/isEmpty';
-import AirtableAPI from "../airtable/api";
+import api from "../circling-api/index";
 import isWechatHandle from '../utils/isWechatHandle';
 
 export default class EnrollForm extends React.Component {
 
   constructor(props) {
     super(props);
-  
+
     this.state = {
       submitted: false,
       name: '',
@@ -18,7 +18,7 @@ export default class EnrollForm extends React.Component {
       error: ''
     };
   }
-  
+
   validate = () => {
     if (isEmpty(this.state.name)) {
       this.setState({error: '姓名或昵称未填写'});
@@ -30,38 +30,45 @@ export default class EnrollForm extends React.Component {
       return false;
     }
     // Assuming that wechat handle accepts mobile with formats of multiple countries
-    if (!isMobilePhone(this.state.wechatUserName, 'any') && 
+    if (!isMobilePhone(this.state.wechatUserName, 'any') &&
         !isWechatHandle(this.state.wechatUserName)) {
       this.setState({error: '微信用户名格式不正确'});
       return false;
     }
-    
+
     this.setState({error: ''});
     return true;
   }
-  
+
   doSubmit = async () => {
     this.setState({ submitted:  true });
-    
+
+    let user;
+
     try {
-      const user = await AirtableAPI.getUserByEmail(this.state.email);
-
-      const trailEvent = await AirtableAPI.getEvent(process.env.TRAIL_EVENT_ID);
-      
-      if (user) {
-        // Udate user wechat, but do not overwrite the name and email at the moment.
-        const userId = user.id;
-        const fields = user.fields;
-        fields.WechatUserName = this.state.wechatUserName;
-
-        const updatedUser = await AirtableAPI.updateUser(userId, fields);
-        // console.log("user wechat update success", updatedUser);
+      const result = await api.findUserByEmail(this.state.email);
+      if(result.user) {
+        user = result.user;
+      } else {
+        // do nothing because the email is not registered.
+        return;
       }
+
+      const trailEvent = await api.getTrailEvent();
 
       if (user && trailEvent) {
-        const updatedTrailEvent = await AirtableAPI.join(trailEvent, user.id);
-        // console.log("joined with event", updatedTrailEvent);
+        // Udate user wechat, but do not overwrite the name and email at the moment.
+        const params = {
+          wechat_id: this.state.wechatUserName,
+          name: this.state.name
+        };
+
+        await Promise.all([
+          api.updateUser(user.id, params),
+          api.joinEvent(trailEvent, user.id)
+        ]);
       }
+
     } catch (err) {
       console.error(err);
     }
@@ -78,15 +85,15 @@ export default class EnrollForm extends React.Component {
 
   handleChange = (event)=> {
     const name = event.target.name;
-    
+
     if (name === 'name') {
       this.setState({name: event.target.value});
     } else if (name === 'email') {
-      this.setState({email: event.target.value}); 
+      this.setState({email: event.target.value});
     } else if (name === 'wechat') {
-      this.setState({wechatUserName: event.target.value});  
+      this.setState({wechatUserName: event.target.value});
     }
-    
+
     event.preventDefault();
   }
 
@@ -96,8 +103,8 @@ export default class EnrollForm extends React.Component {
 
     let btn = (
       <div className="top-margin">
-        <div className="algin-center"><input type="submit" 
-          onClick={this.handleSubmit} 
+        <div className="algin-center"><input type="submit"
+          onClick={this.handleSubmit}
           value="预留席位" data-wait="Please wait..." className="button w-button"/></div>
       </div>
     );
@@ -109,7 +116,7 @@ export default class EnrollForm extends React.Component {
           <div className="error-message w-form-done" style={{display: 'block'}}>
             <div>{this.state.error}</div>
           </div>
-        </div> 
+        </div>
       );
     } else {
       if (submitted) {
@@ -146,7 +153,7 @@ export default class EnrollForm extends React.Component {
           { notification }
           { btn }
         </form>
-        
+
       </div>
     );
   }

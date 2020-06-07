@@ -1,7 +1,7 @@
-DROP TABLE user_event;
-DROP TABLE events;
-DROP TABLE users;
-DROP TYPE event_category;
+DROP TABLE IF EXISTS user_event;
+DROP TABLE IF EXISTS events;
+DROP TABLE IF EXISTS users;
+DROP TYPE IF EXISTS event_category;
 
 -- CREATE EXTENSION pgcrypto; (require superuser)
 

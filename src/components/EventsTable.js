@@ -5,7 +5,7 @@ import EventRow from './EventRow';
 function EventsTable(props) {
   const futureEvents = props.events.filter((eventJson) => {
     const event = new Event(eventJson);
-    return event.startingStatus() != Event.Status.FINISHED;
+    return event.startingStatus() != Event.Status.FINISHED && !event.isTrail();
   });
 
   const eventRows = futureEvents.map((eventJson) => (
