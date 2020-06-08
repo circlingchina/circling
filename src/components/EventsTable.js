@@ -5,6 +5,8 @@ import Spinner from 'react-bootstrap/Spinner';
 import Popover from 'react-bootstrap/Popover';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
+import isNil from 'lodash/isNil';
+
 // import {joinEvent, unjoinEvent} from '../circling-api/index';
 import {joinEvent, unjoinEvent} from '../circling-api/serverless';
 import Event from '../models/Event';
@@ -20,7 +22,11 @@ function getAirbaseUserId() {
 }
 
 function getAirbaseUserRecord() {
-  return window.airbaseUserRecord|| window.localStorage.getItem("airbaseUserRecord");
+  return window.airbaseUserRecord || window.localStorage.getItem("airbaseUserRecord");
+}
+
+function isLoggedIn() {
+  return !isNil(getAirbaseUserId());
 }
 
 function EventsTable(props) {
@@ -29,13 +35,20 @@ function EventsTable(props) {
     return event.startingStatus() != Event.Status.FINISHED;
   });
 
+  let userWechatUserName = '';
+  let mobileNumber = '';
+  if (isLoggedIn()) {
+    userWechatUserName = getAirbaseUserRecord().fields.WechatUserName;
+    mobileNumber = getAirbaseUserRecord().fields.Mobile;
+  }
+
   const eventRows = futureEvents.map((eventJson) => (
     <EventRow
       key={eventJson.id}
       eventJson={eventJson}
       onEventChanged={props.onEventChanged}
-      userWechatUserName={getAirbaseUserRecord().fields.WechatUserName}
-      mobileNumber={getAirbaseUserRecord().fields.Mobile}
+      userWechatUserName={userWechatUserName}
+      mobileNumber={mobileNumber}
     />
   ));
 
@@ -258,38 +271,42 @@ class EventRow extends React.Component {
 
     const joined = event.containsUser(getAirbaseUserId());
 
-    if (!joined) {
-      if (event.isFull()) {
-        joinButton = (
-          <span className="join-button cancel w-button">报名已满</span>
-        );
-      } else {
-        if (event.startingStatus() == Event.Status.STARTING_SOON || event.startingStatus() == Event.Status.NOT_STARTED) {
+    if (!isLoggedIn()) {
+      joinButton = <span className="join-button cancel"><a>注册后才可报名</a></span>;
+    } else {
+      if (!joined) {
+        if (event.isFull()) {
           joinButton = (
-            <span className="join-button w-button" onClick={this.handelJoinEventGateway}>报名</span>
+            <span className="join-button cancel w-button">报名已满</span>
           );
         } else {
-          joinButton = (
-            <span className="join-button cancel">报名截止</span>
-          );
+          if (event.startingStatus() == Event.Status.STARTING_SOON || event.startingStatus() == Event.Status.NOT_STARTED) {
+            joinButton = (
+              <span className="join-button w-button" onClick={this.handelJoinEventGateway}>报名</span>
+            );
+          } else {
+            joinButton = (
+              <span className="join-button cancel">报名截止</span>
+            );
+          }
         }
-      }
-    } else {
-      joinButton = event.isOfflineEvent() ? (
-        <span className="join-button w-button" onClick={this.showOfflineEventModal}>活动详情</span>
-      ) : (
-        <span className="join-button w-button"
-          onClick={(e) => this.handleOpenMeetingRoom(this.props.eventJson.fields.EventLink, e)}>
-        进入房间</span>
-      );
-
-      if (event.startingStatus() == Event.Status.NOT_STARTED) {
-        cancelButton = (
-          <span className="join-button w-button" onClick={this.handleUnjoinEvent}>
-            取消报名</span>
-        );
       } else {
-        cancelButton = <span></span>;
+        joinButton = event.isOfflineEvent() ? (
+          <span className="join-button w-button" onClick={this.showOfflineEventModal}>活动详情</span>
+        ) : (
+          <span className="join-button w-button"
+            onClick={(e) => this.handleOpenMeetingRoom(this.props.eventJson.fields.EventLink, e)}>
+        进入房间</span>
+        );
+
+        if (event.startingStatus() == Event.Status.NOT_STARTED) {
+          cancelButton = (
+            <span className="join-button w-button" onClick={this.handleUnjoinEvent}>
+            取消报名</span>
+          );
+        } else {
+          cancelButton = <span></span>;
+        }
       }
     }
 

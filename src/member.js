@@ -1,15 +1,19 @@
-
-
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import EventsTable from "./components/EventsTable";
 import AirtableApi from "./airtable/api";
 import moment from "moment";
+import isNil from 'lodash/isNil';
+
 require('dotenv').config();
 
 
 function getAirbaseUserId() {
   return window.airbaseUserId || window.localStorage.getItem("airbaseUserId");
+}
+
+function isLoggedIn() {
+  return !isNil(getAirbaseUserId());
 }
 // TODO (Yiliang): move components to separate files
 
@@ -84,6 +88,10 @@ function EventRegion() {
 }
 
 function UpcomingEvent({events}) {
+  if (!isLoggedIn) {
+    return null;
+  }
+
   const myEvents = events.filter((event) => {
     const userId = getAirbaseUserId();
     const eventUsers = event.fields.Users;

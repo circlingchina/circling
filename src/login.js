@@ -36,7 +36,10 @@ function attachIdentityListern() {
 
   netlifyIdentity.on('logout', () => {
     console.log('Logged out');
-    logoutHook();
+    window.airbaseUserId = undefined;
+    window.airbaseUserRecord = undefined;
+    window.localStorage.removeItem('airbaseUserId');
+    window.localStorage.removeItem('airbaseUserRecord');
     window.location.replace("/");
   });
 
@@ -52,11 +55,6 @@ function attachIdentityListern() {
 }
 
 attachIdentityListern();
-
-
-function logoutHook() {
-  $("#nav-user-name").css({display: "none"});
-}
 
 function updateNav(user) {
   if (user) {
