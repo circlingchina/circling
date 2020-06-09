@@ -1,9 +1,9 @@
 ---
 title: Circling不是万精油
-subtitle: 看见就有转机——我与Circling的故事
+subtitle: Circling的千百种样子
 date: 2020-06-03T10:00:34.138Z
 author: 作者 Mint
-category: 看见就有转机——我与Circling的故事
+category: Circling的千百种样子
 img: /images/uploads/a33e358e3d2a692d4293508881036eb0.jpg
 tags:
   - post
