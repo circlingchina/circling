@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const debug = require("debug")("server-debug");
 const Event = require('../models/Event');
 const UserModel = require('../models/UserModel');
@@ -11,6 +13,15 @@ const upcoming = async (req, res) => {
     for (const event of events) {
       const attendees = await Event.attendees(event.id);
       Object.assign(event, {attendees});
+
+      // Convert fields to properties
+      if (!_.isEmpty(event.fields)) {
+        const fieldsObj = event.fields;
+        if (fieldsObj.offline_event_contact) {
+          fieldsObj.offline_event_contact = await UserModel.find(fieldsObj.offline_event_contact);
+        }
+        Object.assign(event, fieldsObj);
+      }
     }
 
     res
