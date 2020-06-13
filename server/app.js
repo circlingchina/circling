@@ -18,7 +18,7 @@ app.use(cors()); //TODO - restrict origin to a few servers
 mountRoutes(app);
 
 
-app.get('/api/healthcheck', async (req, res) => {
+app.get('/healthcheck', async (req, res) => {
   res.end(JSON.stringify({
     healthy: true,
     hostname: req.headers.host,

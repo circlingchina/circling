@@ -1,7 +1,7 @@
 # Initialize new debian VM with deployer account, ssh key, and firewall
 # specify 'user_pass' in commandline as --extra-vars user_pass=
 - hosts: circling-web
-  remote_user: root
+  remote_user: tli
   vars:
     user_name: deployer
   gather_facts: yes

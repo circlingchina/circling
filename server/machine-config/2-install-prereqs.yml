@@ -21,6 +21,12 @@
       pip:
         name:
           - docker
+    # fix a bug with pip, pip3, docker
+    - name: docker pre-req python library
+      pip:
+        name:
+          - docker
+        executable: pip3
     - name: copy over production environment
       copy:
         src: "{{ production_env_file }}"

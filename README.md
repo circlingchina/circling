@@ -166,7 +166,7 @@ Note: The hosts file is located in ```/etc/ansible/hosts``` on linux. If you can
 Test your setup by pinging the remote machines:
 
 ```sh
-ansible circling_web -m ping
+ansible circling-web -m ping
 ```
 
 ![ansible ping](docs/images/ansible-ping.png)

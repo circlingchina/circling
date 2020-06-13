@@ -1,5 +1,5 @@
 # Deploy circling server by pulling an image
-- hosts: circling_web
+- hosts: circling-web
   remote_user: deployer
   gather_facts: yes
   vars:
@@ -22,3 +22,5 @@
         ports:
           - "127.0.0.1:4567:4567"
         env_file: "{{ production_env_file }}"
+        env:
+          NODE_ENV: production
