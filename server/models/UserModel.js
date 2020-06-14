@@ -19,6 +19,16 @@ async function handleFirstJoinEmail(id) {
   }
 }
 
+// Find user by id
+async function find(id) {
+  const users = await db("users").where({id});
+  if (users && users.length > 0) {
+    return users[0];
+  }
+  return null;
+}
+
 module.exports = {
   handleFirstJoinEmail,
+  find,
 };

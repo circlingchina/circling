@@ -20,14 +20,14 @@ function EventRegion() {
     // const interval = setInterval(async() => await refreshEvents(), 10000);
     // return (() => clearInterval(interval));
   }, []);
-  
+
   const updateEvents = (changedEvent) => {
     const newEvents = events.map((event)=> {
       return event.id == changedEvent.id ? changedEvent : event;
     });
     setEvents(newEvents);
   };
-  
+
   window.netlifyIdentity.on('login', async (netiflyUser) => {
     const result = await api.findUserByEmail(netiflyUser.email);
     if(result.user) {

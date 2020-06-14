@@ -2,7 +2,7 @@ const Event = require("./Event");
 const db = require("../db");
 const debug = require("debug")("test");
 const testUtils = require("../testUtils");
-const {createTestEvent, createTestUser} = testUtils;
+const {createTestEvent, createTestUser, createTrailEvent} = testUtils;
 
 
 test("get all events", async () => {
@@ -25,6 +25,12 @@ test("finding an event", async () => {
   const eventId = await createTestEvent("Test Event 1");
   const event = await Event.find(eventId);
   expect(event.id).toBe(eventId);
+});
+
+test("getting trail event", async() => {
+  const eventId = await createTrailEvent();
+  const event = await Event.find(eventId);
+  expect(event.category).toBe('新人介绍课程');
 });
 
 test("finding an non-existing event should return null", async () => {

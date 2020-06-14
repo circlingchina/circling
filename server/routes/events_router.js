@@ -1,6 +1,21 @@
+const _ = require('lodash');
+
 const debug = require("debug")("server-debug");
 const Event = require('../models/Event');
 const UserModel = require('../models/UserModel');
+
+require('dotenv').config();
+
+const eventWithExtraFields = async(event) => {
+  if (!_.isEmpty(event.fields)) {
+    const fieldsObj = event.fields;
+    if (fieldsObj.offline_event_contact) {
+      fieldsObj.offline_event_contact = await UserModel.find(fieldsObj.offline_event_contact);
+    }
+    Object.assign(event, {fields: fieldsObj});
+  }
+  return event;
+};
 
 const upcoming = async (req, res) => {
   try {
@@ -9,6 +24,9 @@ const upcoming = async (req, res) => {
     for (const event of events) {
       const attendees = await Event.attendees(event.id);
       Object.assign(event, {attendees});
+
+      // Convert fields to properties
+      await eventWithExtraFields(event);
     }
 
     res
@@ -18,7 +36,17 @@ const upcoming = async (req, res) => {
   } catch (error) {
     return res.status(500).end();
   }
+};
 
+const trail_event = async(req, res) => {
+  try {
+    const event = await Event.trail();
+    res
+      .type('json')
+      .end(JSON.stringify(event));
+  } catch (error) {
+    return res.status(500).end();
+  }
 };
 
 const join = async (req, res) => {
@@ -31,7 +59,7 @@ const join = async (req, res) => {
   //optionally see if email needs to be sent
   await UserModel.handleFirstJoinEmail(user_id);
   const updatedEvent = await Event.find(event_id, {includeAttendees: true});
-
+  await eventWithExtraFields(updatedEvent);
   res
     .status(200)
     .type('json')
@@ -46,9 +74,10 @@ const unjoin = async (req, res) => {
   const event_id = req.params.id;
   const user_id = req.query.user_id;
   debug({user_id, event_id});
-  
+
   const queryRes = await Event.unjoin(event_id, user_id);
   const updatedEvent = await Event.find(event_id, {includeAttendees: true});
+  await eventWithExtraFields(updatedEvent);
   res
     .status(200)
     .type('json')
@@ -63,4 +92,5 @@ module.exports = (app) => {
   app.get('/events/:id/join', join);
   app.get('/events/:id/unjoin', unjoin);
   app.get('/events', upcoming);
+  app.get('/events/trail', trail_event);
 };

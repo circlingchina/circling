@@ -8,6 +8,11 @@ async function upcoming() {
   //.where('createdAt', '>=', '2009-01-01T00:00:00Z')
   return db.select().from("events").where('start_time', '>=', new Date());
 }
+
+async function trail() {
+  return db.select().from("events").where({category: '新人介绍课程'}).limit(1);
+}
+
 async function join(event_id, user_id) {
   const insertQuery = db("user_event")
     .insert({
@@ -36,7 +41,7 @@ async function find(event_id, params = {}) {
       Object.assign(event, {attendees: eventAttendees});
     }
     return event;
-  } 
+  }
   return null;
 }
 
@@ -53,5 +58,6 @@ module.exports = {
   join,
   unjoin,
   find,
-  attendees
+  attendees,
+  trail,
 };

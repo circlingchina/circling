@@ -24,10 +24,10 @@ class EventRow extends React.Component {
     e.preventDefault();
 
     const event = new Event(this.props.eventJson);
-    
+
     if (event.isOfflineEvent()) {
       return this.showOfflineEventModal();
-    } 
+    }
 
     return this.handleJoinEvent();
   };
@@ -39,7 +39,7 @@ class EventRow extends React.Component {
   showOfflineEventModal = () => {
     //show login modal instead of offline prompt if not logged in
     if(!this.props.user.id) {
-      window.netlifyIdentity.open(); 
+      window.netlifyIdentity.open();
     } else {
       this.setState({showOfflineEventModal: true});
     }
@@ -47,12 +47,12 @@ class EventRow extends React.Component {
 
   handleWechatUserNameChange = (e) => {
     e.preventDefault();
-    this.setState({ wechatUserName: event.target.value });  
+    this.setState({ wechatUserName: event.target.value });
   }
 
   handleMobileNumberChange = (e) => {
     e.preventDefault();
-    this.setState({ mobileNumber: event.target.value });  
+    this.setState({ mobileNumber: event.target.value });
   }
 
   handleJoinOfflineEvent = async() => {
@@ -61,13 +61,13 @@ class EventRow extends React.Component {
     }
 
     const userId = this.props.user.id;
-    
+
     //can't join unless logged in
     if (!userId) {
       return;
     }
 
-    if (!isMobilePhone(this.state.wechatUserName, 'any') && 
+    if (!isMobilePhone(this.state.wechatUserName, 'any') &&
         !isWechatHandle(this.state.wechatUserName) || (!isMobilePhone(this.state.mobileNumber)))  {
       this.setState({ showModalAlert: true });
       return;
@@ -84,17 +84,17 @@ class EventRow extends React.Component {
     };
 
     //first update the user info
-    const user = await api.updateUser(userId, userParams);
-    this.props.onUserChanged(user);
+    const updateUserResponse = await api.updateUser(userId, userParams);
+    this.props.onUserChanged(updateUserResponse.user);
 
     //after user is updated, join offline event
-    const result = await api.joinEvent(event, userId);
-    this.props.onEventChanged(result.event);
+    const joinResponse = await api.joinEvent(event, userId);
+    this.props.onEventChanged(joinResponse.event);
 
-    this.setState({ 
+    this.setState({
       isLoading: false,
-      showModalAlert: false, 
-      showOfflineEventModal: false 
+      showModalAlert: false,
+      showOfflineEventModal: false
     });
   }
 
@@ -110,7 +110,7 @@ class EventRow extends React.Component {
     }
 
     this.setState({ isLoading: true });
-  
+
     api.joinEvent(this.props.eventJson, userId)
       .then((results) => {
         if (results.event) {
@@ -207,8 +207,8 @@ class EventRow extends React.Component {
 
     return (
       <>
-        <OfflineEventModal 
-          eventJson={event.toJSON()} 
+        <OfflineEventModal
+          eventJson={event.toJSON()}
           show={this.state.showOfflineEventModal}
           showAlert={this.state.showModalAlert}
           onHide={this.dismissOfflineEventModal}
