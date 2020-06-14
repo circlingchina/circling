@@ -133,9 +133,9 @@ docker images
 The circling project uses a private container registry (gcr.io). To push and pull you must login once:
 
 ```
-mkdir ~/.gcr
-mv keyfile.json ~/.gcr/
-cat ~/.gcr/keyfile.json | docker login -u _json_key --password-stdin https://gcr.io
+mkdir ~/.circling-api
+mv keyfile.json ~/.circling-api/
+cat ~/.circling-api/keyfile.json | docker login -u _json_key --password-stdin https://gcr.io
 ```
 
 ![docker login](docs/images/docker-login.png)
@@ -207,26 +207,6 @@ will deploy the image with the tag `86d80cb`
 
 # Provisioning Instructions for circling-server
 
-Since the circling project doesn't have a full time devop team, its best to:
-1) keep the servers stateless
-2) automatically provision a new set of servers on-demand
-
-## Prerequisits for provisioning new web servers:
-
-- install Terraform
-- install Ansible: https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
-- configure access to cloud provider (scripts provided for aws/aliyun/digital-ocean)
-
-## Overview
-- Credential setup
-- provision machines
-- Configure machines
-  - install docker
-  - install nginx
-  - acquire deployment credentials
-  - setup production environment variables
-  - firewall
-  - SSL
-  - load balancer
+See [server/machine-config/README.md](server/machine-config/README.md) for instructions on provisioning
 
 

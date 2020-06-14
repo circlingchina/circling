@@ -1,0 +1,3 @@
+- import_playbook: 1-setup-root.yml
+- import_playbook: 2-install-prereqs.yml
+- import_playbook: 3-https-nginx.yml

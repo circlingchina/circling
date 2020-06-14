@@ -3,7 +3,7 @@
   remote_user: deployer
   gather_facts: yes
   vars:
-    gcloud_token_file: ~/.gcr/keyfile.json
+    gcloud_token_file: ~/.circling-api/keyfile.json
     gcloud_token: " {{ lookup('file', gcloud_token_file)}}"
     production_env_file: /home/deployer/.env
     image_tag: latest

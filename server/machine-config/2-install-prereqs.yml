@@ -5,7 +5,7 @@
   vars:
     username: deployer
     docker__users: ["{{username}}"]
-    production_env_file: ~/.gcr/production.env
+    production_env_file: ~/.circling-api/production.env
     users:
       - username: "{{ username }}"
   remote_user: "{{ username }}"
@@ -17,16 +17,13 @@
       apt:
         state: latest
         name: python-pip
-    - name: docker pre-req python library
+    - name: docker via pip
       pip:
         name:
           - docker
     # fix a bug with pip, pip3, docker
-    - name: docker pre-req python library
-      pip:
-        name:
-          - docker
-        executable: pip3
+    - name: docker via shell
+      command: pip install docker
     - name: copy over production environment
       copy:
         src: "{{ production_env_file }}"

@@ -17,7 +17,7 @@ push:
 
 deploy:
 	@echo deploying on remote servers
-	@ansible-playbook server/machine-config/3-deploy-containers.yml --extra-vars "image_tag=$(COMMIT)"
+	@ansible-playbook server/machine-config/4-deploy-containers.yml --extra-vars "image_tag=$(COMMIT)"
 
 local_up: build
 	@docker-compose up server
