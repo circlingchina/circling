@@ -1,7 +1,6 @@
-if(!process.env.NODE_ENV) {
-  throw new Error("NODE_ENV must be set");
-}
-const config = require('./knexfile.js')[process.env.NODE_ENV];
+const node_env = process.env.NODE_ENV || "development";
+
+const config = require('./knexfile.js')[node_env];
 if(!config) {
   throw new Error("No Config");
 }

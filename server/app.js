@@ -16,13 +16,15 @@ app.use(bodyParser.json());
 app.use(cors()); //TODO - restrict origin to a few servers
 
 mountRoutes(app);
-
+const db = require('./db');
 
 app.get('/healthcheck', async (req, res) => {
+  const numEvents = await db('events').count().then((res)=>res[0].count);
   res.end(JSON.stringify({
     healthy: true,
     hostname: req.headers.host,
-    env: `v1.1.0:${process.env.SERVER_ENV}`
+    env: `v1.1.0:${process.env.SERVER_ENV}`,
+    numEvents
   }));
 });
 

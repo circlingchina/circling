@@ -17,6 +17,12 @@ async function insertEvent(record) {
   
   // const events = await knex('events');
   const e = record.fields;
+  
+  // skip events without start-time
+  if(!e.Time) {
+    console.info(`skipped ${e.Name}`);
+    return;
+  }
   let jsonbFields = _.pick(e, ["OfflineEventAddress", "OfflineEventExtra", "OfflineEventContact"]);
   jsonbFields = _.mapKeys(jsonbFields, (v, k) => {
     return _.snakeCase(k);
