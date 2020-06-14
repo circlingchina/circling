@@ -12,7 +12,7 @@ const eventWithExtraFields = async(event) => {
     if (fieldsObj.offline_event_contact) {
       fieldsObj.offline_event_contact = await UserModel.find(fieldsObj.offline_event_contact);
     }
-    Object.assign(event, fieldsObj);
+    Object.assign(event, {fields: fieldsObj});
   }
   return event;
 };

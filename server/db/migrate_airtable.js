@@ -14,14 +14,16 @@ const user_uuids = {};
 const numAttendees = {};
 
 async function insertEvent(record) {
-  
   // const events = await knex('events');
   const e = record.fields;
   let jsonbFields = _.pick(e, ["OfflineEventAddress", "OfflineEventExtra", "OfflineEventContact"]);
   jsonbFields = _.mapKeys(jsonbFields, (v, k) => {
     return _.snakeCase(k);
   });
-  
+  if (Array.isArray(jsonbFields.offline_event_contact) && jsonbFields.offline_event_contact.length > 0) {
+    jsonbFields.offline_event_contact = user_uuids[jsonbFields.offline_event_contact[0]];
+  }
+
   const query = knex('events').insert({
     name: e.Name,
     max_attendees: e.MaxAttendees,
@@ -45,7 +47,7 @@ async function insertEvent(record) {
     }
   }
   // log(queryRes);
-  
+
 }
 
 async function joinEvent(user_uuid, event_uuid) {
@@ -58,14 +60,13 @@ async function joinEvent(user_uuid, event_uuid) {
   } catch (error) {
     log(error);
   }
-  
+
 }
 
 
 async function loadEvents() {
   const records = await base('OpenEvents')
     .select({ maxRecords: LIMIT }).all();
-  
   try {
     for (const record of records) {
       await insertEvent(record);
@@ -81,6 +82,7 @@ async function loadUsers() {
     filterByFormula: "NOT({email} = '')",
     maxRecords: LIMIT,
   }).all();
+
   try {
     for (const record of users) {
       const user = record._rawJson.fields;
@@ -108,7 +110,7 @@ async function insertUser(user) {
     const uuid = await query.then();
     user_uuids[user._recordId] = uuid[0];
     return uuid;
-  
+
   } catch (error) {
     log("error, skipping", error);
     return null;

@@ -8,7 +8,7 @@ import Alert from 'react-bootstrap/Alert';
 import isObject from 'lodash/isObject';
 
 export default function OfflineEventsModal(props) {
-  const eventName = props.eventJson.Name;
+  const eventName = props.eventJson.name;
 
   let contactName = '';
   let contactWechatUserName = '';
