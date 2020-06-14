@@ -6,6 +6,17 @@ const UserModel = require('../models/UserModel');
 
 require('dotenv').config();
 
+const eventWithExtraFields = async(event) => {
+  if (!_.isEmpty(event.fields)) {
+    const fieldsObj = event.fields;
+    if (fieldsObj.offline_event_contact) {
+      fieldsObj.offline_event_contact = await UserModel.find(fieldsObj.offline_event_contact);
+    }
+    Object.assign(event, fieldsObj);
+  }
+  return event;
+};
+
 const upcoming = async (req, res) => {
   try {
     const events = await Event.upcoming();
@@ -15,13 +26,7 @@ const upcoming = async (req, res) => {
       Object.assign(event, {attendees});
 
       // Convert fields to properties
-      if (!_.isEmpty(event.fields)) {
-        const fieldsObj = event.fields;
-        if (fieldsObj.offline_event_contact) {
-          fieldsObj.offline_event_contact = await UserModel.find(fieldsObj.offline_event_contact);
-        }
-        Object.assign(event, fieldsObj);
-      }
+      await eventWithExtraFields(event);
     }
 
     res
@@ -54,7 +59,7 @@ const join = async (req, res) => {
   //optionally see if email needs to be sent
   await UserModel.handleFirstJoinEmail(user_id);
   const updatedEvent = await Event.find(event_id, {includeAttendees: true});
-
+  await eventWithExtraFields(updatedEvent);
   res
     .status(200)
     .type('json')
@@ -72,6 +77,7 @@ const unjoin = async (req, res) => {
 
   const queryRes = await Event.unjoin(event_id, user_id);
   const updatedEvent = await Event.find(event_id, {includeAttendees: true});
+  await eventWithExtraFields(updatedEvent);
   res
     .status(200)
     .type('json')
