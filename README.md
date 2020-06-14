@@ -11,22 +11,24 @@ A couple of areas with complicated logic is rendered as a react component, and b
 
 The entire site is built to the `_site` folder, which can be easily hosted on a static host such as netlify.
 
-There's no backend. Server side functionality are built via a collection of 3rd party services:
+Server side functionality are built via a collection of 3rd party services:
 - Authentication: [netlify auth](https://docs.netlify.com/visitor-access/identity/)
 - Blogposts: netlifycms.org
-- Event and User tables: airtable.com
+- The data (Events and Users) is stored in postgres, and access via an API server located in the [server/](server/) directory.
 
 ## Setup
 
 **Development**
-
-`npm run dev`
 
 For localhost development, setup a [.env](.env) file:
 
 `cp .env.sample .env`
 
 (this file is designed to hold sensitive data, and should not be checked into source control)
+
+To start the web server:
+
+`npm run dev`
 
 **Build**
 
@@ -39,7 +41,7 @@ The `staging` branch is configured to auto-deploy to https://staging.circlingchi
 
 ## API Server
 
-There is a standalone nodejs server for emails, payments, and scheduling jobs. To deploy the server:
+Circling is based on an expressjs API server. To start the API server:
 
 ```
 cd server
@@ -85,7 +87,7 @@ npm run migrate
 Note that by default, NODE_ENV=development. This means the data from the test version of Airtable will be copied. Feel free to overide the base ID in migrate_airtable.js if you want production data in your test pg database.
 
 
-# Deploying Instructions for circling-server
+# Deployment Instructions for circling-server
 
 ## Prerequisits for deploying to production:
 
