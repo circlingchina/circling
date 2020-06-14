@@ -38,7 +38,7 @@ terraform apply
 ## Configure machines
 
 ```
-ansible-playbook circling-api-playbook.yml -vv --extra-vars user_pass=<PASSWORD> -K
+ansible-playbook circling-api-playbook.yml --extra-vars user_pass=<PASSWORD> -K
 ```
 
 ## Install certbot
