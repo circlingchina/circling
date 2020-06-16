@@ -62,7 +62,6 @@ export default class Event {
   startingStatus() {
     const msDiff = new Date(this.rawJson.start_time) - new Date();
     const minutesUntil = msDiff / 1000 / 60;
-
     if(minutesUntil > 2 * 60) {
       return Event.Status.NOT_STARTED;
     }
@@ -73,6 +72,10 @@ export default class Event {
       return Event.Status.ONGOING;
     }
     return Event.Status.FINISHED;
+  }
+
+  isStartingSoon() {
+    return this.startingStatus() == Event.Status.STARTING_SOON;
   }
 
   maxAttendees() {

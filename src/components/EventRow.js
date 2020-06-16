@@ -184,7 +184,7 @@ class EventRow extends React.Component {
         <span className="join-button w-button" onClick={this.showOfflineEventModal}>活动详情</span>
       ) : (
         <span className="join-button w-button"
-          onClick={(e) => this.handleOpenMeetingRoom(this.props.eventJson.fields.EventLink, e)}>
+          onClick={(e) => this.handleOpenMeetingRoom(this.props.eventJson.event_link, e)}>
         进入房间</span>
       );
 
