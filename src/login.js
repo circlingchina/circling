@@ -1,6 +1,3 @@
-import airtable from "./airtable/api";
-import base from "./airtable/base";
-
 /* eslint-disable no-undef */
 
 function attachIdentityListern() {
@@ -24,7 +21,6 @@ function attachIdentityListern() {
   });
 
   netlifyIdentity.on('logout', () => {
-    logoutHook();
     window.location.replace("/");
   });
 
@@ -40,10 +36,6 @@ function attachIdentityListern() {
 
 attachIdentityListern();
 
-
-function logoutHook() {
-  $("#nav-user-name").css({display: "none"});
-}
 
 function updateNav(user) {
   if (user) {
