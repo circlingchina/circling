@@ -36,7 +36,6 @@ function attachIdentityListern() {
 
 attachIdentityListern();
 
-
 function updateNav(user) {
   if (user) {
     let user_link = document.getElementById('nav-user-name');
