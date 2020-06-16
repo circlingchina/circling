@@ -32,8 +32,8 @@ const handler = async function (event, context, callback) {
     const response = await createUser(userParam);
     console.log({response});
     return callback(null, {
-      statusCode: 200,
-      body: JSON.stringify(response),
+      statusCode: response.status,
+      body: JSON.stringify(response.data),
     });
   } catch (err) {
     console.log("error", err);
