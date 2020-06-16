@@ -1,10 +1,9 @@
 require("dotenv").config();
-const debug = require("debug")("test");
-const log = require("debug")("info");
-
+const debug = require("debug")("migrate");
+const debug_join = require("debug")("join");
+const EventModel = require("../models/Event");
 let Airtable = require('airtable');
 const _ = require('lodash');
-log("connecting to base ", process.env.AIRTABLE_BASE);
 let base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base(process.env.AIRTABLE_BASE);
 
 let knex = require('./index');
@@ -45,8 +44,9 @@ async function insertEvent(record) {
   debug({jsonbFields, id: res[0]});
   numAttendees[res[0]] = e.Attendees;
   const attending_users = record.fields.Users;
-  // log(record.fields.Users);
-  if(attending_users && LIMIT > 100) {
+  debug_join(record.fields);
+  debug_join(record.fields.Users);
+  if(attending_users) {
     for (const user of attending_users) {
       // log(user);
       await joinEvent(user_uuids[user], res[0]);
@@ -57,16 +57,8 @@ async function insertEvent(record) {
 }
 
 async function joinEvent(user_uuid, event_uuid) {
-  // log(`user ${typeof user_uuid} joining event ${event_uuid}`);
-  try {
-    knex('user_event').insert({
-      user_id: user_uuid,
-      event_id: event_uuid
-    });
-  } catch (error) {
-    log(error);
-  }
-
+  debug_join(`user ${user_uuid} joining event ${event_uuid}`);
+  EventModel.join(event_uuid, user_uuid);
 }
 
 
@@ -94,7 +86,7 @@ async function loadUsers() {
       const user = record._rawJson.fields;
       await insertUser(user);
     }
-    log("inserted all users");
+    debug("inserted all users");
   }
   catch (error) {
     console.error("error caught", error);
@@ -118,14 +110,14 @@ async function insertUser(user) {
     return uuid;
 
   } catch (error) {
-    log("error, skipping", error);
+    debug("error, skipping", error);
     return null;
   }
 }
 
 async function checkAttendees() {
   for (const entry in numAttendees) {
-    log(entry, numAttendees[entry]);
+    debug(entry, numAttendees[entry]);
   }
 }
 
@@ -137,7 +129,7 @@ loadUsers()
     checkAttendees();
   })
   .catch(err => {
-    log('err', err);
+    debug('err', err);
   })
   .finally(()=> {
     knex.destroy();
