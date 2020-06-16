@@ -21,7 +21,7 @@ const axios = require("axios");
 const handler = async function (event, context, callback) {
   try {
     const data = JSON.parse(event.body);
-    console.log({createUser, version: "1.1", data, metadata: data.user.user_metadata});
+    console.log({version: "1.2", data});
     const userParam = {
       email: data.user.email,
       name: data.user.user_metadata.full_name || data.user.email
@@ -36,17 +36,17 @@ const handler = async function (event, context, callback) {
       body: JSON.stringify(response),
     });
   } catch (err) {
-    // console.log("error", err);
+    console.log("error", err);
     return callback(null, {
-      statusCode: 500,
+      statusCode: 200,
       body: JSON.stringify(err)
     });
   }
 };
 
 const createUser = async(userParam) => {
-  // const route = `${process.env.API_HOST}/users`;
-  const route = `http://127.0.0.1:4567/users`;
+  const route = `${process.env.API_HOST}/users`;
+  // const route = `http://127.0.0.1:4567/users`; HACK localhost testing with netlify dev
   console.log({route});
 
   const response = await axios.post(route, userParam);
