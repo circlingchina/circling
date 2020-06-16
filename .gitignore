@@ -82,8 +82,6 @@ js/*.js*
 # Local Netlify folder
 .netlify
 
-/func/
-
 # AWS config file
 
 /server/config.json
