@@ -50,7 +50,6 @@ const createUser = async(userParam) => {
   console.log({route});
 
   const response = await axios.post(route, userParam);
-  console.log("server response", response.body);
   return response;
 };
 
