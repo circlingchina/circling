@@ -4,6 +4,8 @@ const db = require("./db");
 const debug = require('debug')('test');
 const testUtils = require("./testUtils");
 const Event = require('./models/Event');
+const sinon = require("sinon");
+const UserModel = require('./models/UserModel');
 
 test("/events should return list of upcoming events", async (done)=> {
   await testUtils.createPastEvent();
@@ -30,6 +32,8 @@ test("/events/:id/join should let user join event", async ()=> {
   const route = `/events/${eventId}/join?user_id=${userId}`;
   debug(`GET ${route}`);
 
+  //stub out the email request
+  const joinEmailStub = sinon.stub(UserModel, "handleFirstJoinEmail");
   await request(app)
     .get(route)
     .set('Accept', 'application/json')
@@ -38,6 +42,7 @@ test("/events/:id/join should let user join event", async ()=> {
     })
     .expect(200);
   
+  sinon.assert.calledOnceWithExactly(joinEmailStub, userId);
   const users = await Event.attendees(eventId);
   expect(users.map(u=>u.id)).toEqual([userId]);
 });
@@ -82,12 +87,39 @@ test("/events result should contain list of attendees", async (done)=> {
 
 });
 
+test("POST /users should create new user", async (done)=> {
+  debug("testing creation of user");
+  const userParam = {
+    name: "John",
+    email: "john@test.com"
+  };
+  // let numUsers = await db('users').count();
+  // expect(numUsers).toBe(0);
+
+  request(app)
+    .post("/users")
+    .send(userParam)
+    .set('Accept', 'application/json')
+    .expect(async (res) => {
+      expect(res.body).toMatchObject({id: expect.any(String)});
+
+      // numUsers = await db('users').count();
+      // expect(numUsers).toBe(1);
+    })
+    .expect(200, done);
+
+});
+
 beforeEach(async () => {
   await testUtils.clearDB();
 });
 
 afterEach(async () => {
-  await testUtils.clearDB();
+  try {
+    await testUtils.clearDB();
+  } catch (e) {
+    debug(e);
+  }
 });
 
 afterAll(async () => {

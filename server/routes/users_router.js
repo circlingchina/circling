@@ -31,7 +31,32 @@ const find = async(req, res) => {
     }));
 };
 
+const create = async(req, res) => {
+  const userParams = req.body;
+  // upsert - on conflict update
+  const query = db.raw(
+    `? ON CONFLICT (email)
+            DO UPDATE SET
+            name = EXCLUDED.name
+          RETURNING id;`,
+    [db("users").insert(userParams)],
+  );
+  const result = await query;
+  let id = null;
+  if(result.rowCount > 0) {
+    id = result.rows[0].id;
+  } 
+  debug({id});
+  res
+    .status(200)
+    .type('json')
+    .send(JSON.stringify({
+      id
+    }));
+};
+
 module.exports = (app) => {
   app.get('/users/find', find);
+  app.post('/users', create);
   app.put('/users/:user_id', update);
 };

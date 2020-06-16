@@ -5,30 +5,30 @@
 
 
 // endpoint /api/events/:event_id/join?user_id=user_id
-export const joinEvent = async (event, user_id) => {
+exports.joinEvent = async (event, user_id) => {
   const route = `${process.env.API_HOST}/events/${event.id}/join?user_id=${user_id}`;
   return fetch(route).then((res)=> res.json());
 };
 
 // endpoint /api/events/:event_id/unjoin?user_id=user_id
-export const unjoinEvent = async (event, user_id) => {
+exports.unjoinEvent = async (event, user_id) => {
   const route = `${process.env.API_HOST}/events/${event.id}/unjoin?user_id=${user_id}`;
   return fetch(route).then((res)=> res.json());
 };
 
 // endpoing /api/events/trail
-export const getTrailEvent = async () => {
+exports.getTrailEvent = async () => {
   const route = `${process.env.API_HOST}/events/trail`;
   return fetch(route).then((res)=> res.json());
 };
 
-export const getEvents = async () => {
+exports.getEvents = async () => {
   const route = `${process.env.API_HOST}/events`;
   const res = await fetch(route).then((res)=> res.json());
   return res.events;
 };
 
-export const updateUser = async (userId, params) => {
+exports.updateUser = async (userId, params) => {
   const route = `${process.env.API_HOST}/users/${userId}`;
   const res = await fetch(route, {
     method: 'PUT',
@@ -41,16 +41,17 @@ export const updateUser = async (userId, params) => {
   return res;
 };
 
-export const findUserByEmail = async(email) => {
+exports.findUserByEmail = async(email) => {
   const route = `${process.env.API_HOST}/users/find?email=${email}`;
   return fetch(route).then(res=>res.json());
 };
 
-module.exports = {
-  getEvents,
-  joinEvent,
-  getTrailEvent,
-  unjoinEvent,
-  updateUser,
-  findUserByEmail,
+exports.createUser = async(userParam) => {
+  const route = `${process.env.API_HOST}/users`;
+  const response = await fetch(route, {
+    method: 'POST',
+    body: JSON.stringify(userParam)
+  });
+  console.log("server response", response);
+  return response;
 };
