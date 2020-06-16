@@ -1,12 +1,12 @@
 const db = require("../db");
 
 async function all() {
-  return db.select().from("events");
+  return db.select().from("events").orderBy("start_time");
 }
 
 async function upcoming() {
   //.where('createdAt', '>=', '2009-01-01T00:00:00Z')
-  return db.select().from("events").where('start_time', '>=', new Date());
+  return db.select().from("events").where('start_time', '>=', new Date()).orderBy("start_time");
 }
 
 async function trail() {
