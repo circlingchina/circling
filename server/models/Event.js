@@ -1,3 +1,4 @@
+const moment = require('moment');
 const db = require("../db");
 
 async function all() {
@@ -6,7 +7,11 @@ async function all() {
 
 async function upcoming() {
   //.where('createdAt', '>=', '2009-01-01T00:00:00Z')
-  return db.select().from("events").where('start_time', '>=', new Date()).orderBy("start_time");
+  const now = new Date();
+  const offsetMins = -30;
+  
+  return db.select().from("events").where('start_time', '>=', moment(now).add(offsetMins, 'm').toDate())
+    .orderBy("start_time");
 }
 
 async function trail() {
