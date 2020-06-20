@@ -26,8 +26,8 @@ exports.createUpcomingEvent = async function() {
   return createTestEvent("Future Event", future);
 };
 
-exports.createTrailEvent = async function() {
-  return createTestEvent("Trail Event", new Date(), '新人介绍课程');
+exports.createTrailEvent = async function(name="Trail Event", start_time=new Date()) {
+  return createTestEvent(name, start_time, '新人介绍课程');
 };
 
 exports.clearDB = async function() {

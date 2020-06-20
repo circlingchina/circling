@@ -38,9 +38,9 @@ const upcoming = async (req, res) => {
   }
 };
 
-const trail_event = async(req, res) => {
+const next_trail_event = async(req, res) => {
   try {
-    const event = await Event.trail();
+    const event = await Event.nextTrail();
     res
       .type('json')
       .end(JSON.stringify(event));
@@ -92,5 +92,5 @@ module.exports = (app) => {
   app.get('/events/:id/join', join);
   app.get('/events/:id/unjoin', unjoin);
   app.get('/events', upcoming);
-  app.get('/events/trail', trail_event);
+  app.get('/events/nextTrail', next_trail_event);
 };

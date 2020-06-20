@@ -14,8 +14,13 @@ async function upcoming() {
     .orderBy("start_time");
 }
 
-async function trail() {
-  return db.select().from("events").where({category: '新人介绍课程'}).limit(1);
+async function nextTrail() {
+  const now = new Date();
+  return db.select().from("events")
+    .where('category', '新人介绍课程')
+    .andWhere('start_time', '>=', now)
+    .orderBy("start_time")
+    .limit(1);
 }
 
 async function join(event_id, user_id) {
@@ -64,5 +69,5 @@ module.exports = {
   unjoin,
   find,
   attendees,
-  trail,
+  nextTrail,
 };

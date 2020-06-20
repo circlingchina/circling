@@ -33,6 +33,24 @@ test("getting trail event", async() => {
   expect(event.category).toBe('新人介绍课程');
 });
 
+test("getting next valid trail event", async() => {
+  const now = new Date();
+  const eventId1 = await createTrailEvent("trail1", new Date(now.getTime() + 10000000));
+  await createTrailEvent("trail2", new Date(now.getTime() + 20000000));
+  
+  const events = await Event.nextTrail();
+  
+  expect(events[0].id).toBe(eventId1);
+  expect(events[0].category).toBe('新人介绍课程');
+});
+
+test("getting a null trail event", async() => {
+  const now = new Date();
+  await createTrailEvent("trail1", new Date(now.getTime() - 10000000));
+  const events = await Event.nextTrail();
+  expect(events).toEqual([]);
+});
+
 test("finding an non-existing event should return null", async () => {
   const guid = await createTestUser("just-an-guid");
   const event = await Event.find(guid);
