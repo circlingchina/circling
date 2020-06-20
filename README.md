@@ -159,8 +159,7 @@ To deploy builds, you need to add the following lines to your ansible hosts file
 
 ```sh
 [circling]
-138.68.10.123 ansible_user=deployer
-138.68.62.169 ansible_user=deployer
+35.199.171.128 ansible_user=deployer
 ```
 
 Note: The hosts file is located in ```/etc/ansible/hosts``` on linux. If you can't find or need to customize location of the hosts file, see: https://stackoverflow.com/a/21959961
