@@ -158,7 +158,7 @@ To deploy builds, you need to add the following lines to your ansible hosts file
 
 
 ```sh
-[circling]
+[circling-web]
 35.199.171.128 ansible_user=deployer
 ```
 
