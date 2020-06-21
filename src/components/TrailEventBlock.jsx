@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from "../circling-api/index";
-import readableTimeString from "../utils/readableTimeString";
+import Event from '../models/Event';
 
 export default function TrailEventBlock(props) {
   const [event, setEvent] = useState(null);
@@ -9,14 +9,14 @@ export default function TrailEventBlock(props) {
     (async () => {
       const events = await api.getTrailEvent();
       if (Array.isArray(events) && events.length > 0) {
-        setEvent(events[0]);
+        setEvent(new Event(events[0]));
       }
     })();
   }, []);
     
   let startTimeDisplay = "";
   if (event) {
-    startTimeDisplay = readableTimeString(event.start_time);
+    startTimeDisplay = event.startTimeDisplay();
   }
     
   return (
