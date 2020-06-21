@@ -4,6 +4,7 @@ import isMobilePhone from 'validator/lib/isMobilePhone';
 import isEmpty from 'validator/lib/isEmpty';
 import api from "../circling-api/index";
 import isWechatHandle from '../utils/isWechatHandle';
+import readableTimeString from '../utils/readableTimeString';
 
 export default class EnrollForm extends React.Component {
 
@@ -15,8 +16,17 @@ export default class EnrollForm extends React.Component {
       name: '',
       email: '',
       wechatUserName: '',
-      error: ''
+      error: '',
+      trailEvent: null
     };
+  }
+  
+  async componentDidMount() {
+    const results = await api.getTrailEvent();
+    if (Array.isArray(results) && results.length > 0) {
+      const trailEvent = results[0];
+      this.setState({trailEvent});
+    }
   }
 
   validate = () => {
@@ -54,9 +64,9 @@ export default class EnrollForm extends React.Component {
         return;
       }
 
-      const trailEvent = await api.getTrailEvent();
+      
 
-      if (user && trailEvent) {
+      if (user && this.state.trailEvent) {
         // Udate user wechat, but do not overwrite the name and email at the moment.
         const params = {
           wechat_id: this.state.wechatUserName,
@@ -65,7 +75,7 @@ export default class EnrollForm extends React.Component {
 
         await Promise.all([
           api.updateUser(user.id, params),
-          api.joinEvent(trailEvent, user.id)
+          api.joinEvent(this.state.trailEvent, user.id)
         ]);
       }
 
@@ -130,12 +140,18 @@ export default class EnrollForm extends React.Component {
         );
       }
     }
+    
+    let startTimeDisplay = "";
+    if (this.state.trailEvent) {
+      startTimeDisplay = readableTimeString(this.state.trailEvent.start_time);
+    }
 
     return (
       <div className="submit-project-wrapper">
         <form id="email-form" name="email-form" data-name="Email Form" className="form" data-netlify="true" >
           <div>
-            <label htmlFor="Timeline" className="field-label-2">下一次新人课程将会在2020年6月14日北京时间下午2点—4点在线上进行<br />请提前报名，我们会通过邮件和微信告知参与方式
+           
+            <label htmlFor="Timeline" className="field-label-2">下一次新人课程将会在{startTimeDisplay}在线上进行<br />请提前报名，我们会通过邮件和微信告知参与方式
             </label>
           </div>
           <div>

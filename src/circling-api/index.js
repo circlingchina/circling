@@ -16,9 +16,9 @@ exports.unjoinEvent = async (event, user_id) => {
   return fetch(route).then((res)=> res.json());
 };
 
-// endpoing /api/events/trail
+// endpoing /api/events/nextTrail
 exports.getTrailEvent = async () => {
-  const route = `${process.env.API_HOST}/events/trail`;
+  const route = `${process.env.API_HOST}/events/nextTrail`;
   return fetch(route).then((res)=> res.json());
 };
 
