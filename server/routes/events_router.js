@@ -38,9 +38,9 @@ const upcoming = async (req, res) => {
   }
 };
 
-const trail_event = async(req, res) => {
+const nextTrail = async(req, res) => {
   try {
-    const event = await Event.trail();
+    const event = await Event.nextTrail();
     res
       .type('json')
       .end(JSON.stringify(event));
@@ -57,7 +57,7 @@ const join = async (req, res) => {
   const queryRes = await Event.join(event_id, user_id);
 
   //optionally see if email needs to be sent
-  await UserModel.handleFirstJoinEmail(user_id);
+  await UserModel.handleFirstJoinEmail(user_id, event_id);
   const updatedEvent = await Event.find(event_id, {includeAttendees: true});
   await eventWithExtraFields(updatedEvent);
   res
@@ -92,5 +92,5 @@ module.exports = (app) => {
   app.get('/events/:id/join', join);
   app.get('/events/:id/unjoin', unjoin);
   app.get('/events', upcoming);
-  app.get('/events/trail', trail_event);
+  app.get('/events/nextTrail', nextTrail);
 };

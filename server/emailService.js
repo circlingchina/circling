@@ -31,7 +31,7 @@ const sendWelcomeMail = (userName, toEmail) => {
   return sendMail(sender, toEmail, subject, body_html);
 };
 
-const sentFirstEventEmail = (userName, toEmail) => {
+const sentFirstEventEmail = (userName, toEmail, eventName, eventStartTime) => {
   
   const sender = "Jess <jess@circlingchina.org>"; // This address must be verified with Amazon SES.
   const subject = "这封信帮你准备好第一次Circling";
@@ -40,7 +40,9 @@ const sentFirstEventEmail = (userName, toEmail) => {
   const compiledFunction = pug.compileFile('./emails/firstEvent.pug');
   // Render a set of data
   const body_html = compiledFunction({
-    name: userName
+    name: userName,
+    eventName,
+    eventStartTime
   });
 
   return sendMail(sender, toEmail, subject, body_html);
