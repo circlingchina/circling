@@ -12,8 +12,12 @@
 
  */
 
-import readableTimeString from "../utils/readableTimeString";
+import moment from 'moment';
+import 'moment/locale/zh-cn';
 
+import readableTimeString, {readableDate, readableTime} from "../utils/readableTimeString";
+
+moment.locale('zh-cn');
 export default class Event {
   constructor(rawJson) {
     if(!('id' in rawJson)) {
@@ -49,6 +53,21 @@ export default class Event {
 
   startTimeDisplay() {
     return readableTimeString(this.rawJson.start_time);
+  }
+  
+  endTimeDisplay() {
+    return readableTimeString(this.rawJson.end_time);
+  }
+  
+  durationDisplay() {
+    const startTimeDate = readableDate(this.rawJson.start_time);
+    const endTimeDate = readableDate(this.rawJson.end_time);
+    
+    if (startTimeDate === endTimeDate) {
+      return this.startTimeDisplay() + " - " + readableTime(this.rawJson.end_time);
+    }
+    
+    return this.startTimeDisplay() + " - " + this.endTimeDisplay();
   }
 
   isOfflineEvent() {
