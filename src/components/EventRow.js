@@ -223,7 +223,7 @@ class EventRow extends React.Component {
         <div className="schedule-columns w-row">
           <div className="w-col w-col-9 w-col-small-6 w-col-tiny-6 w-col-medium-9">
             <div className="w-col w-col-4 w-col-medium-4">
-              <div>{event.startTimeDisplay()}</div>
+              <div>{event.durationDisplay()}</div>
             </div>
             <div className="w-col w-col-3 w-col-medium-3">
               {this.props.eventJson.name}
