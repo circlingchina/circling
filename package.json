@@ -52,6 +52,7 @@
     "classnames": "^2.2.6",
     "helmet": "^3.22.0",
     "lodash": "^4.17.15",
+    "moment-timezone": "^0.5.31",
     "netlify-lambda": "^1.6.3",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",

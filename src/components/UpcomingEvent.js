@@ -1,7 +1,8 @@
 import React from "react";
-import moment from "moment";
 import Event from "../models/Event";
 import _ from "lodash";
+import readableTimeString from '../utils/readableTimeString';
+
 function UpcomingEvent({events, userId}) {
   const myEvents = events.filter((event) => {
     return event.attendees.map(user=>user.id).includes(userId);
@@ -25,7 +26,7 @@ function UpcomingEvent({events, userId}) {
       <div className="sub-text red">即将开始</div>
       <div className="div-block-13">
         <div className="sub-text black">{startingSoonEvent.name}</div>
-        <div className="sub-text black">开始时间：{moment(startingSoonEvent.start_time).format("YYYY年M月D日 Ah点mm分")}</div>
+        <div className="sub-text black">开始时间：{readableTimeString(startingSoonEvent.start_time)}</div>
         <div className="sub-text black">带领者：{startingSoonEvent.host}</div>
         <a href={startingSoonEvent.event_link} className="button w-button" target="_blank" rel="noopener noreferrer">
           点击进入

@@ -32,7 +32,7 @@ function TableHeader() {
   return (
     <div className="schedule-title w-row events-table-header w-hidden-small">
       <div className="column w-col w-col-9 w-col-small-6">
-        <div className="w-col w-col-4 w-col-medium-4">时间</div>
+        <div className="w-col w-col-4 w-col-medium-4">中国时间</div>
         <div className="w-col w-col-3 w-col-medium-3">活动</div>
         <div className="w-col w-col-3 w-col-medium-3">带领者</div>
         <div className="w-col w-col-2 w-col-medium-2">人数</div>

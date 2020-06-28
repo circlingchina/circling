@@ -12,10 +12,12 @@
 
  */
 
-import moment from 'moment';
+import moment from 'moment-timezone';
 import 'moment/locale/zh-cn';
 
 import readableTimeString, {readableDate, readableTime} from "../utils/readableTimeString";
+
+const TIME_ZONE = 'Asia/Shanghai';
 
 moment.locale('zh-cn');
 export default class Event {
@@ -79,8 +81,12 @@ export default class Event {
   }
 
   startingStatus() {
-    const msDiff = new Date(this.rawJson.start_time) - new Date();
-    const minutesUntil = msDiff / 1000 / 60;
+   
+    let momentStartTime = moment.tz(this.rawJson.start_time, TIME_ZONE);
+    const momentNow = moment.tz(new Date(), TIME_ZONE);
+    
+    let minutesUntil = moment.duration(momentStartTime.diff(momentNow)).asMinutes();
+   
     if(minutesUntil > 2 * 60) {
       return Event.Status.NOT_STARTED;
     }
