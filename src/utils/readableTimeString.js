@@ -3,14 +3,16 @@ import 'moment/locale/zh-cn';
 
 moment.locale('zh-cn');
 
+const TIME_ZONE = 'Asia/Shanghai';
+
 export default function readableTimeString(datetime) {
-  return moment(datetime).format("YYYY年M月D日（ddd）H点m分").replace(/点0分$/, '点');
+  return moment(datetime).tz(TIME_ZONE).format("YYYY年M月D日（ddd）H点m分").replace(/点0分$/, '点');
 }
 
 export function readableTime(datetime) {
-  return moment(datetime).format("H点m分").replace(/点0分$/, '点');
+  return moment(datetime).tz(TIME_ZONE).format("H点m分").replace(/点0分$/, '点');
 }
 
 export function readableDate(datetime) {
-  return moment(datetime).format("YYYY年M月D日");
+  return moment(datetime).tz(TIME_ZONE).format("YYYY年M月D日");
 }
