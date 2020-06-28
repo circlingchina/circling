@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: esquaredly/circling
+  repo: circlingchina/circling
 
 media_folder: "/images/uploads"
 
