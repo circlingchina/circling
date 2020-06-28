@@ -54,6 +54,7 @@
     "lodash": "^4.17.15",
     "moment-timezone": "^0.5.31",
     "netlify-lambda": "^1.6.3",
+    "pingpp-js": "^2.2.21",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",

@@ -17,6 +17,7 @@
     "aws-sdk": "^2.664.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "knex": "^0.21.1",
@@ -24,6 +25,7 @@
     "moment": "^2.27.0",
     "moment-timezone": "^0.5.31",
     "pg": "^8.2.1",
+    "pingpp": "^2.1.5",
     "pug": "^2.0.4"
   },
   "devDependencies": {
