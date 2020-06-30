@@ -42,7 +42,7 @@ test("/events/:id/join should let user join event", async ()=> {
     })
     .expect(200);
   
-  sinon.assert.calledOnceWithExactly(joinEmailStub, userId);
+  sinon.assert.calledOnceWithExactly(joinEmailStub, userId, eventId);
   const users = await Event.attendees(eventId);
   expect(users.map(u=>u.id)).toEqual([userId]);
 });

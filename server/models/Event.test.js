@@ -1,8 +1,9 @@
+const _ = require("lodash");
 const Event = require("./Event");
 const db = require("../db");
 const debug = require("debug")("test");
 const testUtils = require("../testUtils");
-const {createTestEvent, createTestUser, createTrailEvent} = testUtils;
+const {createTestEvent, createTestUser, createTrailEvent, createUserEvent} = testUtils;
 
 
 test("get all events", async () => {
@@ -42,6 +43,34 @@ test("getting next valid trail event", async() => {
   
   expect(events[0].id).toBe(eventId1);
   expect(events[0].category).toBe('新人介绍课程');
+});
+
+test("getting empty array if there is no trail event in the future", async() => {
+  const now = new Date();
+  await createTrailEvent("trail1", new Date(now.getTime() - 10000000));
+
+  const events = await Event.nextTrail();
+  expect(events).toEqual([]);
+});
+
+test("getting the nearest non-full trail event", async() => {
+  const now = new Date();
+  const eventId1 = await createTrailEvent("trail1", new Date(now.getTime() + 10000000));
+  const eventId2 = await createTrailEvent("trail2", new Date(now.getTime() + 20000000));
+  const eventId3 = await createTrailEvent("trail3", new Date(now.getTime() + 30000000));
+  
+  for (const no of _.range(10)) {
+    const userId = await createTestUser("username1"+no);
+    await createUserEvent(eventId1, userId);
+  }
+  
+  for (const no of _.range(5)) {
+    const userId = await createTestUser("username2"+no);
+    await createUserEvent(eventId1, userId);
+  }
+  
+  const events = await Event.nextTrail();
+  expect(events[0].id).toBe(eventId2);
 });
 
 test("getting a null trail event", async() => {

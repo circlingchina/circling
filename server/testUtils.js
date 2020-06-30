@@ -1,11 +1,12 @@
 const db = require("./db");
 
-const createTestEvent =  async function(name="Test Event", start_time = new Date(), category='线上Circling') {
+const createTestEvent =  async function(name="Test Event", start_time = new Date(), category='线上Circling', max_attendees=10) {
   return db("events").returning('id').insert({
     name: name,
     host: "tester",
     start_time,
     category,
+    max_attendees
   }).then(ids=>ids[0]);
 };
 
@@ -28,6 +29,10 @@ exports.createUpcomingEvent = async function() {
 
 exports.createTrailEvent = async function(name="Trail Event", start_time=new Date()) {
   return createTestEvent(name, start_time, '新人介绍课程');
+};
+
+exports.createUserEvent = async function(event_id, user_id) {
+  return db("user_event").insert({ event_id, user_id });
 };
 
 exports.clearDB = async function() {

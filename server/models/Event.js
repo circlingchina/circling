@@ -1,5 +1,6 @@
 const moment = require('moment');
 const db = require("../db");
+const _ = require("lodash");
 
 async function all() {
   return db.select().from("events").orderBy("start_time");
@@ -16,11 +17,40 @@ async function upcoming() {
 
 async function nextTrail() {
   const now = new Date();
-  return db.select().from("events")
+  
+  const events = await db.select().from('events')
     .where('category', '新人介绍课程')
     .andWhere('start_time', '>=', now)
-    .orderBy("start_time")
-    .limit(1);
+    .orderBy("start_time");
+  
+  // ALERT! N+1 queries, improve improve it later. 
+  /* equivalent query::
+  select 
+  events.id,
+  events.name,
+  events.max_attendees,
+  count(user_event.user_id) as attendee_count,
+  events.start_time
+  from events 
+  left join user_event on user_event.event_id = events.id
+  where events.category = '新人介绍课程' and events.start_time > '2020-07-01'
+  group by events.id 
+  having events.max_attendees > count(user_event.user_id) 
+  order by events.start_time
+  limit 1
+  */
+  for (const event of events) {
+    
+    const result = await db.count().from('user_event').where({event_id: event.id});
+    const count = _.toNumber(result[0]['count']);
+    
+    // console.log('event.max_attendees', event.max_attendees);
+    // console.log('count', count);
+    if (count < event.max_attendees) {
+      return [event];
+    }
+  }
+  return [];
 }
 
 async function join(event_id, user_id) {
