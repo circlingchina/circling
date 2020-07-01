@@ -1,6 +1,6 @@
 ---
 title: Circling线下体验 阿姆斯特丹站
-date: 2020-07-18T07:00:51.267Z
+date: 2020-07-18T15:00:51.267Z
 summary: "111"
 thumbnail: /images/uploads/redcharlie-qy0cro1wung-unsplash.jpg
 event_url: https://www.douban.com/event/33515531/
