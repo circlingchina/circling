@@ -60,11 +60,13 @@ exports.getNewCharge = async(userId, chargeType) => {
   const route = `${process.env.API_HOST}/payment/charges`;
   const response = await fetch(route, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify({
       user_id: userId,
       charge_type: chargeType,
     })
   });
-  console.log('getNewCharge', response);
-  return response;
+  return response.json();
 };

@@ -94,8 +94,10 @@ const createCharge = async(req, res) => {
   
   // current date + 12 random numberic chars
   // TODO: check collision
-  const user_id = body.user_id;
+  
   const order_no = moment(new Date()).format('YYYYMMDD') + cryptoRandomString({length: 12, type: 'numeric'});
+  
+  const user_id = body.user_id;
   // update db
   
   const params = {
