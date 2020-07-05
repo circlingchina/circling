@@ -3,10 +3,14 @@ require('dotenv').config();
 const cryptoRandomString = require('crypto-random-string');
 const _ = require("lodash");
 const moment = require("moment");
-const debug = require("debug")("payment_router");
+
+const mainLogger = require("../logger");
+
+const NAME = 'router.payment';
+const logger = mainLogger.child({ label: NAME });
+const debug = require("debug")(NAME);
 
 const pingpp = require('pingpp')(process.env.PINGXX_SECRET_KEY);
-
 // TODO: place the cert on server and remove it from the repo
 pingpp.setPrivateKeyPath(__dirname + '/../certs/pingpp_merchant_pri.pem');
 
@@ -111,56 +115,52 @@ const createCharge = async(req, res) => {
     app: {id: process.env.PINGXX_APP_ID}
   };
   
-  debug('charge params', params);
+  logger.info('create new charge with param', {params});
   
   pingpp.charges.create(params, (err, charge) => {
     if (err) {
+      logger.info('err when creating charge', {err});
       debug(err);
       res
         .status(500)
         .type('json')
         .send(JSON.stringify(err.raw));
     } else {
+      logger.info('charge created', {charge});
       res
         .status(200)
         .type('json')
-        .send(JSON.stringify({
-          charge
-        }));
+        .send(JSON.stringify({ charge }));
     }
   });
 };
 
 const pingppWebhook = async (req, res) => {
   const event = req.body;
-  console.log(event);
+  logger.info('incoming event', {event});
   
-  res.status(200).send('pingxxabc');
+  if (
+    !_.isObject(event) || 
+    event.object !== 'event'||
+    _.isEmpty(event.type) || 
+    !_.isObject(event.data)
+  ) {
+    res.status(400).type('json').send(JSON.stringify({err: "bad request"}));
+    return;
+  }
   
+  // https://help.pingxx.com/article/1021941/
+  // TODO: need deduplication
   
-  // if (
-  //   !_.isObject(event) || 
-  //   event.object !== 'event'||
-  //   _.isEmpty(event.type) || 
-  //   !_.isObject(event.data)
-  // ) {
-  //   res.status(400).type('json').send(JSON.stringify({err: "bad request"}));
-  //   return;
-  // }
-  // debug(event);
+  const eventType = event.type;
   
-  // // https://help.pingxx.com/article/1021941/
-  // // TODO: need deduplication
+  if (eventType === 'charge.succeeded	') {
+    logger.info('eventType is charge');
+  }
   
-  // const eventType = event.type;
+  // DB update
   
-  // if (eventType === 'charge.succeeded	') {
-  //   debug('eventType is charge');
-  // }
-  
-  // // DB update
-  
-  // res.status(200).type('json').send(JSON.stringify({success: true}));
+  res.status(200).type('json').send(JSON.stringify({success: true}));
 };
 
 module.exports = (app) => {

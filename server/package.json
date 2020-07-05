@@ -26,7 +26,8 @@
     "moment-timezone": "^0.5.31",
     "pg": "^8.2.1",
     "pingpp": "^2.1.5",
-    "pug": "^2.0.4"
+    "pug": "^2.0.4",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "debug": "^4.1.1",
