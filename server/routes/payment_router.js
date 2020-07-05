@@ -133,32 +133,34 @@ const createCharge = async(req, res) => {
 
 const pingppWebhook = async (req, res) => {
   const event = req.body;
+  console.log(event);
   
-  debug(event);
+  res.status(200).send('pingxxabc');
   
-  if (
-    !_.isObject(event) || 
-    event.object !== 'event'||
-    _.isEmpty(event.type) || 
-    !_.isObject(event.data)
-  ) {
-    res.status(400).type('json').send(JSON.stringify({err: "bad request"}));
-    return;
-  }
-  debug(event);
   
-  // https://help.pingxx.com/article/1021941/
-  // TODO: need deduplication
+  // if (
+  //   !_.isObject(event) || 
+  //   event.object !== 'event'||
+  //   _.isEmpty(event.type) || 
+  //   !_.isObject(event.data)
+  // ) {
+  //   res.status(400).type('json').send(JSON.stringify({err: "bad request"}));
+  //   return;
+  // }
+  // debug(event);
   
-  const eventType = event.type;
+  // // https://help.pingxx.com/article/1021941/
+  // // TODO: need deduplication
   
-  if (eventType === 'charge.succeeded	') {
-    debug('eventType is charge');
-  }
+  // const eventType = event.type;
   
-  // DB update
+  // if (eventType === 'charge.succeeded	') {
+  //   debug('eventType is charge');
+  // }
   
-  res.status(200).type('json').send(JSON.stringify({success: true}));
+  // // DB update
+  
+  // res.status(200).type('json').send(JSON.stringify({success: true}));
 };
 
 module.exports = (app) => {

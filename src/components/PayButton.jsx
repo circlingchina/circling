@@ -1,12 +1,28 @@
-import React from 'react';
+import React, { useState } from "react";
 import pingpp from 'pingpp-js';
+import api from "../circling-api";
 
 import {getNewCharge} from '../circling-api/index';
 
 export default function PayButton(props) {
+    
+  const [user, setUser] = useState({}); 
+    
+  window.netlifyIdentity.on('login', async (netiflyUser) => {
+    const result = await api.findUserByEmail(netiflyUser.email);
+    if(result.user) {
+      setUser(result.user);
+    } else {
+      throw Error(`${netiflyUser.email} not found in user db!`);
+    }
+  });
+    
+  window.netlifyIdentity.on('logout', () => {
+    setUser({});
+  });
  
   async function initiatePayment() {
-    const charge = (await getNewCharge('userIdabc', props.chargeType)).charge;
+    const charge = (await getNewCharge(user.id, props.chargeType)).charge;
     
     pingpp.createPayment(charge, (result, err) => {
       console.log("result:" + result);
