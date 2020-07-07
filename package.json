@@ -4,7 +4,7 @@
   "description": "TODO",
   "main": ".eleventy.js",
   "scripts": {
-    "dev": "(./node_modules/parcel-bundler/bin/cli.js watch src/member.js src/login.js src/trailevent.jsx --out-dir _site/js &) && ./node_modules/@11ty/eleventy/cmd.js --serve",
+    "dev": "(./node_modules/parcel-bundler/bin/cli.js watch src/member.js src/login.js src/trailevent.jsx src/payment.js --out-dir _site/js &) && ./node_modules/@11ty/eleventy/cmd.js --serve",
     "test": "jest -o",
     "test:watch": "jest --watch",
     "build": "npm run build:js && npm run build:site && npm run build:cssmin",
@@ -54,6 +54,7 @@
     "lodash": "^4.17.15",
     "moment-timezone": "^0.5.31",
     "netlify-lambda": "^1.6.3",
+    "pingpp-js": "^2.2.21",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
