@@ -92,6 +92,8 @@ const createCharge = async(req, res) => {
 };
 
 const pingppWebhook = async (req, res) => {
+  res.status(200).send('pingxx pong');
+  
   const event = req.body;
   logger.info('incoming event', {event});
   
@@ -115,12 +117,20 @@ const pingppWebhook = async (req, res) => {
   if (eventType === 'charge.succeeded') {
     await ChargeModel.handleChargeSucceededEvent(event);
   }
-  
-  res.status(200).send('pingxx pong');
 };
+
+const pingppWebhookTest = async (req, res) => {
+  res.status(200).send('pingxx test');
+  
+  const event = req.body;
+  logger.info('incoming event test', {event});
+  
+};
+
 
 module.exports = (app) => {
   // TODO: use POST, called by client with credential
   app.post('/payment/charges', createCharge);
   app.post('/payment/pingppwebhook', pingppWebhook);
+  app.post('/payment/pingppwebhook_test', pingppWebhookTest);
 };
