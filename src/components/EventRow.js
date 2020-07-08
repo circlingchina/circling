@@ -7,6 +7,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import AttendeesCell from './AttendeesCell';
 import api from '../circling-api/index';
 import Event from '../models/Event';
+import User from '../models/User';
 
 class EventRow extends React.Component {
   constructor(props) {
@@ -102,10 +103,15 @@ class EventRow extends React.Component {
     if (this.state.isLoading) {
       return;
     }
-
     const userId = this.props.user.id;
     if (!userId) {
       window.netlifyIdentity.open();
+      return;
+    }
+    
+    const userModel = new User(this.props.user);
+    if (!userModel.isPremium()) {
+      window.location = '/pages/pricing';
       return;
     }
 
