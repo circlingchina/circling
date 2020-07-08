@@ -1,4 +1,5 @@
 const db = require("./db");
+const moment = require('moment');
 
 const createTestEvent =  async function(name="Test Event", start_time = new Date(), category='线上Circling', max_attendees=10) {
   return db("events").returning('id').insert({
@@ -14,6 +15,23 @@ exports.createTestUser = async function(name="Alice") {
   return db("users").returning('id').insert({
     name: name,
     email: `${name}@test.com`
+  }).then(ids=>ids[0]);
+};
+
+exports.createPremiumUser= async function(name="Alice", premium_level='1', expired=false) {
+  let premium_expired_at;
+  
+  if (expired) {
+    premium_expired_at = moment().add(-2, 'days').format("YYYY-MM-DD"); 
+  } else {
+    premium_expired_at = moment().add(2, 'days').format("YYYY-MM-DD"); 
+  }
+  
+  return db("users").returning('id').insert({
+    name: name,
+    email: `${name}@test.com`,
+    premium_level,
+    premium_expired_at
   }).then(ids=>ids[0]);
 };
 

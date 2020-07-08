@@ -53,7 +53,20 @@ const join = async (req, res) => {
 
   const event_id = req.params.id;
   const user_id = req.query.user_id;
-
+  
+  const canJoin = await UserModel.canJoin(user_id);
+  
+  if (!canJoin) {
+    res
+      .status(400)
+      .type('json')
+      .send(JSON.stringify({
+        result: false,
+        err: 'invalid user id'
+      }));
+    return;
+  }
+  
   const queryRes = await Event.join(event_id, user_id);
 
   //optionally see if email needs to be sent

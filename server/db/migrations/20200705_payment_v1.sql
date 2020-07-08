@@ -1,7 +1,8 @@
 CREATE TYPE product_category AS ENUM (
   'SINGLE_EVENT',
   'MONTHLY',
-  'HALF_YEAR'
+  'HALF_YEAR',
+  'VIP'
 );
 
 CREATE TYPE charge_status AS ENUM (
@@ -48,4 +49,4 @@ BEFORE UPDATE ON user_charges
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_updated_at();
 
-ALTER TYPE product_category ADD VALUE 'VIP';
+

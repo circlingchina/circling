@@ -2,6 +2,7 @@ const debug = require("debug")("email");
 const db = require("../db");
 const {sentFirstEventEmail} = require('../emailService');
 const readableTimeString = require('../utils/readableTimeString');
+const moment = require('moment');
 
 async function handleFirstJoinEmail(id, event_id) {
   debug("handling email stuff for user_id=", id);
@@ -33,7 +34,29 @@ async function find(id) {
   return null;
 }
 
+// Lazy check if user is expired or not. If so, don't allow user to join the event and set the premium_level to 0
+async function _checkExpired(user) {
+  const isExpired = moment().tz('Asia/Shanghai').isAfter(user.premium_expired_at);
+  if (isExpired) {
+    await db("users")
+      .where({ id: user.id })
+      .update({ premium_level: 0 });
+    return false;
+  }
+  return true;
+}
+
+async function canJoin(id) {
+  const user = await find(id);
+  
+  if (!user || user.premium_level === '0') {
+    return false;
+  }
+  return _checkExpired(user);
+}
+
 module.exports = {
   handleFirstJoinEmail,
   find,
+  canJoin
 };

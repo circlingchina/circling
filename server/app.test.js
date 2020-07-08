@@ -25,9 +25,9 @@ test("/events should return list of upcoming events", async (done)=> {
 
 });
 
-test("/events/:id/join should let user join event", async ()=> {
+test("/events/:id/join should let premium user join event", async ()=> {
   const eventId = await testUtils.createUpcomingEvent();
-  const userId = await testUtils.createTestUser();
+  const userId = await testUtils.createPremiumUser();
 
   const route = `/events/${eventId}/join?user_id=${userId}`;
   debug(`GET ${route}`);
@@ -45,6 +45,22 @@ test("/events/:id/join should let user join event", async ()=> {
   sinon.assert.calledOnceWithExactly(joinEmailStub, userId, eventId);
   const users = await Event.attendees(eventId);
   expect(users.map(u=>u.id)).toEqual([userId]);
+});
+
+test("/events/:id/join should not let non-premium user join event", async ()=> {
+  const eventId = await testUtils.createUpcomingEvent();
+  const userId = await testUtils.createTestUser();
+
+  const route = `/events/${eventId}/join?user_id=${userId}`;
+  debug(`GET ${route}`);
+
+  await request(app)
+    .get(route)
+    .set('Accept', 'application/json')
+    .expect((res) => {
+      expect(res.body.err).toBe('invalid user id');
+    })
+    .expect(400);
 });
 
 test("/events/:id/unjoin should let user unjoin event", async ()=> {
