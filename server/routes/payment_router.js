@@ -34,6 +34,11 @@ const CHARGE_TYPE_INFO = {
     subject: "半年度会员",
     body: "半年度会员",
     amount: 3
+  },
+  VIP: {
+    subject: "亲密朋友",
+    body: "特别会员",
+    amount: 4
   }
 };
 

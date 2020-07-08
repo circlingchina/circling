@@ -47,3 +47,5 @@ CREATE TRIGGER user_charges_set_updated_at
 BEFORE UPDATE ON user_charges
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_updated_at();
+
+ALTER TYPE product_category ADD VALUE 'VIP';

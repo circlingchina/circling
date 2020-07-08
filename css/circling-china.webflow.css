@@ -2389,6 +2389,7 @@ figure {
 }
 
 .section.red {
+  margin-top: 50px;
   max-width: 1200px;
   margin-right: auto;
   margin-left: auto;
@@ -5929,12 +5930,13 @@ figure {
   margin-top: 30px;
   margin-bottom: 40px;
   color: #121217;
-  font-size: 70px;
+  font-size: 60px;
   line-height: 60px;
   font-weight: 500;
 }
 
 .top-sub-text {
+  margin-top: 20px;
   margin-bottom: 10px;
   font-size: 24px;
   line-height: 30px;
@@ -5961,6 +5963,7 @@ figure {
   padding: 60px 30px;
   background-color: #fff;
   text-align: center;
+  height: 550px;
 }
 
 .pricing-style-wrapper.featured {
