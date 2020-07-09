@@ -2426,6 +2426,7 @@ figure {
   -ms-flex-align: center;
   align-items: center;
   text-align: center;
+  white-space: nowrap;
 }
 
 .top-margin._15px {
@@ -5933,6 +5934,7 @@ figure {
   font-size: 60px;
   line-height: 60px;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .top-sub-text {
@@ -5993,6 +5995,11 @@ figure {
   font-family: Roboto, sans-serif;
   color: #afafb6;
   font-size: 13px;
+}
+
+.payment-qr-code {
+  margin: 0 auto;
+  width: 50%
 }
 
 .laptop {
@@ -7358,6 +7365,10 @@ figure {
 }
 
 @media screen and (max-width: 767px) {
+  .payment-qr-code {
+    width: 16% !important;
+  }
+  
   .section {
     padding-top: 60px;
     padding-bottom: 60px;
