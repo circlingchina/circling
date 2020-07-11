@@ -103,6 +103,7 @@ class EventRow extends React.Component {
     if (this.state.isLoading) {
       return;
     }
+    
     const userId = this.props.user.id;
     if (!userId) {
       window.netlifyIdentity.open();
@@ -110,7 +111,9 @@ class EventRow extends React.Component {
     }
     
     const userModel = new User(this.props.user);
-    if (!userModel.isPremium()) {
+    const event = new Event(this.props.eventJson);
+    
+    if (!userModel.isPremium() && !event.isTrail()) {
       window.location = '/pages/pricing';
       return;
     }

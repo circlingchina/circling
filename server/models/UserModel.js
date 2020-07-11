@@ -1,5 +1,6 @@
 const debug = require("debug")("email");
 const db = require("../db");
+const EventModel = require('./Event');
 const {sentFirstEventEmail} = require('../emailService');
 const readableTimeString = require('../utils/readableTimeString');
 const moment = require('moment');
@@ -46,11 +47,12 @@ async function _checkExpired(user) {
   return true;
 }
 
-async function canJoin(id) {
-  const user = await find(id);
+async function canJoin(user_id, event_id) {
+  const user = await find(user_id);
   
   if (!user || user.premium_level === '0') {
-    return false;
+    const event = await EventModel.find(event_id);
+    return event && event.category === '新人介绍课程';
   }
   return _checkExpired(user);
 }

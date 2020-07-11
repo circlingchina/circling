@@ -54,7 +54,7 @@ const join = async (req, res) => {
   const event_id = req.params.id;
   const user_id = req.query.user_id;
   
-  const canJoin = await UserModel.canJoin(user_id);
+  const canJoin = await UserModel.canJoin(user_id, event_id);
   
   if (!canJoin) {
     res
