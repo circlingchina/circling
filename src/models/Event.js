@@ -87,7 +87,7 @@ export default class Event {
     
     let minutesUntil = moment.duration(momentStartTime.diff(momentNow)).asMinutes();
    
-    if(minutesUntil > 2 * 60) {
+    if(minutesUntil > 1 * 60) {
       return Event.Status.NOT_STARTED;
     }
     if(minutesUntil > 15){
