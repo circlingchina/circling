@@ -54,8 +54,19 @@ const join = async (req, res) => {
   const event_id = req.params.id;
   const user_id = req.query.user_id;
   
-  const canJoin = await UserModel.canJoin(user_id, event_id);
+  const event = await Event.find(event_id, {includeAttendees: true});
+  if (event && event.attendees.length >= event.max_attendees) {
+    res
+      .status(400)
+      .type('json')
+      .send(JSON.stringify({
+        result: false,
+        err: 'event is full'
+      }));
+    return;
+  }
   
+  const canJoin = await UserModel.canJoin(user_id, event_id);
   if (!canJoin) {
     res
       .status(400)

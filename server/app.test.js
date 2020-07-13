@@ -47,6 +47,36 @@ test("/events/:id/join should let premium user join event", async ()=> {
   expect(users.map(u=>u.id)).toEqual([userId]);
 });
 
+test("/events/:id/join should not let user join when is full", async ()=> {
+  const eventId = await testUtils.createTestEvent("Test Event", new Date(), '线上Circling', 1);
+  const userId1 = await testUtils.createPremiumUser('u1');
+  const userId2 = await testUtils.createPremiumUser('u2');
+
+  let route = `/events/${eventId}/join?user_id=${userId1}`;
+  debug(`GET ${route}`);
+
+  await request(app)
+    .get(route)
+    .set('Accept', 'application/json')
+    .expect((res) => {
+      expect(res.body.event.id).toBe(eventId);
+    })
+    .expect(200);
+  
+  const users = await Event.attendees(eventId);
+  expect(users.map(u=>u.id)).toEqual([userId1]);
+  
+  route = `/events/${eventId}/join?user_id=${userId2}`;
+  debug(`GET ${route}`);
+  await request(app)
+    .get(route)
+    .set('Accept', 'application/json')
+    .expect((res) => {
+      expect(res.body.err).toBe("event is full");
+    })
+    .expect(400);
+});
+
 test("/events/:id/join should not let non-premium user join event", async ()=> {
   const eventId = await testUtils.createUpcomingEvent();
   const userId = await testUtils.createTestUser();

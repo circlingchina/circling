@@ -14,6 +14,7 @@ test("find a user", async () => {
 test("none-premium cannot join non-trail events", async() => {
   const userId = await createTestUser('Peter');
   const eventId = await testUtils.createUpcomingEvent();
+  
   expect(await UserModel.canJoin(userId, eventId)).toBe(false);
 });
 
