@@ -41,7 +41,7 @@ function updateNav(user) {
     let user_link = document.getElementById('nav-user-name');
     if (user_link) {
       user_link.style.display = '';
-      user_link.childNodes[1].innerText = user.user_metadata.full_name + "的活动";
+      user_link.childNodes[1].innerText = "我的活动";
     }
 
     let user_page_name = document.getElementById('user-name-label');
