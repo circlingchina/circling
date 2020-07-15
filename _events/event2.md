@@ -1,9 +1,9 @@
 ---
 title: 带领者认证培训
+date: 2020-07-25T19:30:00.000Z
 summary: Hello CMS Event
-date: 2020-04-22
 thumbnail: /images/uploads/event-2-image.jpg
-event_url: https://www.eventbrite.com.au/e/masterclass-on-the-cynefin-framework-strategy-narrative-tickets-90925242849
+event_url: https://shimo.im/docs/RYWthDy99phwDQTG/read
 tags:
   - event
 ---
