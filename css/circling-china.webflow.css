@@ -5929,7 +5929,7 @@ figure {
 .biger {
   position: relative;
   margin-top: 30px;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   color: #121217;
   font-size: 60px;
   line-height: 60px;
@@ -5965,7 +5965,7 @@ figure {
   padding: 60px 30px;
   background-color: #fff;
   text-align: center;
-  height: 580px;
+  height: 640px;
 }
 
 .pricing-style-wrapper.featured {
@@ -5999,7 +5999,8 @@ figure {
 
 .payment-qr-code {
   margin: 0 auto;
-  width: 50%
+  width: 50%;
+  margin-bottom: 15px;
 }
 
 .laptop {
