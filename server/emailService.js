@@ -48,6 +48,21 @@ const sentFirstEventEmail = (userName, toEmail, eventName, eventStartTime) => {
   return sendMail(sender, toEmail, subject, body_html);
 };
 
+const sentTrailEventEmail = (toEmail) => {
+  
+  const sender = "Jess <jess@circlingchina.org>"; // This address must be verified with Amazon SES.
+  const subject = "关于7月17日20:00 Circling新人介绍课的通知";
+
+  //compile body from template
+  const compiledFunction = pug.compileFile('./emails/trailTemp.pug');
+  // Render a set of data
+  const body_html = compiledFunction({
+   
+  });
+
+  return sendMail(sender, toEmail, subject, body_html);
+};
+
 //Try to send the email.
 const sendMail = (sender, recipient, subject, body_html) => {
   // Specify the parameters to pass to the API.
@@ -90,3 +105,4 @@ const sendMail = (sender, recipient, subject, body_html) => {
 
 exports.sendWelcomeMail = sendWelcomeMail;
 exports.sentFirstEventEmail = sentFirstEventEmail;
+exports.sentTrailEventEmail = sentTrailEventEmail;
