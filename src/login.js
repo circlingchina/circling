@@ -5,7 +5,6 @@ function attachIdentityListern() {
   
   netlifyIdentity.on('init', (user) => {
     updateNav(user);
-    // getAirbaseUid(user);
   });
 
   netlifyIdentity.on('login', async (user) => {

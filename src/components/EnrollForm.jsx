@@ -5,13 +5,15 @@ import isEmpty from 'validator/lib/isEmpty';
 import api from "../circling-api/index";
 import isWechatHandle from '../utils/isWechatHandle';
 import readableTimeString from '../utils/readableTimeString';
-
+import lodashIsEmpty from 'lodash/isEmpty';
+import isNull from 'lodash/isNull';
 export default class EnrollForm extends React.Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
+      user: {},
       submitted: false,
       name: '',
       email: '',
@@ -22,10 +24,16 @@ export default class EnrollForm extends React.Component {
   }
   
   async componentDidMount() {
-    const results = await api.getTrailEvent();
-    if (Array.isArray(results) && results.length > 0) {
-      const trailEvent = results[0];
+    const trailEventsResult = await api.getTrailEvent();
+    if (Array.isArray(trailEventsResult) && trailEventsResult.length > 0) {
+      const trailEvent = trailEventsResult[0];
       this.setState({trailEvent});
+    }
+    
+    const netlifyUser = window.netlifyIdentity.currentUser();
+    if (!isNull(netlifyUser)) { // logged in
+      const userResult= await api.findUserByEmail(netlifyUser.email);
+      this.setState({ user: userResult.user });
     }
   }
 
@@ -51,22 +59,15 @@ export default class EnrollForm extends React.Component {
   }
 
   doSubmit = async () => {
+    if (lodashIsEmpty(this.state.user)) {
+      window.netlifyIdentity.open();
+      return; 
+    } 
+    
     this.setState({ submitted:  true });
-
-    let user;
-
+    
     try {
-      const result = await api.findUserByEmail(this.state.email);
-      if(result.user) {
-        user = result.user;
-      } else {
-        // do nothing because the email is not registered.
-        return;
-      }
-
-      
-
-      if (user && this.state.trailEvent) {
+      if (this.state.user && this.state.trailEvent) {
         // Udate user wechat, but do not overwrite the name and email at the moment.
         const params = {
           wechat_id: this.state.wechatUserName,
@@ -74,13 +75,17 @@ export default class EnrollForm extends React.Component {
         };
 
         await Promise.all([
-          api.updateUser(user.id, params),
-          api.joinEvent(this.state.trailEvent, user.id)
+          api.updateUser(this.state.user.id, params),
+          api.joinEvent(this.state.trailEvent, this.state.user.id)
         ]);
+        
+        // console.log("joined",this.state.trailEvent, this.state.user.id );
       }
-
+      else {
+        console.log('no valid user or valid trail event');
+      }
     } catch (err) {
-      console.error(err);
+      console.log(err);
     }
   }
 
