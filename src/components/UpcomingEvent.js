@@ -13,7 +13,7 @@ function UpcomingEvent({events, userId}) {
     return eventObj.isStartingSoon();
   });
 
-  console.log(myEvents.map(e=> (new Event(e)).startingStatus()), startingEvents);
+  // console.log(myEvents.map(e=> (new Event(e)).startingStatus()), startingEvents);
   startingEvents.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
   let startingSoonEvent = _.head(startingEvents);
 
