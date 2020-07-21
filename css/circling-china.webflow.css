@@ -6790,10 +6790,13 @@ figure {
   color: #5e5e5f;
 }
 
-.join-button.host {
+.host {
   color: black;
   background-color: #edf2f5;
   font-weight: 500;
+  margin: 2px 5px 2px 5px;
+  font-size: 15px;
+  line-height: 20px;
 }
 
 .tabs {
