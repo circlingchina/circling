@@ -239,7 +239,7 @@ class EventRow extends React.Component {
             </div>
             <div className="w-col w-col-3 w-col-medium-3">
               <a href={"/pages/leaders/#" + this.props.eventJson.host}
-                className="join-button host">{this.props.eventJson.host}
+                className="host">{this.props.eventJson.host}
               </a>
             </div>
             <AttendeesCell event={event} maxLength={10} />
