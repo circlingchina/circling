@@ -16,8 +16,8 @@ const pingpp = require('pingpp')(process.env.PINGXX_SECRET_KEY);
 // TODO: place the cert on server and remove it from the repo
 pingpp.setPrivateKeyPath(__dirname + '/../certs/pingpp_merchant_pri.pem');
 
-// We only have this channel for now （weixin H5）
-const CHANNEL='wx_wap';
+// We only have this channel for now
+const CHANNEL='alipay_pc_direct';
 
 const CHARGE_TYPE_INFO = {
   SINGLE_EVENT: {
