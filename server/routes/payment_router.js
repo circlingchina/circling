@@ -17,7 +17,7 @@ const pingpp = require('pingpp')(process.env.PINGXX_SECRET_KEY);
 pingpp.setPrivateKeyPath(__dirname + '/../certs/pingpp_merchant_pri.pem');
 
 // We only have this channel for now
-const CHANNEL='alipay_pc_direct';
+const CHANNEL='alipay_wap';
 
 const CHARGE_TYPE_INFO = {
   SINGLE_EVENT: {
