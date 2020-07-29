@@ -71,7 +71,10 @@ const createCharge = async(req, res) => {
     channel: CHANNEL,
     currency: "cny",
     client_ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
-    app: {id: process.env.PINGXX_APP_ID}
+    app: {id: process.env.PINGXX_APP_ID},
+    extra: {
+      success_url: "https://www.circlingquanquan.com"
+    }
   };
   
   logger.info('create new charge with param', {params});
