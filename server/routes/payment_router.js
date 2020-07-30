@@ -11,6 +11,7 @@ const logger = mainLogger.child({ label: NAME });
 const debug = require("debug")(NAME);
 
 const ChargeModel = require('../models/Charge');
+const UserModel = require('../models/UserModel');
 
 const pingpp = require('pingpp')(process.env.PINGXX_SECRET_KEY);
 // TODO: place the cert on server and remove it from the repo
@@ -123,7 +124,17 @@ const pingppWebhook = async (req, res) => {
   logger.info(`livemode: ${livemode}, eventType: ${eventType}` );
   
   if (eventType === 'charge.succeeded') {
+    const chargeId = event.data.object.id;
+    
     await ChargeModel.handleChargeSucceededEvent(event);
+    
+    const charge = await ChargeModel.findByChargeId(chargeId); 
+    logger.info("Charge updated", {charge});
+    const userId = charge.user_id;
+    const category = charge.category;
+    
+    await UserModel.enablePremium(userId, category);
+    logger.info("User premium status updated", {userId, category}); 
   }
 };
 

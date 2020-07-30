@@ -27,9 +27,19 @@ async function handleChargeSucceededEvent(event) {
       charge_paied_at: charge.time_paid
     });
 }
+
+async function findByChargeId(charge_id) {
+  const charges = await db("user_charges").where({charge_id});
+  if (charges && charges.length > 0) {
+    return charges[0];
+  }
+  return null;
+}
+
   
 module.exports = {
   createCharge,
   handleChargeSucceededEvent,
+  findByChargeId,
 };
   

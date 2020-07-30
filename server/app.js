@@ -7,6 +7,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
+const useragent = require('express-useragent');
 const mountRoutes = require('./routes');
 
 const app = express();
@@ -14,6 +15,7 @@ const app = express();
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(cors()); //TODO - restrict origin to a few servers
+app.use(useragent.express());
 
 mountRoutes(app);
 const db = require('./db');

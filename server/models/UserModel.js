@@ -4,6 +4,28 @@ const EventModel = require('./Event');
 const {sentFirstEventEmail} = require('../emailService');
 const readableTimeString = require('../utils/readableTimeString');
 const moment = require('moment');
+const _ = require('lodash');
+const { DataSync } = require("aws-sdk");
+
+
+const PAYMENT_PRODUCTS = {
+  SINGLE_EVENT: {
+    premiumLevel: '1',
+    daysDelta: 3, 
+  },
+  MONTHLY: {
+    premiumLevel: '2',
+    daysDelta: 31, 
+  },
+  HALF_YEAR: {
+    premiumLevel: '3',
+    daysDelta: 183, 
+  },
+  VIP: {
+    premiumLevel: '4',
+    daysDelta: 365 * 5 + 1, 
+  },
+};
 
 async function handleFirstJoinEmail(id, event_id) {
   debug("handling email stuff for user_id=", id);
@@ -57,8 +79,33 @@ async function canJoin(user_id, event_id) {
   return _checkExpired(user);
 }
 
+async function enablePremium(userId, category) {
+  const user = await find(userId); 
+  
+  const premiumLevel = _.get(PAYMENT_PRODUCTS, category + '.premiumLevel', '0');
+  const daysDelta = _.get(PAYMENT_PRODUCTS, category + '.daysDelta', 0);
+  
+  const premiumLevelToUpdate = Math.max(
+    parseInt(premiumLevel), 
+    parseInt(user.premium_level)
+  ).toString();
+
+  let momentToUpdate = moment.max(
+    moment(), 
+    moment(user.premium_expired_at, 'YYYY-MM-DD')
+  ).add(daysDelta, 'days').format('YYYY-MM-DD');
+  
+  await db("users")
+    .where({ id: userId })
+    .update({ 
+      premium_level: premiumLevelToUpdate, 
+      premium_expired_at: momentToUpdate }
+    ); 
+} 
+
 module.exports = {
   handleFirstJoinEmail,
   find,
-  canJoin
+  canJoin,
+  enablePremium,
 };
