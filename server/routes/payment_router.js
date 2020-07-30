@@ -18,7 +18,10 @@ const pingpp = require('pingpp')(process.env.PINGXX_SECRET_KEY);
 pingpp.setPrivateKeyPath(__dirname + '/../certs/pingpp_merchant_pri.pem');
 
 // We only have this channel for now
-const CHANNEL='alipay_wap';
+const CHANNEL = {
+  desktop: 'alipay_pc_direct',
+  mobile: 'alipay_wap'
+};
 
 const CHARGE_TYPE_INFO = {
   SINGLE_EVENT: {
@@ -59,6 +62,8 @@ const createCharge = async(req, res) => {
     return;
   }
   
+  const channel = req.useragent.isDesktop ? CHANNEL.desktop : CHANNEL.mobile;
+  
   // current date + 12 random numberic chars
   // TODO: check collision
   
@@ -69,7 +74,7 @@ const createCharge = async(req, res) => {
     body: CHARGE_TYPE_INFO[chargeType]['body'],
     amount: CHARGE_TYPE_INFO[chargeType]['amount'],
     order_no,
-    channel: CHANNEL,
+    channel,
     currency: "cny",
     client_ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
     app: {id: process.env.PINGXX_APP_ID},
