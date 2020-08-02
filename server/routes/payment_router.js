@@ -27,22 +27,22 @@ const CHARGE_TYPE_INFO = {
   SINGLE_EVENT: {
     subject: "单次活动",
     body: "单次活动",
-    amount: 1
+    amount: 6900
   },
   MONTHLY: {
     subject: "月度会员",
     body: "月度会员",
-    amount: 2
+    amount: 19900
   }, 
   HALF_YEAR: {
     subject: "半年度会员",
     body: "半年度会员",
-    amount: 3
+    amount: 49900
   },
   VIP: {
     subject: "亲密朋友",
     body: "特别会员",
-    amount: 4
+    amount: 400000
   }
 };
 
