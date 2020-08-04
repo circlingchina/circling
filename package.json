@@ -56,6 +56,7 @@
     "netlify-lambda": "^1.6.3",
     "pingpp-js": "^2.2.21",
     "react": "^16.13.1",
+    "react-big-calendar": "^0.26.0",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
     "validator": "^13.0.0"
