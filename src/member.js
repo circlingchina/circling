@@ -3,20 +3,30 @@ import ReactDOM from "react-dom";
 import EventsTable from "./components/EventsTable";
 import UpcomingEvent from "./components/UpcomingEvent";
 import api from "./circling-api";
-import { Calendar, momentLocalizer } from "react-big-calendar";
+import { Calendar, momentLocalizer } from "react-big-calendar"; //docs for calendar: http://jquense.github.io/react-big-calendar/examples/index.html
 import moment from "moment";
+import Event from "./models/Event";
 
-function convertToCalendarEvents(events) {
+function convertToCalendarEvents(events, userId) {
   //right now we return some fake events, but what we need to do is to covert events into the format the calendar needs
-
   const calEvents = events.map((event) => {
+    const eventObj = new Event(event);
     return {
-      start: moment().toDate(),
-      end: moment().add(1, "days").toDate(),
-      title: "Fake Event 1",
+      start: new Date(event.start_time),
+      end: new Date(event.end_time),
+      title: event.name,
+      resource: eventObj.isUserAttending(userId),
     };
   });
   return calEvents;
+}
+
+function EventRenderer({ event, children }) {
+  return (
+    <div className={event.resource ? "attending" : "not-attending"}>
+      {children}
+    </div>
+  );
 }
 
 const MyCalendar = ({ events }) => (
@@ -24,11 +34,15 @@ const MyCalendar = ({ events }) => (
     <Calendar
       localizer={momentLocalizer(moment)}
       defaultDate={new Date()}
-      defaultView="month"
+      defaultView="week"
       events={events}
       startAccessor="start"
       endAccessor="end"
       style={{ height: 500 }}
+      selectable={false}
+      components={{
+        eventWrapper: EventRenderer,
+      }}
     />
   </div>
 );
@@ -88,7 +102,7 @@ function EventRegion() {
         <div className="container w-container">
           <div className="sub-text red">本周会员Circling</div>
           <div className="CalendarApp">
-            <MyCalendar events={convertToCalendarEvents(events)} />
+            <MyCalendar events={convertToCalendarEvents(events, user.id)} />
           </div>
           <EventsTable
             events={events}

@@ -8603,3 +8603,7 @@ figure {
   -ms-grid-column-span: 1;
   grid-column-end: span 1;
 }
+
+.rbc-events-container .attending .rbc-event {
+  background-color: green;
+}
