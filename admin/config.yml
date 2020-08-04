@@ -40,6 +40,6 @@ collections:
     create: true
     slug: "{{slug}}"
     fields:
-      - { label: "Name", name: "name", widget: "string" }
+      - { label: "Name", name: "title", widget: "string" }
       - { label: "Avatar", name: "avatar", widget: "image" }
       - { label: "Body", name: "body", widget: "markdown" }
