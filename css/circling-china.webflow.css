@@ -3901,6 +3901,16 @@ figure {
   transform: translate(-50%, 0px);
 }
 
+.container-center {
+  display: flex;
+  justify-content: center;
+}
+.page-divider-static {
+  width: 2px;
+  height: 150px;
+  background-color: rgba(217, 223, 228, 0.6);
+}
+
 .page-divider.top {
   left: 50%;
   top: -75px;
@@ -6678,6 +6688,36 @@ figure {
   -webkit-align-items: center;
   -ms-flex-align: center;
   align-items: center;
+}
+
+.leader-cell-container {
+  margin-top:40px;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.leader-full-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.leader-panel {
+  display: flex;
+  /* justify-content: space-between; */
+  margin-bottom:40px;
+}
+
+.leader-panel-avatar {
+  width: 400px;
+}
+.leader-panel-avatar img {
+  height: auto;
+  width: 400px;
+}
+
+.leader-panel .info {
+  max-width: 600px;
+  margin-left: 40px;
 }
 
 .rich-text-block-2 {

@@ -34,3 +34,12 @@ collections:
       - { label: "Image", name: "img", widget: "image" }
       - { label: "Tags", name: "tags", widget: "list", default: ["post"] }
       - { label: "Body", name: "body", widget: "markdown" }
+  - name: "leader"
+    label: "Leader"
+    folder: "leaders"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Name", name: "name", widget: "string" }
+      - { label: "Avatar", name: "avatar", widget: "image" }
+      - { label: "Body", name: "body", widget: "markdown" }
