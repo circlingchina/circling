@@ -4,8 +4,8 @@ import EventsTable from "./components/EventsTable";
 import UpcomingEvent from "./components/UpcomingEvent";
 import api from "./circling-api";
 import { Calendar, momentLocalizer } from "react-big-calendar"; //docs for calendar: http://jquense.github.io/react-big-calendar/examples/index.html
-import moment from "moment";
 import Event from "./models/Event";
+import moment from "moment";
 
 function convertToCalendarEvents(events, userId) {
   //right now we return some fake events, but what we need to do is to covert events into the format the calendar needs
@@ -29,23 +29,25 @@ function EventRenderer({ event, children }) {
   );
 }
 
-const MyCalendar = ({ events }) => (
-  <div>
-    <Calendar
-      localizer={momentLocalizer(moment)}
-      defaultDate={new Date()}
-      defaultView="week"
-      events={events}
-      startAccessor="start"
-      endAccessor="end"
-      style={{ height: 500 }}
-      selectable={false}
-      components={{
-        eventWrapper: EventRenderer,
-      }}
-    />
-  </div>
-);
+const MyCalendar = ({ events }) => {
+  return (
+    <div>
+      <Calendar
+        localizer={momentLocalizer(moment)}
+        defaultDate={new Date()}
+        defaultView="week"
+        events={events}
+        startAccessor="start"
+        endAccessor="end"
+        style={{ height: 500 }}
+        selectable={false}
+        components={{
+          eventWrapper: EventRenderer,
+        }}
+      />
+    </div>
+  );
+};
 
 function EventRegion() {
   const [events, setEvents] = useState([]);
