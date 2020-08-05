@@ -6,6 +6,7 @@ import api from "./circling-api";
 import { Calendar, momentLocalizer } from "react-big-calendar"; //docs for calendar: http://jquense.github.io/react-big-calendar/examples/index.html
 import moment from "moment";
 import Event from "./models/Event";
+import { TIME_ZONE } from "./utils/readableTimeString";
 
 function convertToCalendarEvents(events, userId) {
   //right now we return some fake events, but what we need to do is to covert events into the format the calendar needs
@@ -32,7 +33,7 @@ function EventRenderer({ event, children }) {
 const MyCalendar = ({ events }) => (
   <div>
     <Calendar
-      localizer={momentLocalizer(moment)}
+      localizer={momentLocalizer(moment().tz(TIME_ZONE))}
       defaultDate={new Date()}
       defaultView="week"
       events={events}
