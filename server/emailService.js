@@ -51,7 +51,7 @@ const sentFirstEventEmail = (userName, toEmail, eventName, eventStartTime) => {
 const sentTrailEventEmail = (toEmail) => {
   
   const sender = "Jess <jess@circlingchina.org>"; // This address must be verified with Amazon SES.
-  const subject = "关于7月17日20:00 Circling新人介绍课的通知";
+  const subject = "关于8月7日20:00 Circling新人介绍课的通知";
 
   //compile body from template
   const compiledFunction = pug.compileFile('./emails/trailTemp.pug');
