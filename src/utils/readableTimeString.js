@@ -3,7 +3,7 @@ import "moment/locale/zh-cn";
 
 moment.locale("zh-cn");
 
-export const TIME_ZONE = "Asia/Shanghai";
+export const TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export default function readableTimeString(datetime) {
   return moment(datetime)

@@ -17,7 +17,7 @@ import 'moment/locale/zh-cn';
 
 import readableTimeString, {readableDate, readableTime} from "../utils/readableTimeString";
 
-const TIME_ZONE = 'Asia/Shanghai';
+const TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 moment.locale('zh-cn');
 export default class Event {
