@@ -1,6 +1,4 @@
 ---
 title: Circling
-category: Circling
 ---
-
-This is the MAIN EVENT!!!
+This is the circling event type, which people sit around and **share stories!**

@@ -43,3 +43,11 @@ collections:
       - { label: "Name", name: "title", widget: "string" }
       - { label: "Avatar", name: "avatar", widget: "image" }
       - { label: "Body", name: "body", widget: "markdown" }
+  - name: "event_types"
+    label: "Event Types"
+    folder: "event_types"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Category", name: "title", widget: "string" }
+      - { label: "Body", name: "body", widget: "markdown" }      
