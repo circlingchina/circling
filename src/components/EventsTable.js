@@ -1,12 +1,14 @@
-import React from 'react';
-import Event from '../models/Event';
-import EventRow from './EventRow';
+import React from "react";
+import Event from "../models/Event";
+import EventRow from "./EventRow";
 
 function EventsTable(props) {
   const futureEvents = props.events.filter((eventJson) => {
     const event = new Event(eventJson);
     return event.startingStatus() != Event.Status.FINISHED;
   });
+
+  let numEvents = countUserEvents(props.events, props.user.id);
 
   const eventRows = futureEvents.map((eventJson) => (
     <EventRow
@@ -15,6 +17,7 @@ function EventsTable(props) {
       onEventChanged={props.onEventChanged}
       onUserChanged={props.onUserChanged}
       user={props.user}
+      numEvents={numEvents}
     />
   ));
 
@@ -40,6 +43,17 @@ function TableHeader() {
       <div className="w-col w-col-3 w-col-medium-3">报名</div>
     </div>
   );
+}
+
+function countUserEvents(events, userId) {
+  let numEvents = 0;
+  events.filter((eventJson) => {
+    const event = new Event(eventJson);
+    if (event.isUserAttending(userId)) {
+      numEvents += 1;
+    }
+  });
+  return numEvents;
 }
 
 export default EventsTable;
