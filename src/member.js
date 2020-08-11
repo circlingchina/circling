@@ -6,7 +6,7 @@ import api from "./circling-api";
 import { Calendar, momentLocalizer } from "react-big-calendar"; //docs for calendar: http://jquense.github.io/react-big-calendar/examples/index.html
 import Event from "./models/Event";
 import moment from "moment";
-
+import { ToastContainer } from "react-toastify";
 function convertToCalendarEvents(events, userId) {
   //right now we return some fake events, but what we need to do is to covert events into the format the calendar needs
   const calEvents = events.map((event) => {
@@ -112,6 +112,7 @@ function EventRegion() {
             onEventChanged={updateEvents}
             onUserChanged={updateUser}
           />
+          <ToastContainer />
         </div>
         <div className="page-divider">
           <div className="page-divider-white down" />

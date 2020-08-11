@@ -9,6 +9,9 @@ import api from "../circling-api/index";
 import Event from "../models/Event";
 import User from "../models/User";
 
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 class EventRow extends React.Component {
   constructor(props) {
     super(props);
@@ -125,7 +128,7 @@ class EventRow extends React.Component {
     }
 
     if (this.maxedOut()) {
-      alert("max event reached!");
+      toast.dark("不要太贪心哦,一次只能报5个活动");
       return;
     }
     this.setState({ isLoading: true });

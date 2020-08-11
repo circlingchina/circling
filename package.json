@@ -59,6 +59,7 @@
     "react-big-calendar": "^0.26.0",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
+    "react-toastify": "^6.0.8",
     "validator": "^13.0.0"
   },
   "jest": {
