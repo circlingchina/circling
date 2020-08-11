@@ -8607,3 +8607,15 @@ figure {
 .rbc-events-container .attending .rbc-event {
   background-color: green;
 }
+
+.event_types_container {
+  margin-top: 150px;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.event_types_container .item {
+  text-align: center;
+}

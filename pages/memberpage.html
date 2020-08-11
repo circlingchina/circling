@@ -28,7 +28,14 @@ custom_react: <script src="/js/member.js"></script>
 </div>
 
 <div id="event-region"></div>
-
+<div class="event_types_container">
+  <div class="item">
+    <h2>Event Types</h1>
+  </div>
+  {% for category in collections.event_types %}
+    {% include _category.html %}
+  {% endfor %}
+</div>
 <div class="section">
   <div class="container w-container">
     <div  class="top-title center">
