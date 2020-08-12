@@ -1,4 +1,6 @@
 ---
 title: Circling
 ---
-This is the circling event type, which people sit around and **share stories!**
+Circling是圈圈的核心活动，每一场Circling都是由认证带领者或者实习带领者带领，时长在60-120分钟。
+
+我们希望大家可以享受每一场Circling，放下伪装与评判，投入到感受当中去。建议所有会员每周至少参与一场Circing，保证与自己的联结。
