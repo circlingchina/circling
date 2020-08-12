@@ -28,15 +28,25 @@ custom_react: <script src="/js/member.js"></script>
 </div>
 
 <div id="event-region"></div>
-<div class="event_types_container">
-  <div class="item">
-    <h2>Event Types</h1>
-  </div>
-  {% for category in collections.event_types %}
-    {% include _category.html %}
-  {% endfor %}
-</div>
+
 <div class="section">
+  <div class="container w-container">
+    <div  class="top-title center">
+    <div class="sub-text red">活动介绍<br/></div>
+    <h1 class="h1">会员可以免费参加以下所有线上活动<br/></h1>
+    </div>
+    <div class="event_types_container">
+      {% for category in collections.event_types %}
+      {% include _category.html %}
+      {% endfor %}
+    </div>
+  </div>
+  <div class="page-divider">
+    <div class="page-divider-white"></div>
+  </div>
+</div>
+
+<div class="section transparent">
   <div class="container w-container">
     <div  class="top-title center">
       <div class="sub-text red">近期活动<br/></div>
