@@ -4,6 +4,7 @@
   "description": "TODO",
   "main": ".eleventy.js",
   "scripts": {
+    "start": "npm run dev",
     "dev": "(./node_modules/parcel-bundler/bin/cli.js watch src/member.js src/login.js src/trailevent.jsx src/payment.js --out-dir _site/js &) && ./node_modules/@11ty/eleventy/cmd.js --serve",
     "test": "jest -o",
     "test:watch": "jest --watch",

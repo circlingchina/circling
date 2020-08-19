@@ -89,6 +89,12 @@ function EventRegion() {
     setUser(user);
   };
 
+  let calEvents = [];
+  try {
+    calEvents = convertToCalendarEvents(events, user.id);
+  } catch (e) {
+    console.log(e);
+  }
   return (
     <>
       <div id="modal-root"></div>
@@ -104,7 +110,7 @@ function EventRegion() {
         <div className="container w-container">
           <div className="sub-text red">本周会员Circling</div>
           <div className="CalendarApp">
-            <MyCalendar events={convertToCalendarEvents(events, user.id)} />
+            <MyCalendar events={calEvents} />
           </div>
           <EventsTable
             events={events}
