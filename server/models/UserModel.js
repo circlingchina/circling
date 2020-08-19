@@ -10,8 +10,8 @@ const { DataSync } = require("aws-sdk");
 
 const PAYMENT_PRODUCTS = {
   SINGLE_EVENT: {
-    premiumLevel: '1',
-    daysDelta: 3, 
+    premiumLevel: '0',
+    daysDelta: 0, 
   },
   MONTHLY: {
     premiumLevel: '2',
@@ -71,12 +71,25 @@ async function _checkExpired(user) {
 
 async function canJoin(user_id, event_id) {
   const user = await find(user_id);
-  
-  if (!user || user.premium_level === '0') {
-    const event = await EventModel.find(event_id);
-    return event && event.category === '新人介绍课程';
+  if (!user) {
+    return false;
   }
+  
+  const event = await EventModel.find(event_id);
+  if (!event) {
+    return false;
+  }
+  
+  if (event.category === '新人介绍课程') {
+    return true;
+  }
+  
+  if (user.premium_level === '0') {
+    return user.event_credit > 0;
+  } 
+  
   return _checkExpired(user);
+  
 }
 
 async function enablePremium(userId, category) {
@@ -95,17 +108,51 @@ async function enablePremium(userId, category) {
     moment(user.premium_expired_at, 'YYYY-MM-DD')
   ).add(daysDelta, 'days').format('YYYY-MM-DD');
   
-  await db("users")
+  let operation = db("users")
     .where({ id: userId })
-    .update({ 
+    .update({
       premium_level: premiumLevelToUpdate, 
-      premium_expired_at: momentToUpdate }
-    ); 
+      premium_expired_at: momentToUpdate
+    });
+  
+  if (category === 'SINGLE_EVENT') {
+    operation = operation.increment('event_credit', 1);
+  }
+  
+  await operation;
 } 
+
+/**
+ * After join hook, decrease event_credit after a non-premium user joined an event
+ * @param userId 
+ */
+async function afterJoin(userId) {
+  const user = await find(userId); 
+  if (user && user.premium_level === '0') {
+    await db("users")
+      .where({ id: userId })
+      .decrement('event_credit', 1);
+  } 
+}
+
+/**
+ * After un-join hook, increase event_credit after a non-premium user un-joined an event
+ * @param userId 
+ */
+async function afterUnjoin(userId) {
+  const user = await find(userId); 
+  if (user && user.premium_level === '0') {
+    await db("users")
+      .where({ id: userId })
+      .increment('event_credit', 1);
+  } 
+}
 
 module.exports = {
   handleFirstJoinEmail,
   find,
   canJoin,
   enablePremium,
+  afterJoin,
+  afterUnjoin
 };

@@ -1,7 +1,7 @@
 const db = require("./db");
 const moment = require('moment');
 
-const createTestEvent =  async function(name="Test Event", start_time = new Date(), category='线上Circling', max_attendees=10) {
+const createTestEvent =  async function(name="Test Event", start_time = new Date(), category='Circling', max_attendees=10) {
   return db("events").returning('id').insert({
     name: name,
     host: "tester",
@@ -14,6 +14,15 @@ const createTestEvent =  async function(name="Test Event", start_time = new Date
 exports.createTestUser = async function(name="Alice") {
   return db("users").returning('id').insert({
     name: name,
+    email: `${name}@test.com`
+  }).then(ids=>ids[0]);
+};
+
+
+exports.createTestUserWithEventCredit = async function(name="Alice", event_credit = 1) {
+  return db("users").returning('id').insert({
+    name,
+    event_credit,
     email: `${name}@test.com`
   }).then(ids=>ids[0]);
 };
