@@ -70,26 +70,38 @@ async function _checkExpired(user) {
 }
 
 async function canJoin(user_id, event_id) {
+  // sanity check
   const user = await find(user_id);
   if (!user) {
     return false;
   }
-  
   const event = await EventModel.find(event_id);
   if (!event) {
     return false;
   }
   
+  // No restrictions for trail events
   if (event.category === '新人介绍课程') {
     return true;
   }
   
+  // For premium_level 0, event_credit > 0 is required
   if (user.premium_level === '0') {
     return user.event_credit > 0;
   } 
   
-  return _checkExpired(user);
+  // For premium_level 2,3,4, the start time of event must before user's premium expire date
+  if (parseInt(user.premium_level, 10) > 1) {
+    // if the user has been expired, decrease the premium level and return false
+    if (!_checkExpired(user)) {
+      return false;
+    } 
+
+    return moment(user.premium_expired_at).isAfter(event.start_time);
+  }
   
+  // safe guard
+  return false;
 }
 
 async function enablePremium(userId, category) {

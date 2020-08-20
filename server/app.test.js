@@ -143,6 +143,42 @@ test("/events/:id/unjoin should let user unjoin event", async ()=> {
   expect(users).toEqual([]);
 });
 
+test("/events/:id/join should not let premium user join event started after the premium is expired", async ()=> {
+  // will start in 5 days
+  const eventId = await testUtils.createUpcomingEvent(new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000));
+  
+  // will expire in 2 days
+  const userId = await testUtils.createPremiumUser();
+  const route = `/events/${eventId}/join?user_id=${userId}`;
+  debug(`GET ${route}`);
+
+  await request(app)
+    .get(route)
+    .set('Accept', 'application/json')
+    .expect((res) => {
+      expect(res.body.err).toBe('invalid user id');
+    })
+    .expect(400); 
+});
+
+test("/events/:id/join should let non-premium user (with credit) join event started after the premium is expired", async ()=> {
+  // will start in 5 days
+  const eventId = await testUtils.createUpcomingEvent(new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000));
+  
+  // will expire in 2 days
+  const userId = await testUtils.createTestUserWithEventCredit();
+  const route = `/events/${eventId}/join?user_id=${userId}`;
+  debug(`GET ${route}`);
+
+  await request(app)
+    .get(route)
+    .set('Accept', 'application/json')
+    .expect((res) => {
+      expect(res.body.event.id).toBe(eventId);
+    })
+    .expect(200);
+});
+
 test("/events result should contain list of attendees", async (done)=> {
 
   const eventId = await testUtils.createUpcomingEvent();

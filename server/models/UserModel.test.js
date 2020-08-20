@@ -45,7 +45,7 @@ test("premium can join trail events", async() => {
 });
 
 test("expired premium cannot join and user becomes non-premium", async() => {
-  const userId = await createPremiumUser('Peter', 1, true);
+  const userId = await createPremiumUser('Peter', '2', true);
   const eventId = await testUtils.createUpcomingEvent();
   expect(await UserModel.canJoin(userId, eventId)).toBe(false);
   

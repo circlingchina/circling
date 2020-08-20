@@ -27,7 +27,7 @@ exports.createTestUserWithEventCredit = async function(name="Alice", event_credi
   }).then(ids=>ids[0]);
 };
 
-exports.createPremiumUser= async function(name="Alice", premium_level='1', expired=false) {
+exports.createPremiumUser= async function(name="Alice", premium_level='2', expired=false) {
   let premium_expired_at;
   
   if (expired) {
@@ -49,8 +49,8 @@ exports.createPastEvent = async function() {
   return createTestEvent("Past Event", past);
 };
 
-exports.createUpcomingEvent = async function() {
-  const future = new Date(new Date().getTime() + 60 * 60 * 1000);
+exports.createUpcomingEvent = async function(date = new Date(new Date().getTime() + 60 * 60 * 1000) ) {
+  const future = date;
   return createTestEvent("Future Event", future);
 };
 
