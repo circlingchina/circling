@@ -28,7 +28,7 @@ export default class User {
   
   isPremium() {
     const primiumLevelInt = parseInt(this.rawJson.premium_level);
-    return primiumLevelInt > 0;
+    return primiumLevelInt >= 0 || this.rawJson.event_credit > 0;
   }
 
   toJSON() {
