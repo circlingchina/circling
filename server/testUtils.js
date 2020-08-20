@@ -1,7 +1,7 @@
 const db = require("./db");
 const moment = require('moment');
 
-const createTestEvent =  async function(name="Test Event", start_time = new Date(), category='线上Circling', max_attendees=10) {
+const createTestEvent =  async function(name="Test Event", start_time = new Date(), category='Circling', max_attendees=10) {
   return db("events").returning('id').insert({
     name: name,
     host: "tester",
@@ -18,7 +18,16 @@ exports.createTestUser = async function(name="Alice") {
   }).then(ids=>ids[0]);
 };
 
-exports.createPremiumUser= async function(name="Alice", premium_level='1', expired=false) {
+
+exports.createTestUserWithEventCredit = async function(name="Alice", event_credit = 1) {
+  return db("users").returning('id').insert({
+    name,
+    event_credit,
+    email: `${name}@test.com`
+  }).then(ids=>ids[0]);
+};
+
+exports.createPremiumUser= async function(name="Alice", premium_level='2', expired=false) {
   let premium_expired_at;
   
   if (expired) {
@@ -40,8 +49,8 @@ exports.createPastEvent = async function() {
   return createTestEvent("Past Event", past);
 };
 
-exports.createUpcomingEvent = async function() {
-  const future = new Date(new Date().getTime() + 60 * 60 * 1000);
+exports.createUpcomingEvent = async function(date = new Date(new Date().getTime() + 60 * 60 * 1000) ) {
+  const future = date;
   return createTestEvent("Future Event", future);
 };
 

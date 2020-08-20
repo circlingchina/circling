@@ -3,7 +3,7 @@ const debug = require("debug")("test");
 const UserModel = require("./UserModel");
 const testUtils = require("../testUtils");
 const moment = require('moment');
-const { createTestUser, createPremiumUser } = testUtils;
+const { createTestUser, createPremiumUser, createTestUserWithEventCredit } = testUtils;
 
 
 test("find a user", async () => {
@@ -25,6 +25,13 @@ test("none-premium can join trail events", async() => {
   expect(await UserModel.canJoin(userId, eventId)).toBe(true);
 });
 
+test("user with event credit can join non-trail events", async() => {
+  const userId = await createTestUserWithEventCredit();
+  const eventId = await testUtils.createUpcomingEvent();
+  
+  expect(await UserModel.canJoin(userId, eventId)).toBe(true);
+});
+
 test("premium can join non-trail events", async() => {
   const userId = await createPremiumUser('Peter');
   const eventId = await testUtils.createUpcomingEvent();
@@ -38,7 +45,7 @@ test("premium can join trail events", async() => {
 });
 
 test("expired premium cannot join and user becomes non-premium", async() => {
-  const userId = await createPremiumUser('Peter', 1, true);
+  const userId = await createPremiumUser('Peter', '2', true);
   const eventId = await testUtils.createUpcomingEvent();
   expect(await UserModel.canJoin(userId, eventId)).toBe(false);
   
@@ -46,16 +53,14 @@ test("expired premium cannot join and user becomes non-premium", async() => {
   expect(user.premium_level).toBe('0');
 });
 
-test("enable premium single event", async() => {
+test("paied for single event", async() => {
   const userId = await createTestUser('Peter');
   await UserModel.enablePremium(userId, 'SINGLE_EVENT');
   
   const user = await UserModel.find(userId);
-  expect(user.premium_level).toBe('1');
-  expect(
-    moment(user.premium_expired_at).isSame(
-      moment().add(3, 'days'), 'day')
-  ); 
+  expect(user.premium_level).toBe('0');
+  expect(user.event_credit).toBe(1);
+  expect(moment(user.premium_expired_at).isSame(moment(), 'day')); 
 });
 
 test("enable premium monthly", async() => {

@@ -3,7 +3,8 @@ const Event = require("./Event");
 const db = require("../db");
 const debug = require("debug")("test");
 const testUtils = require("../testUtils");
-const {createTestEvent, createTestUser, createTrailEvent, createUserEvent} = testUtils;
+const UserModel = require("./UserModel");
+const {createTestEvent, createTestUser, createTrailEvent, createUserEvent, createTestUserWithEventCredit} = testUtils;
 
 
 test("get all events", async () => {

@@ -51,10 +51,11 @@ const nextTrail = async(req, res) => {
 
 const join = async (req, res) => {
 
-  const event_id = req.params.id;
-  const user_id = req.query.user_id;
+  const eventId = req.params.id;
+  const userId = req.query.user_id;
   
-  const event = await Event.find(event_id, {includeAttendees: true});
+  const event = await Event.find(eventId, {includeAttendees: true});
+  
   if (event && event.attendees.length >= event.max_attendees) {
     res
       .status(400)
@@ -66,7 +67,7 @@ const join = async (req, res) => {
     return;
   }
   
-  const canJoin = await UserModel.canJoin(user_id, event_id);
+  const canJoin = await UserModel.canJoin(userId, eventId);
   if (!canJoin) {
     res
       .status(400)
@@ -78,11 +79,12 @@ const join = async (req, res) => {
     return;
   }
   
-  const queryRes = await Event.join(event_id, user_id);
+  const queryRes = await Event.join(eventId, userId);
+  await UserModel.afterJoin(userId);
 
   //optionally see if email needs to be sent
-  await UserModel.handleFirstJoinEmail(user_id, event_id);
-  const updatedEvent = await Event.find(event_id, {includeAttendees: true});
+  await UserModel.handleFirstJoinEmail(userId, eventId);
+  const updatedEvent = await Event.find(eventId, {includeAttendees: true});
   await eventWithExtraFields(updatedEvent);
   res
     .status(200)
@@ -95,12 +97,13 @@ const join = async (req, res) => {
 
 const unjoin = async (req, res) => {
 
-  const event_id = req.params.id;
-  const user_id = req.query.user_id;
-  debug({user_id, event_id});
+  const eventId = req.params.id;
+  const userId = req.query.user_id;
+  debug({userId, eventId});
 
-  const queryRes = await Event.unjoin(event_id, user_id);
-  const updatedEvent = await Event.find(event_id, {includeAttendees: true});
+  const queryRes = await Event.unjoin(eventId, userId);
+  await UserModel.afterUnjoin(userId);
+  const updatedEvent = await Event.find(eventId, {includeAttendees: true});
   await eventWithExtraFields(updatedEvent);
   res
     .status(200)
