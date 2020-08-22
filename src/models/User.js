@@ -31,6 +31,23 @@ export default class User {
     return primiumLevelInt >= 0 || this.rawJson.event_credit > 0;
   }
 
+  canJoin(eventModel) {
+    if (eventModel.isTrail()) {
+      return true;
+    }
+
+    if (this.rawJson.premium_level === '0') {
+      return this.rawJson.event_credit > 0 && eventModel.toJSON().category === 'Circling';
+    }
+
+    if (parseInt(this.rawJson.premium_level, 10) > 1) {
+      return true;
+    }
+
+    // safe guard
+    return false;
+  }
+
   toJSON() {
     return this.rawJson;
   }

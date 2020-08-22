@@ -12,23 +12,6 @@ import User from "../models/User";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function _canJoin(userModel, eventModel) {
-  if (eventModel.isTrail()) {
-    return true;
-  } 
-  
-  if (userModel.toJSON().premium_level === '0') {
-    return userModel.toJSON().event_credit > 0 && eventModel.toJSON().category === 'Circling';
-  }
-  
-  if (parseInt(userModel.toJSON().premium_level, 10) > 1) {
-    return true;
-  }
-  
-  // safe guard
-  return false;
-}
-
 class EventRow extends React.Component {
   constructor(props) {
     super(props);
@@ -139,7 +122,7 @@ class EventRow extends React.Component {
     const userModel = new User(this.props.user);
     const event = new Event(this.props.eventJson);
 
-    if (!_canJoin(userModel, event)) {
+    if (!userModel.canJoin(event)) {
       window.location = "/pages/pricing";
       return;
     }
