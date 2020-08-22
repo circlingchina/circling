@@ -18,7 +18,6 @@ exports.createTestUser = async function(name="Alice") {
   }).then(ids=>ids[0]);
 };
 
-
 exports.createTestUserWithEventCredit = async function(name="Alice", event_credit = 1) {
   return db("users").returning('id').insert({
     name,
@@ -52,6 +51,11 @@ exports.createPastEvent = async function() {
 exports.createUpcomingEvent = async function(date = new Date(new Date().getTime() + 60 * 60 * 1000) ) {
   const future = date;
   return createTestEvent("Future Event", future);
+};
+
+exports.createUpcomingNonCirclingEvent = async function(date = new Date(new Date().getTime() + 60 * 60 * 1000) ) {
+  const future = date;
+  return createTestEvent("Future Non-Circling Event", future, "社群自发活动");
 };
 
 exports.createTrailEvent = async function(name="Trail Event", start_time=new Date()) {
