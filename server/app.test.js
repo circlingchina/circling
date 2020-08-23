@@ -179,6 +179,24 @@ test("/events/:id/join should let non-premium user (with credit) join event star
     .expect(200);
 });
 
+test("/events/:id/join should let non-premium user (with credit) join event started after the premium is expired", async ()=> {
+  // will start in 5 days
+  const eventId = await testUtils.createUpcomingNonCirclingEvent(new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000));
+  
+  // will expire in 2 days
+  const userId = await testUtils.createTestUserWithEventCredit();
+  const route = `/events/${eventId}/join?user_id=${userId}`;
+  debug(`GET ${route}`);
+
+  await request(app)
+    .get(route)
+    .set('Accept', 'application/json')
+    .expect((res) => {
+      expect(res.body.err).toBe('invalid user id');
+    })
+    .expect(400); 
+});
+
 test("/events result should contain list of attendees", async (done)=> {
 
   const eventId = await testUtils.createUpcomingEvent();

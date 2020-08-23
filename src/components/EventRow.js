@@ -122,7 +122,7 @@ class EventRow extends React.Component {
     const userModel = new User(this.props.user);
     const event = new Event(this.props.eventJson);
 
-    if (!userModel.isPremium() && !event.isTrail()) {
+    if (!userModel.canJoin(event)) {
       window.location = "/pages/pricing";
       return;
     }

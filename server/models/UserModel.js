@@ -87,7 +87,7 @@ async function canJoin(user_id, event_id) {
   
   // For premium_level 0, event_credit > 0 is required
   if (user.premium_level === '0') {
-    return user.event_credit > 0;
+    return user.event_credit > 0 && event.category === 'Circling';
   } 
   
   // For premium_level 2,3,4, the start time of event must before user's premium expire date
