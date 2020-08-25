@@ -105,7 +105,7 @@ class EventRow extends React.Component {
   };
 
   maxedOut() {
-    return this.props.numEvents >= 5;
+    return this.props.numEvents >= 3;
   }
 
   handleJoinEvent = async () => {
@@ -128,7 +128,7 @@ class EventRow extends React.Component {
     }
 
     if (this.maxedOut()) {
-      toast.dark("不要太贪心哦,一次只能报5个活动");
+      toast.dark("不要太贪心哦,一次只能报3个活动");
       return;
     }
     this.setState({ isLoading: true });
