@@ -5986,7 +5986,7 @@ figure {
   padding: 60px 30px;
   background-color: #fff;
   text-align: center;
-  height: 580px;
+  height: 620px;
 }
 
 .pricing-style-wrapper.featured {
@@ -8620,4 +8620,10 @@ figure {
 .event_types_container .item {
   text-align: center;
   max-width: 600px;
+}
+
+.payment-subtitle {
+  display: "relative";
+  color: #333;
+  font-size: 13px;
 }
