@@ -6754,14 +6754,7 @@ figure {
   margin-bottom: 10px;
   padding-top: 10px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #64646a;
-}
-
-.rich-text-block-4 {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  text-align: center;
 }
 
 .heading-2 {
@@ -8627,3 +8620,5 @@ figure {
   color: #333;
   font-size: 13px;
 }
+
+.freesession
