@@ -2,22 +2,22 @@
 
 let aws = require('aws-sdk');
 const pug = require ('pug');
-// Provide the full path to your config.json file. 
+// Provide the full path to your config.json file.
 aws.config.update({region: 'us-west-2'});
 
 // Specify a configuration set. If you do not want to use a configuration
-// set, comment the following variable, and the 
+// set, comment the following variable, and the
 // ConfigurationSetName : configuration_set argument below.
 // const configuration_set = "ConfigSet";
 
 // The character encoding for the email.
 const charset = "UTF-8";
 
-// Create a new SES object. 
+// Create a new SES object.
 let ses = new aws.SES();
 
 const sendWelcomeMail = (userName, toEmail) => {
-  
+
   const sender = "Jess <jess@circlingchina.org>"; // This address must be verified with Amazon SES.
   const subject = "给新用户的一封信";
 
@@ -32,7 +32,7 @@ const sendWelcomeMail = (userName, toEmail) => {
 };
 
 const sentFirstEventEmail = (userName, toEmail, eventName, eventStartTime) => {
-  
+
   const sender = "Jess <jess@circlingchina.org>"; // This address must be verified with Amazon SES.
   const subject = "这封信帮你准备好第一次Circling";
 
@@ -49,7 +49,7 @@ const sentFirstEventEmail = (userName, toEmail, eventName, eventStartTime) => {
 };
 
 const sentTrailEventEmail = (toEmail) => {
-  
+
   const sender = "Jess <jess@circlingchina.org>"; // This address must be verified with Amazon SES.
   const subject = "关于8月7日20:00 Circling新人介绍课的通知";
 
@@ -57,7 +57,22 @@ const sentTrailEventEmail = (toEmail) => {
   const compiledFunction = pug.compileFile('./emails/trailTemp.pug');
   // Render a set of data
   const body_html = compiledFunction({
-   
+
+  });
+
+  return sendMail(sender, toEmail, subject, body_html);
+};
+
+const sendCampain202009 = (toEmail) => {
+
+  const sender = "Jess <jess@circlingchina.org>"; // This address must be verified with Amazon SES.
+  const subject = "Circling 9 月新人活动，等你来玩！";
+
+  //compile body from template
+  const compiledFunction = pug.compileFile('./emails/campain_202009.pug');
+  // Render a set of data
+  const body_html = compiledFunction({
+
   });
 
   return sendMail(sender, toEmail, subject, body_html);
@@ -66,11 +81,11 @@ const sentTrailEventEmail = (toEmail) => {
 //Try to send the email.
 const sendMail = (sender, recipient, subject, body_html) => {
   // Specify the parameters to pass to the API.
-  const params = { 
-    Source: sender, 
-    Destination: { 
+  const params = {
+    Source: sender,
+    Destination: {
       ToAddresses: [
-        recipient 
+        recipient
       ],
     },
     Message: {
@@ -98,11 +113,11 @@ const sendMail = (sender, recipient, subject, body_html) => {
         resolve(data);
       }
     });
-  }); 
+  });
 };
-
 
 
 exports.sendWelcomeMail = sendWelcomeMail;
 exports.sentFirstEventEmail = sentFirstEventEmail;
 exports.sentTrailEventEmail = sentTrailEventEmail;
+exports.sendCampain202009 = sendCampain202009;
