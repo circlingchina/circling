@@ -1,5 +1,5 @@
 const _ = require('lodash');
-
+const passport = require('passport');
 const debug = require("debug")("server-debug");
 const Event = require('../models/Event');
 const UserModel = require('../models/UserModel');
@@ -53,9 +53,9 @@ const join = async (req, res) => {
 
   const eventId = req.params.id;
   const userId = req.query.user_id;
-  
+
   const event = await Event.find(eventId, {includeAttendees: true});
-  
+
   if (event && event.attendees.length >= event.max_attendees) {
     res
       .status(400)
@@ -66,7 +66,7 @@ const join = async (req, res) => {
       }));
     return;
   }
-  
+
   const canJoin = await UserModel.canJoin(userId, eventId);
   if (!canJoin) {
     res
@@ -78,7 +78,7 @@ const join = async (req, res) => {
       }));
     return;
   }
-  
+
   const queryRes = await Event.join(eventId, userId);
   await UserModel.afterJoin(userId);
 
@@ -116,8 +116,8 @@ const unjoin = async (req, res) => {
 
 
 module.exports = (app) => {
-  app.get('/events/:id/join', join);
-  app.get('/events/:id/unjoin', unjoin);
+  app.get('/events/:id/join', passport.authenticate('jwt', { session: false }), join);
+  app.get('/events/:id/unjoin', passport.authenticate('jwt', { session: false }), unjoin);
   app.get('/events', upcoming);
   app.get('/events/nextTrail', nextTrail);
 };

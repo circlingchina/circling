@@ -2,18 +2,27 @@
  * The version of API calls that requires a self hosted API server (implemented in /src/server).
  * All calls go from client to Circling-Server first. The client holds a single access token (userId for now), everything else is stored server-side.
 */
-
+import Cookie from 'js-cookie';
 
 // endpoint /api/events/:event_id/join?user_id=user_id
 exports.joinEvent = async (event, user_id) => {
   const route = `${process.env.API_HOST}/events/${event.id}/join?user_id=${user_id}`;
-  return fetch(route).then((res)=> res.json());
+  return fetch(route, {
+    headers: {
+      Authorization: `bearer ${Cookie.get('circlingchina.token')}`
+    }
+  }).then((res)=> res.json());
 };
 
 // endpoint /api/events/:event_id/unjoin?user_id=user_id
 exports.unjoinEvent = async (event, user_id) => {
   const route = `${process.env.API_HOST}/events/${event.id}/unjoin?user_id=${user_id}`;
-  return fetch(route).then((res)=> res.json());
+  return fetch(route, {
+    headers: {
+      Authorization: `bearer ${Cookie.get('circlingchina.token')}`
+    }
+  },
+  ).then((res)=> res.json());
 };
 
 // endpoing /api/events/nextTrail
@@ -61,7 +70,8 @@ exports.getNewCharge = async(userId, chargeType) => {
   const response = await fetch(route, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      Authorization: `bearer ${Cookie.get('circlingchina.token')}`,
     },
     body: JSON.stringify({
       user_id: userId,

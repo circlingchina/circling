@@ -48,6 +48,31 @@ const sentFirstEventEmail = (userName, toEmail, eventName, eventStartTime) => {
   return sendMail(sender, toEmail, subject, body_html);
 };
 
+const sendPasswordResetEmail = (toEmail, passwordResetId) => {
+  const sender = "Jess <jess@circlingchina.org>"; // This address must be verified with Amazon SES.
+  const subject = "Circling China 密码重置";
+  const compiledFunction = pug.compileFile('./emails/passwordReset.pug');
+
+  const link = `https://www.circlingchina.org/#recovery_token=${passwordResetId}`;
+
+  const body_html = compiledFunction({ link });
+
+  return sendMail(sender, toEmail, subject, body_html);
+};
+
+const sendVerificationEmail = (toEmail, precreateUserId) => {
+  const sender = "Jess <jess@circlingchina.org>"; // This address must be verified with Amazon SES.
+  const subject = "欢迎加入Circling中国社群";
+
+  const compiledFunction = pug.compileFile('./emails/verification.pug');
+
+  const link = `https://www.circlingchina.org/#confirmation_token=${precreateUserId}`;
+
+  const body_html = compiledFunction({ link });
+
+  return sendMail(sender, toEmail, subject, body_html);
+};
+
 const sentTrailEventEmail = (toEmail) => {
 
   const sender = "Jess <jess@circlingchina.org>"; // This address must be verified with Amazon SES.
@@ -121,3 +146,5 @@ exports.sendWelcomeMail = sendWelcomeMail;
 exports.sentFirstEventEmail = sentFirstEventEmail;
 exports.sentTrailEventEmail = sentTrailEventEmail;
 exports.sendCampain202009 = sendCampain202009;
+exports.sendPasswordResetEmail = sendPasswordResetEmail;
+exports.sendVerificationEmail = sendVerificationEmail;

@@ -52,6 +52,7 @@
     "bootstrap": "^4.5.0",
     "classnames": "^2.2.6",
     "helmet": "^3.22.0",
+    "js-cookie": "^2.2.1",
     "lodash": "^4.17.20",
     "moment-timezone": "^0.5.31",
     "netlify-lambda": "^1.6.3",
