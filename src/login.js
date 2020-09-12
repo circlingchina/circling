@@ -2,7 +2,7 @@
 
 function attachIdentityListern() {
   let isSigningIn = false;
-  
+
   netlifyIdentity.on('init', (user) => {
     updateNav(user);
   });
