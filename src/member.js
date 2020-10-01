@@ -108,7 +108,7 @@ function EventRegion() {
       </div>
       <div className="section transparent">
         <div className="container w-container">
-          <div className="sub-text red">本周会员Circling<br />（当地时间）</div>
+          <div className="sub-text red">本周会员Circling<br />（每周日晚更新下一周活动）</div>
           <br />
           <div className="CalendarApp">
             <MyCalendar events={calEvents} />
