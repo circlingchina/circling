@@ -18,7 +18,7 @@ function UpcomingEvent({events, userId}) {
   let startingSoonEvent = _.head(startingEvents);
 
   if(!startingSoonEvent) {
-    return <div className="sub-text red">没有即将开始的活动</div>;
+    return <div className="sub-text red">你报名的活动将显示在这里，去看看下面的活动吧</div>;
   }
 
   return (
