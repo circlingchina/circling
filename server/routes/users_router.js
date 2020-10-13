@@ -1,10 +1,9 @@
 const debug = require("debug")("server");
-// const User = require('../models/User');
 const db = require("../db");
 
 const update = async(req, res) => {
 
-  const id = req.params.user_id;
+  const id = req.params.userId;
   const userParams = req.body; //{email: 'some@email.com'}
   const users = await db("users").returning('*').update(userParams).where({id});
 
@@ -22,7 +21,7 @@ const find = async(req, res) => {
   const query = req.query;
 
   const users = await db("users").where(query).limit(1);
-  
+
   res
     .status(200)
     .type('json')
@@ -45,7 +44,7 @@ const create = async(req, res) => {
   let id = null;
   if(result.rowCount > 0) {
     id = result.rows[0].id;
-  } 
+  }
   debug({id});
   res
     .status(200)
@@ -58,5 +57,6 @@ const create = async(req, res) => {
 module.exports = (app) => {
   app.get('/users/find', find);
   app.post('/users', create);
-  app.put('/users/:user_id', update);
+  app.put('/users/:userId', update);
+
 };

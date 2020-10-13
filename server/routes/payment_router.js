@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const cryptoRandomString = require('crypto-random-string');
 const _ = require("lodash");
+const passport = require("passport");
 const moment = require("moment");
 
 const mainLogger = require("../logger");
@@ -33,7 +34,7 @@ const CHARGE_TYPE_INFO = {
     subject: "月度会员",
     body: "月度会员",
     amount: 19900
-  }, 
+  },
   HALF_YEAR: {
     subject: "半年度会员",
     body: "半年度会员",
@@ -50,23 +51,23 @@ const createCharge = async(req, res) => {
   const body = req.body;
   const chargeType = body.charge_type;
   const user_id = body.user_id;
-  
+
   debug(body);
   if (
-    !_.isObject(body) || 
-    _.isEmpty(body.user_id) || 
-    _.isEmpty(body.charge_type) || 
+    !_.isObject(body) ||
+    _.isEmpty(body.user_id) ||
+    _.isEmpty(body.charge_type) ||
     !_.includes(Object.keys(CHARGE_TYPE_INFO), chargeType)
   ) {
     res.status(400).type('json').send(JSON.stringify({err: "bad request"}));
     return;
   }
-  
+
   const channel = req.useragent.isDesktop ? CHANNEL.desktop : CHANNEL.mobile;
-  
+
   // current date + 12 random numberic chars
   // TODO: check collision
-  
+
   const order_no = moment(new Date()).format('YYYYMMDD') + cryptoRandomString({length: 12, type: 'numeric'});
 
   const params = {
@@ -82,9 +83,9 @@ const createCharge = async(req, res) => {
       success_url: "https://www.circlingquanquan.com"
     }
   };
-  
+
   logger.info('create new charge with param', {params});
-  
+
   pingpp.charges.create(params, async (err, charge) => {
     if (err) {
       logger.info('err when creating charge', {err});
@@ -96,7 +97,7 @@ const createCharge = async(req, res) => {
     } else {
       logger.info('charge created', {charge});
       await ChargeModel.createCharge(user_id, charge, chargeType);
-      
+
       res
         .status(200)
         .type('json')
@@ -107,54 +108,54 @@ const createCharge = async(req, res) => {
 
 const pingppWebhook = async (req, res) => {
   res.status(200).send('pingxx pong');
-  
+
   const event = req.body;
   logger.info('incoming event', {event});
-  
+
   if (
-    !_.isObject(event) || 
+    !_.isObject(event) ||
     event.object !== 'event'||
-    _.isEmpty(event.type) || 
+    _.isEmpty(event.type) ||
     !_.isObject(event.data)
   ) {
     res.status(400).type('json').send(JSON.stringify({err: "bad request"}));
     return;
   }
-  
+
   // TODO: fetch and dedup
   // https://help.pingxx.com/article/1021941/
   const livemode = event.livemode;
   const eventType = event.type;
-  
+
   logger.info(`livemode: ${livemode}, eventType: ${eventType}` );
-  
+
   if (eventType === 'charge.succeeded') {
     const chargeId = event.data.object.id;
-    
+
     await ChargeModel.handleChargeSucceededEvent(event);
-    
-    const charge = await ChargeModel.findByChargeId(chargeId); 
+
+    const charge = await ChargeModel.findByChargeId(chargeId);
     logger.info("Charge updated", {charge});
     const userId = charge.user_id;
     const category = charge.category;
-    
+
     await UserModel.enablePremium(userId, category);
-    logger.info("User premium status updated", {userId, category}); 
+    logger.info("User premium status updated", {userId, category});
   }
 };
 
 const pingppWebhookTest = async (req, res) => {
   res.status(200).send('pingxx test');
-  
+
   const event = req.body;
   logger.info('incoming event test', {event});
-  
+
 };
 
 
 module.exports = (app) => {
   // TODO: use POST, called by client with credential
-  app.post('/payment/charges', createCharge);
+  app.post('/payment/charges', passport.authenticate('jwt', { session: false }), createCharge);
   app.post('/payment/pingppwebhook', pingppWebhook);
   app.post('/payment/pingppwebhook_test', pingppWebhookTest);
 };
