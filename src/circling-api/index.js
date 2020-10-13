@@ -2,14 +2,16 @@
  * The version of API calls that requires a self hosted API server (implemented in /src/server).
  * All calls go from client to Circling-Server first. The client holds a single access token (userId for now), everything else is stored server-side.
 */
-import Cookie from 'js-cookie';
 
+const tokenKey = "circlingchina.user";
 // endpoint /api/events/:event_id/join?user_id=user_id
 exports.joinEvent = async (event, user_id) => {
   const route = `${process.env.API_HOST}/events/${event.id}/join?user_id=${user_id}`;
+  const token = JSON.parse(window.localStorage.getItem(tokenKey)).token.access_token;
+
   return fetch(route, {
     headers: {
-      Authorization: `bearer ${Cookie.get('circlingchina.token')}`
+      Authorization: `bearer ${token}`
     }
   }).then((res)=> res.json());
 };
@@ -17,9 +19,10 @@ exports.joinEvent = async (event, user_id) => {
 // endpoint /api/events/:event_id/unjoin?user_id=user_id
 exports.unjoinEvent = async (event, user_id) => {
   const route = `${process.env.API_HOST}/events/${event.id}/unjoin?user_id=${user_id}`;
+  const token = JSON.parse(window.localStorage.getItem(tokenKey)).token.access_token;
   return fetch(route, {
     headers: {
-      Authorization: `bearer ${Cookie.get('circlingchina.token')}`
+      Authorization: `bearer ${token}`
     }
   },
   ).then((res)=> res.json());
@@ -61,17 +64,17 @@ exports.createUser = async(userParam) => {
     method: 'POST',
     body: JSON.stringify(userParam)
   });
-  console.log("server response", response);
   return response;
 };
 
 exports.getNewCharge = async(userId, chargeType) => {
   const route = `${process.env.API_HOST}/payment/charges`;
+  const token = JSON.parse(window.localStorage.getItem(tokenKey)).token.access_token;
   const response = await fetch(route, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `bearer ${Cookie.get('circlingchina.token')}`,
+      Authorization: `bearer ${token}`,
     },
     body: JSON.stringify({
       user_id: userId,
