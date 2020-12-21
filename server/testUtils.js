@@ -67,7 +67,7 @@ exports.createUpcomingEvent = async function(date = new Date(new Date().getTime(
 
 exports.createUpcomingNonCirclingEvent = async function(date = new Date(new Date().getTime() + 60 * 60 * 1000) ) {
   const future = date;
-  return createTestEvent("Future Non-Circling Event", future, "社群自发活动");
+  return createTestEvent("Future Non-Circling Event", future, "社群活动");
 };
 
 exports.createTrailEvent = async function(name="Trail Event", start_time=new Date()) {
