@@ -1,5 +1,5 @@
 ---
-title: Jamie（见习带领者）
+title: Jamie
 avatar: /images/uploads/img_20200825_115717_mr1598725085066-02.jpeg
 ---
 我是JAMIE，赵镕熹。
