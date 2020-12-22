@@ -1,5 +1,5 @@
 ---
-title: Fairy（见习带领者）
+title: Fairy
 avatar: /images/uploads/img_20200905_101100.jpg
 ---
 我是Fairy。困顿、迷茫、怀疑都有过，对世界的态度也一直在变化。
