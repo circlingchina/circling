@@ -1,5 +1,5 @@
 ---
-title: April（见习带领者）
+title: April
 avatar: /images/uploads/wechatimg548.jpeg
 ---
 在当了10年医学生之后，兜兜转转发现，相比于解除疾苦，我更想缔造真实的联结。
