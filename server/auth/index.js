@@ -19,7 +19,7 @@ const AUTH_CONSTANTS = {
 };
 
 const makeUserObj = function (jwt_token, user) {
-  const userObj = _.pick(user, ['id','email', 'created_at']);
+  const userObj = _.pick(user, ['id','email', 'created_at', 'premium_level', 'premium_expired_at']);
   userObj.user_metadata = {
     full_name: user.name,
   };
