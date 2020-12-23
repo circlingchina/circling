@@ -10,40 +10,40 @@ async function upcoming() {
   //.where('createdAt', '>=', '2009-01-01T00:00:00Z')
   const now = new Date();
   const offsetMins = -30;
-  
+
   return db.select().from("events").where('start_time', '>=', moment(now).add(offsetMins, 'm').toDate())
     .orderBy("start_time");
 }
 
 async function nextTrail() {
   const now = new Date();
-  
+
   const events = await db.select().from('events')
     .where('category', '新人介绍课程')
     .andWhere('start_time', '>=', now)
     .orderBy("start_time");
-  
-  // ALERT! N+1 queries, improve improve it later. 
+
+  // ALERT! N+1 queries, improve improve it later.
   /* equivalent query::
-  select 
+  select
   events.id,
   events.name,
   events.max_attendees,
   count(user_event.user_id) as attendee_count,
   events.start_time
-  from events 
+  from events
   left join user_event on user_event.event_id = events.id
   where events.category = '新人介绍课程' and events.start_time > '2020-07-01'
-  group by events.id 
-  having events.max_attendees > count(user_event.user_id) 
+  group by events.id
+  having events.max_attendees > count(user_event.user_id)
   order by events.start_time
   limit 1
   */
   for (const event of events) {
-    
+
     const result = await db.count().from('user_event').where({event_id: event.id});
     const count = _.toNumber(result[0]['count']);
-    
+
     // console.log('event.max_attendees', event.max_attendees);
     // console.log('count', count);
     if (count < event.max_attendees) {
@@ -86,8 +86,11 @@ async function find(event_id, params = {}) {
 }
 
 async function attendees(event_id) {
-  return db('user_event')
-    .leftJoin('users', 'users.id', '=', 'user_event.user_id').where({
+  return db
+    .select('id','email','name')
+    .from('user_event')
+    .leftJoin('users', 'users.id', '=', 'user_event.user_id')
+    .where({
       event_id
     });
 }
