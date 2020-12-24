@@ -13,11 +13,12 @@ build:
 
 push:
 	@echo pushing to $(REGISTRY)
-	@docker push $(NAME)
+	@docker push $(FULL_TAG)
+	@docker push $(LATEST_TAG)
 
 deploy:
 	@echo deploying on remote servers
-	@ansible-playbook server/machine-config/4-deploy-containers.yml --extra-vars "image_tag=latest"
+	@ansible-playbook server/machine-config/4-deploy-containers.yml --extra-vars "image_tag=$(COMMIT)"
 
 local_up: build
 	@docker-compose up server
