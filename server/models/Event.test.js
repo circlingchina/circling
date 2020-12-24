@@ -39,9 +39,9 @@ test("getting next valid trail event", async() => {
   const now = new Date();
   const eventId1 = await createTrailEvent("trail1", new Date(now.getTime() + 10000000));
   await createTrailEvent("trail2", new Date(now.getTime() + 20000000));
-  
+
   const events = await Event.nextTrail();
-  
+
   expect(events[0].id).toBe(eventId1);
   expect(events[0].category).toBe('新人介绍课程');
 });
@@ -59,17 +59,17 @@ test("getting the nearest non-full trail event", async() => {
   const eventId1 = await createTrailEvent("trail1", new Date(now.getTime() + 10000000));
   const eventId2 = await createTrailEvent("trail2", new Date(now.getTime() + 20000000));
   const eventId3 = await createTrailEvent("trail3", new Date(now.getTime() + 30000000));
-  
+
   for (const no of _.range(10)) {
     const userId = await createTestUser("username1"+no);
     await createUserEvent(eventId1, userId);
   }
-  
+
   for (const no of _.range(5)) {
     const userId = await createTestUser("username2"+no);
     await createUserEvent(eventId1, userId);
   }
-  
+
   const events = await Event.nextTrail();
   expect(events[0].id).toBe(eventId2);
 });

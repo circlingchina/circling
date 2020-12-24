@@ -22,6 +22,13 @@ const upcoming = async (req, res) => {
     const events = await Event.upcoming();
 
     for (const event of events) {
+
+      let isInJoinableTimeFrame = false;
+      if (Event.isInJoinableTimeFrame(event)) {
+        isInJoinableTimeFrame = true;
+      }
+      Object.assign(event, { isInJoinableTimeFrame });
+
       const attendees = await Event.attendees(event.id);
       Object.assign(event, {attendees});
 
@@ -66,6 +73,8 @@ const join = async (req, res) => {
       }));
     return;
   }
+
+  // TODO: (Yiliang) Check _isJoinableTimeFrame(event)
 
   const canJoin = await UserModel.canJoin(userId, eventId);
   if (!canJoin) {

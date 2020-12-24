@@ -1,9 +1,14 @@
 const moment = require('moment');
 const db = require("../db");
 const _ = require("lodash");
+const { isBeforeAFutureTimeFromNow } = require('../utils/timeUtils');
 
 async function all() {
   return db.select().from("events").orderBy("start_time");
+}
+
+function isInJoinableTimeFrame(event) {
+  return isBeforeAFutureTimeFromNow(event.start_time, 2, 'days', true);
 }
 
 async function upcoming() {
@@ -103,4 +108,7 @@ module.exports = {
   find,
   attendees,
   nextTrail,
+
+  // utility functions
+  isInJoinableTimeFrame,
 };
