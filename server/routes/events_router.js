@@ -63,6 +63,17 @@ const join = async (req, res) => {
 
   const event = await Event.find(eventId, {includeAttendees: true});
 
+  if (Event.isInJoinableTimeFrame(event)) {
+    res
+      .status(400)
+      .type('json')
+      .send(JSON.stringify({
+        result: false,
+        err: 'event is unjoinable'
+      }));
+    return;
+  }
+
   if (event && event.attendees.length >= event.max_attendees) {
     res
       .status(400)
@@ -73,8 +84,6 @@ const join = async (req, res) => {
       }));
     return;
   }
-
-  // TODO: (Yiliang) Check _isJoinableTimeFrame(event)
 
   const canJoin = await UserModel.canJoin(userId, eventId);
   if (!canJoin) {
