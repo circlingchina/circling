@@ -43,6 +43,7 @@ test("/events/:id/join should let premium user join event", async ()=> {
     .set('Authorization', `bearer ${makeJWTtokenFromUser(user)}`)
     .set('Accept', 'application/json')
     .expect((res) => {
+      expect(res.body.event.hasOwnProperty('isInJoinableTimeFrame')).toBe(true);
       expect(res.body.event.id).toBe(eventId);
     })
     .expect(200);
@@ -150,6 +151,7 @@ test("/events/:id/unjoin should let user unjoin event", async ()=> {
     .set('Authorization', `bearer ${makeJWTtokenFromUser(user)}`)
     .set('Accept', 'application/json')
     .expect((res) => {
+      expect(res.body.event.hasOwnProperty('isInJoinableTimeFrame')).toBe(true);
       expect(res.body.event.id).toBe(eventId);
     })
     .expect(200);

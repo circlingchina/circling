@@ -14,6 +14,13 @@ const eventWithExtraFields = async(event) => {
     }
     Object.assign(event, {fields: fieldsObj});
   }
+
+  let isInJoinableTimeFrame = false;
+  if (Event.isInJoinableTimeFrame(event)) {
+    isInJoinableTimeFrame = true;
+  }
+  Object.assign(event, { isInJoinableTimeFrame });
+
   return event;
 };
 
@@ -22,12 +29,6 @@ const upcoming = async (req, res) => {
     const events = await Event.upcoming();
 
     for (const event of events) {
-
-      let isInJoinableTimeFrame = false;
-      if (Event.isInJoinableTimeFrame(event)) {
-        isInJoinableTimeFrame = true;
-      }
-      Object.assign(event, { isInJoinableTimeFrame });
 
       const attendees = await Event.attendees(event.id);
       Object.assign(event, {attendees});
