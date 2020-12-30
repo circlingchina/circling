@@ -160,7 +160,7 @@ test("/events/:id/unjoin should let user unjoin event", async ()=> {
 
 test("/events/:id/join should not let premium user join event started after the premium is expired", async ()=> {
   // will start in 5 days
-  const eventId = await testUtils.createUpcomingEvent(new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000));
+  const eventId = await testUtils.createUpcomingEvent(new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000));
 
   // will expire in 2 days
   const userId = await testUtils.createPremiumUser();
@@ -179,9 +179,28 @@ test("/events/:id/join should not let premium user join event started after the 
     .expect(400);
 });
 
-test("/events/:id/join should let non-premium user (with credit) join event started after the premium is expired", async ()=> {
+test("/events/:id/join should not let premium user join event starting after 3 days later", async ()=> {
   // will start in 5 days
   const eventId = await testUtils.createUpcomingEvent(new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000));
+
+  const userId = await testUtils.createPremiumUser();
+  const route = `/events/${eventId}/join?user_id=${userId}`;
+
+  const user = await UserModel.find(userId);
+
+  await request(app)
+    .get(route)
+    .set('Authorization', `bearer ${makeJWTtokenFromUser(user)}`)
+    .set('Accept', 'application/json')
+    .expect((res) => {
+      expect(res.body.err).toBe('event is unjoinable');
+    })
+    .expect(400);
+});
+
+test("/events/:id/join should let non-premium user (with credit) join event started after the premium is expired", async ()=> {
+  // will start in 5 days
+  const eventId = await testUtils.createUpcomingEvent(new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000));
 
   // will expire in 2 days
   const userId = await testUtils.createTestUserWithEventCredit();
@@ -200,7 +219,7 @@ test("/events/:id/join should let non-premium user (with credit) join event star
 
 test("/events/:id/join should let non-premium user (with credit) join event started after the premium is expired", async ()=> {
   // will start in 5 days
-  const eventId = await testUtils.createUpcomingNonCirclingEvent(new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000));
+  const eventId = await testUtils.createUpcomingNonCirclingEvent(new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000));
 
   // will expire in 2 days
   const userId = await testUtils.createTestUserWithEventCredit();
