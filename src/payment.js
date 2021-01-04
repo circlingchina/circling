@@ -15,10 +15,10 @@ if (paymentMonthly) {
   ReactDOM.render(<PaymentButton chargeType="MONTHLY" />, paymentMonthly);
 }
 
-// const paymentHalfYear = document.getElementById("payment-half-year");
-// if (paymentHalfYear) {
-//   ReactDOM.render(<PaymentButton chargeType='HALF_YEAR'/>, paymentHalfYear);
-// }
+const paymentHalfYear = document.getElementById("payment-half-year");
+if (paymentHalfYear) {
+  ReactDOM.render(<PaymentButton chargeType='HALF_YEAR'/>, paymentHalfYear);
+}
 
 const paymentVip = document.getElementById("payment-vip");
 if (paymentMonthly) {

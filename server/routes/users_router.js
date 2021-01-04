@@ -1,5 +1,6 @@
 const debug = require("debug")("server");
 const db = require("../db");
+const _ = require("lodash");
 
 const update = async(req, res) => {
 
@@ -21,6 +22,10 @@ const find = async(req, res) => {
   const query = req.query;
 
   const users = await db("users").where(query).limit(1);
+
+  for (let user of users) {
+    user = _.pick(user, ['id', 'email', 'premium_level', 'email', 'premium_expired_at']);
+  }
 
   res
     .status(200)
