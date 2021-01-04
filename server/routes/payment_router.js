@@ -43,7 +43,7 @@ const CHARGE_TYPE_INFO = {
   VIP: {
     subject: "亲密朋友",
     body: "特别会员",
-    amount: 400000
+    amount: 500000
   }
 };
 
