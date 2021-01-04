@@ -38,7 +38,7 @@ const CHARGE_TYPE_INFO = {
   HALF_YEAR: {
     subject: "半年度会员",
     body: "半年度会员",
-    amount: 49900
+    amount: 52000
   },
   VIP: {
     subject: "亲密朋友",
