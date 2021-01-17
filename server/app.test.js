@@ -1,5 +1,6 @@
 const app = require('./app');
 const request = require('supertest');
+const mockdate = require('mockdate');
 const db = require("./db");
 const debug = require('debug')('test');
 const testUtils = require("./testUtils");
@@ -357,7 +358,17 @@ test("Fetch JWT token for a registered user, then refresh the token", async (don
       }).length).toBe(1);
 
       // debug({cookie});
+      let now = new Date();
+      let fixedTime = new Date(now.getTime() + 15 * 60 * 1000);
 
+      request(app)
+        .post('/auth/refresh')
+        .set('Accept', 'application/json')
+        .set('Cookie', cookie)
+        .send()
+        .expect(400);
+
+      mockdate.set(fixedTime);
       request(app)
         .post('/auth/refresh')
         .set('Accept', 'application/json')
@@ -371,18 +382,17 @@ test("Fetch JWT token for a registered user, then refresh the token", async (don
           const cookies = res.headers['set-cookie'];
           expect(cookies.filter(element => {
             let ret = element.startsWith('circlingchina.token=');
-            if (ret) {
-              expect(element).toBe(cookie);
-            }
             return ret;
           }).length).toBe(1);
+
+          mockdate.reset();
           done();
         });
 
     });
 });
 
-test("Refresh JWT token for a registerd user", async (done) => {
+test("Refresh JWT token for a non-registerd user", async (done) => {
   const param = {
     email:'does-not-exist@test.com',
     password: 'password'

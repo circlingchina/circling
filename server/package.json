@@ -38,6 +38,7 @@
   "devDependencies": {
     "debug": "^4.1.1",
     "jest": "^26.0.1",
+    "mockdate": "^3.0.2",
     "nodemon": "^2.0.3",
     "sinon": "^9.0.2",
     "superagent": "^5.2.2",

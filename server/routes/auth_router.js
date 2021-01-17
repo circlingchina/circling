@@ -9,12 +9,7 @@ const EmailService = require("../emailService");
 const { AUTH_CONSTANTS, makeUserObj, makeJWTtokenFromUser } = require("../auth");
 
 const JWT_EXPIRY_SECONDS = AUTH_CONSTANTS.JWT_SIGN_OPTIONS.EXPIRESIN;
-const JWT_ALGORITHM = AUTH_CONSTANTS.JWT_SIGN_OPTIONS.ALGORITHM;
 const COOKIE_NAME = AUTH_CONSTANTS.COOKIE_NAME;
-const JWT_SIGN_OPTIONS = {
-  algorithm: JWT_ALGORITHM,
-  expiresIn: JWT_EXPIRY_SECONDS,
-};
 
 // Issue JWT token
 const authToken = async (req, res) => {
@@ -79,18 +74,20 @@ const authRefresh = async (req, res) => {
 
   // // We ensure that a new token is not issued until enough time has elapsed
   // // In this case, a new token will only be issued if the old token is within
-  // // 30 seconds of expiry. Otherwise, return a bad request status
-  // const nowUnixSeconds = Math.round(Number(new Date()) / 1000);
-  // if (payload.exp - nowUnixSeconds > 30) {
-  //   return res.status(400).end();
-  // }
+  // // 30 min of expiry. Otherwise, return a bad request status
+
+  const nowUnixSeconds = Math.round(Number(new Date()) / 1000);
+
+  if (payload.exp - nowUnixSeconds > AUTH_CONSTANTS.JWT_REFRESH_THREASHOLD) {
+    return res.status(400).end();
+  }
 
   // Remove `iat` and `exp` from the paylaod, so we can re-sign it.
   delete payload.iat;
   delete payload.exp;
 
   // Now, create a new token for the current user, with a renewed expiration time
-  const new_jwt_token = jwt.sign(payload, JWT_SECRET, JWT_SIGN_OPTIONS);
+  const new_jwt_token = makeJWTtokenFromUser(user);
 
   debug({new_jwt_token});
 

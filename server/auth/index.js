@@ -14,8 +14,9 @@ const AUTH_CONSTANTS = {
   COOKIE_NAME: "circlingchina.token",
   JWT_SIGN_OPTIONS: {
     ALGORITHM: "HS256",
-    EXPIRESIN: 3600,
-  }
+    EXPIRESIN: 1200, // 20 min
+  },
+  JWT_REFRESH_THREASHOLD: 600, // 10 min
 };
 
 const makeUserObj = function (jwt_token, user) {
