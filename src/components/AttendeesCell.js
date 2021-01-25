@@ -51,7 +51,7 @@ function AttendeesCell({event, maxLength}) {
   }
 
   return(
-    <div className="w-col w-col-2 w-col-medium-2">
+    <div className="w-col w-col-1 w-col-medium-1">
       {spanWrapper}
     </div>
   );

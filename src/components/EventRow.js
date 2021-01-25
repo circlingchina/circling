@@ -277,10 +277,13 @@ class EventRow extends React.Component {
             <div className="w-col w-col-4 w-col-medium-4">
               <div>{event.durationDisplay()}</div>
             </div>
-            <div className="w-col w-col-3 w-col-medium-3">
+            <div className="w-col w-col-4 w-col-medium-4">
               {this.props.eventJson.name}
             </div>
-            <div className="w-col w-col-3 w-col-medium-3">
+            <div className="w-col w-col-2 w-col-medium-2">
+              {this.props.eventJson.category}
+            </div> 
+            <div className="w-col w-col-1 w-col-medium-1">
               <a
                 href={"/pages/leaders/#" + this.props.eventJson.host}
                 className="host"

@@ -36,9 +36,10 @@ function TableHeader() {
     <div className="schedule-title w-row events-table-header w-hidden-small">
       <div className="column w-col w-col-9 w-col-small-6">
         <div className="w-col w-col-4 w-col-medium-4">当地时间</div>
-        <div className="w-col w-col-3 w-col-medium-3">活动</div>
-        <div className="w-col w-col-3 w-col-medium-3">带领者</div>
-        <div className="w-col w-col-2 w-col-medium-2">人数</div>
+        <div className="w-col w-col-4 w-col-medium-4">活动</div>
+        <div className="w-col w-col-2 w-col-medium-2">类别</div> 
+        <div className="w-col w-col-1 w-col-medium-1">带领者</div>
+        <div className="w-col w-col-1 w-col-medium-1">人数</div>
       </div>
       <div className="w-col w-col-3 w-col-medium-3">报名</div>
     </div>
