@@ -19,9 +19,10 @@ const PAYMENT_PRODUCTS = {
     premiumLevel: '2',
     daysDelta: 31,
   },
+  // have changed this to SEASON -> 3 months
   HALF_YEAR: {
     premiumLevel: '3',
-    daysDelta: 183,
+    daysDelta: 92,
   },
   VIP: {
     premiumLevel: '4',

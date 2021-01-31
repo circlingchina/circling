@@ -28,16 +28,17 @@ const CHARGE_TYPE_INFO = {
   SINGLE_EVENT: {
     subject: "单次活动",
     body: "单次活动",
-    amount: 6900
+    amount: 9900
   },
   MONTHLY: {
     subject: "月度会员",
     body: "月度会员",
-    amount: 19900
+    amount: 26900
   },
+  // have changed this to SEASON -> 3 months
   HALF_YEAR: {
-    subject: "半年度会员",
-    body: "半年度会员",
+    subject: "季度会员",
+    body: "季度会员",
     amount: 52000
   },
   VIP: {

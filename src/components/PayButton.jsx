@@ -67,7 +67,7 @@ export default function PayButton(props) {
           >点此购买</a>
         </div>
         <div className="payment-subtitle">
-            点击购买会跳转知识星球付费链接，加入后即可成为半年期会员
+            点击购买会跳转知识星球付费链接，加入后即可成为季度会员
         </div>
       </>
     );
@@ -78,7 +78,7 @@ export default function PayButton(props) {
         <a onClick={async() => { await initiatePayment(); }} href="#" className="button membership w-button">点此购买</a>
       </div>
       <div className="payment-subtitle">
-            2021 年 1 月 31 日前， 已到期会员续费专用
+            {/* 2021 年 1 月 31 日前， 已到期会员续费专用 */}
       </div>
     </>
   );
