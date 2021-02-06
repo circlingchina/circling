@@ -198,7 +198,7 @@ class EventRow extends React.Component {
           event.startingStatus() == Event.Status.STARTING_SOON ||
           event.startingStatus() == Event.Status.NOT_STARTED
         ) {
-          if (event.isInJoinableTimeFrame()) {
+          // if (event.isInJoinableTimeFrame()) {
             joinButton = (
               <span
                 className="join-button w-button"
@@ -207,13 +207,13 @@ class EventRow extends React.Component {
                 报名
               </span>
             );
-          } else {
-            joinButton = (
-              <span className="join-button cancel">
-                报名暂未开放
-              </span>
-            );
-          }
+          // } else {
+          //   joinButton = (
+          //     <span className="join-button cancel">
+          //       报名暂未开放
+          //     </span>
+          //   );
+          // }
 
         } else {
           joinButton = <span className="join-button cancel">报名截止</span>;
