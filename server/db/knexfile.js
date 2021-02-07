@@ -15,14 +15,15 @@ module.exports = {
   production: {
     client: 'pg',
     connection: {
-      host : '10.0.96.3',
-      port: '5432',
+      host: 'pgm-2ze3z8jo4e863al4129190.pg.rds.aliyuncs.com',
+      // host : '10.0.96.3',
+      port: '1921',
       user : 'circling',
       password : 'circling',
       database : 'circling_db',
-      ssl: {
-        rejectUnauthorized: false
-      }
+      // ssl: {
+      //   rejectUnauthorized: false
+      // }
     }
   },
 
