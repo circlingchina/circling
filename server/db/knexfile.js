@@ -21,6 +21,7 @@ module.exports = {
       user : 'circling',
       password : 'circling',
       database : 'circling_db',
+      ssl: false,
       // ssl: {
       //   rejectUnauthorized: false
       // }
