@@ -31,3 +31,6 @@
 TODO：
 1. CD server
 2. CDN(any free CDN?)
+3. Let's encrypt cert (2/16 继续)
+4. PG 数据迁移 （等待tianfang将google服务器的pg客户端升级到12.4）(tianfang yiliang)
+5. amazon email 看看阿里云中有没有替代方案 （yiliang）
