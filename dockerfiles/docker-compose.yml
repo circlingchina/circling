@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  nginx:
+    image: "registry.cn-beijing.aliyuncs.com/circlingchina/circling_aliyun_fe"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    networks:
+      - circling-network
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+  server:
+    image: "registry-vpc.cn-beijing.aliyuncs.com/circlingchina/circling_aliyun:latest"
+    ports:
+      - "4567:4567"
+    networks:
+      - circling-network
+  
+networks:
+  circling-network:
