@@ -34,8 +34,11 @@ deploy:
 
 build_ali:
 	@echo building $(ALI_FULL_TAG)
-	@docker build -t $(ALI_FULL_TAG) -f $(SERVER_DOCKERFILE) .
+	@mv server/.env /tmp/.env.tmp
+	@cp server/.env.prod server/.env
+	@docker build -t $(ALI_FULL_TAG) -f $(SERVER_DOCKERFILE) .	
 	@docker tag ${ALI_FULL_TAG} ${ALI_LATEST_TAG}
+	@mv /tmp/.env.tmp server/.env	
 
 build_ali_fe:
 	@echo building $(ALI_FE_FULL_TAG)
