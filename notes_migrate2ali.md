@@ -34,3 +34,11 @@ TODO：
 3. Let's encrypt cert (2/16 继续)
 4. PG 数据迁移 （等待tianfang将google服务器的pg客户端升级到12.4）(tianfang yiliang)
 5. amazon email 看看阿里云中有没有替代方案 （yiliang）
+
+
+```
+psql -d circling_db -U circling -p 1921
+
+docker stop circling_deploy_nginx_1 circling_deploy_server_1
+docker rm circling_deploy_nginx_1 circling_deploy_server_1
+```
