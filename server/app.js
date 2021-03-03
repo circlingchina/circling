@@ -35,9 +35,16 @@ app.use(useragent.express());
 
 // auth
 app.use(passport.initialize());
-setupPassport(passport);
-// app.use(passport.session());
 
+app.use(function(req, res, next) {
+  let reqDomain = domain.create();
+  reqDomain.on('error', function (err) { 
+       res.send(500, err.stack);
+   });
+  reqDomain.run(next);
+});
+
+setupPassport(passport);
 mountRoutes(app);
 
 app.get('/healthcheck', async (req, res) => {
