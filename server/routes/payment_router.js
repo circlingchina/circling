@@ -108,40 +108,42 @@ const createCharge = async(req, res) => {
 };
 
 const pingppWebhook = async (req, res) => {
-  res.status(200).send('pingxx pong');
-
   const event = req.body;
   logger.info('incoming event', {event});
 
-  if (
-    !_.isObject(event) ||
-    event.object !== 'event'||
-    _.isEmpty(event.type) ||
-    !_.isObject(event.data)
-  ) {
+  if (!_.isObject(event)) {
     res.status(400).type('json').send(JSON.stringify({err: "bad request"}));
-    return;
+  } else {
+    // for pingxx testing ping
+    res.status(200).send('pingxx pong');
   }
 
-  // TODO: fetch and dedup
-  // https://help.pingxx.com/article/1021941/
-  const livemode = event.livemode;
-  const eventType = event.type;
+  try {
+    if (event.object !== 'event'|| _.isEmpty(event.type) || !_.isObject(event.data)) {
+      
+      // TODO: fetch and dedup
+      // https://help.pingxx.com/article/1021941/
+      const livemode = event.livemode;
+      const eventType = event.type;
 
-  logger.info(`livemode: ${livemode}, eventType: ${eventType}` );
+      logger.info(`livemode: ${livemode}, eventType: ${eventType}` );
 
-  if (eventType === 'charge.succeeded') {
-    const chargeId = event.data.object.id;
+      if (eventType === 'charge.succeeded') {
+        const chargeId = event.data.object.id;
 
-    await ChargeModel.handleChargeSucceededEvent(event);
+        await ChargeModel.handleChargeSucceededEvent(event);
 
-    const charge = await ChargeModel.findByChargeId(chargeId);
-    logger.info("Charge updated", {charge});
-    const userId = charge.user_id;
-    const category = charge.category;
+        const charge = await ChargeModel.findByChargeId(chargeId);
+        logger.info("Charge updated", {charge});
+        const userId = charge.user_id;
+        const category = charge.category;
 
-    await UserModel.enablePremium(userId, category);
-    logger.info("User premium status updated", {userId, category});
+        await UserModel.enablePremium(userId, category);
+        logger.info("User premium status updated", {userId, category});
+      }
+    }
+  } catch (error) {
+    logger.error("Payment processing error", { error } );
   }
 };
 
