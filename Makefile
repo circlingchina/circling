@@ -18,6 +18,11 @@ ALI_FE_LATEST_TAG := ${ALI_NAME}_fe:latest
 
 
 all: build push deploy
+
+aliyun_server: build_ali push_ali
+
+aliyun_fe: build_ali_fe push_ali_fe
+
 build:
 	@echo building $(FULL_TAG)
 	@docker build -t $(FULL_TAG) -f $(SERVER_DOCKERFILE) .
