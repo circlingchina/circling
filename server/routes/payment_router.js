@@ -110,6 +110,59 @@ const createCharge = async(req, res) => {
 const pingppWebhook = async (req, res) => {
   const event = req.body;
   logger.info('incoming event', {event});
+  // event example:
+  // {
+  //   id: 'evt_401210307054540914096706',
+  //   created: 1615067140,
+  //   livemode: true,
+  //   type: 'charge.succeeded',
+  //   data: {
+  //     object: {
+  //       id: 'ch_101210307212180285440005',
+  //       object: 'charge',
+  //       created: 1615067120,
+  //       livemode: true,
+  //       paid: true,
+  //       refunded: false,
+  //       reversed: false,
+  //       app: 'app_brLuTGbXX9aHOCWb',
+  //       channel: 'alipay_pc_direct',
+  //       order_no: '20210306217198274881',
+  //       client_ip: '::ffff:172.17.0.1',
+  //       amount: 1,
+  //       amount_settle: 1,
+  //       currency: 'cny',
+  //       subject: '单次活动',
+  //       body: '单次活动',
+  //       extra: {
+  //         success_url: 'https://www.circlingquanquan.com',
+  //         buyer_user_id: '2088102002878646',
+  //         fund_bill_list: [ { amount: 1, fundChannel: 'ALIPAYACCOUNT' } ],
+  //         receipt_amount: 1,
+  //         buyer_pay_amount: 1
+  //       },
+  //       time_paid: 1615067139,
+  //       time_expire: 1615153520,
+  //       time_settle: null,
+  //       transaction_no: '2021030722001478641451852493',
+  //       refunds: {
+  //         object: 'list',
+  //         url: '/v1/charges/ch_101210307212180285440005/refunds',
+  //         has_more: false,
+  //         data: []
+  //       },
+  //       amount_refunded: 0,
+  //       failure_code: null,
+  //       failure_msg: null,
+  //       metadata: {},
+  //       credential: {},
+  //       description: null
+  //     }
+  //   },
+  //   object: 'event',
+  //   request: 'iar_GOKybDrHaP8CrfnPK0POOeH8',
+  //   pending_webhooks: 0
+  // }
 
   if (!_.isObject(event)) {
     res.status(400).type('json').send(JSON.stringify({err: "bad request"}));
@@ -119,7 +172,11 @@ const pingppWebhook = async (req, res) => {
   }
 
   try {
-    if (event.object !== 'event'|| _.isEmpty(event.type) || !_.isObject(event.data)) {
+    if (
+      event.object === 'event' &&
+      _.isEmpty(event.type) && // "charge.succeeded"
+      _.isObject(event.data)
+    ) {
       
       // TODO: fetch and dedup
       // https://help.pingxx.com/article/1021941/
