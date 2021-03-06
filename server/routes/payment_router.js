@@ -28,12 +28,12 @@ const CHARGE_TYPE_INFO = {
   SINGLE_EVENT: {
     subject: "单次活动",
     body: "单次活动",
-    amount: 1
+    amount: 9900
   },
   MONTHLY: {
     subject: "月度会员",
     body: "月度会员",
-    amount: 1
+    amount: 26900
   },
   // have changed this to SEASON -> 3 months
   HALF_YEAR: {
@@ -166,9 +166,6 @@ const pingppWebhook = async (req, res) => {
   //   pending_webhooks: 0
   // }
 
-  logger.info("1", {bool: !_.isObject(event)})
-  logger.info("2", {bool: event.object !== 'event'})
-  logger.info("3", {bool:!_.isObject(event.data) })
   if (
     !_.isObject(event) ||
     event.object !== 'event'||
