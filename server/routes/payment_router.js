@@ -108,6 +108,8 @@ const createCharge = async(req, res) => {
 };
 
 const pingppWebhook = async (req, res) => {
+  res.status(200).send('pingxx pong');
+
   const event = req.body;
   logger.info('incoming event', {event});
   // event example:
@@ -164,43 +166,38 @@ const pingppWebhook = async (req, res) => {
   //   pending_webhooks: 0
   // }
 
-  if (!_.isObject(event)) {
+  logger.info("1", {bool: !_.isObject(event)})
+  logger.info("2", {bool: event.object !== 'event'})
+  logger.info("3", {bool:!_.isObject(event.data) })
+  if (
+    !_.isObject(event) ||
+    event.object !== 'event'||
+    !_.isObject(event.data)
+  ) {
+    logger.info("return 400 for event");
     res.status(400).type('json').send(JSON.stringify({err: "bad request"}));
-  } else {
-    // for pingxx testing ping
-    res.status(200).send('pingxx pong');
+    return;
   }
 
-  try {
-    if (
-      event.object === 'event' &&
-      _.isEmpty(event.type) && // "charge.succeeded"
-      _.isObject(event.data)
-    ) {
-      
-      // TODO: fetch and dedup
-      // https://help.pingxx.com/article/1021941/
-      const livemode = event.livemode;
-      const eventType = event.type;
+  // TODO: fetch and dedup
+  // https://help.pingxx.com/article/1021941/
+  const livemode = event.livemode;
+  const eventType = event.type;
 
-      logger.info(`livemode: ${livemode}, eventType: ${eventType}` );
+  logger.info(`livemode: ${livemode}, eventType: ${eventType}` );
 
-      if (eventType === 'charge.succeeded') {
-        const chargeId = event.data.object.id;
+  if (eventType === 'charge.succeeded') {
+    const chargeId = event.data.object.id;
 
-        await ChargeModel.handleChargeSucceededEvent(event);
+    await ChargeModel.handleChargeSucceededEvent(event);
 
-        const charge = await ChargeModel.findByChargeId(chargeId);
-        logger.info("Charge updated", {charge});
-        const userId = charge.user_id;
-        const category = charge.category;
+    const charge = await ChargeModel.findByChargeId(chargeId);
+    logger.info("Charge updated", {charge});
+    const userId = charge.user_id;
+    const category = charge.category;
 
-        await UserModel.enablePremium(userId, category);
-        logger.info("User premium status updated", {userId, category});
-      }
-    }
-  } catch (error) {
-    logger.error("Payment processing error", { error } );
+    await UserModel.enablePremium(userId, category);
+    logger.info("User premium status updated", {userId, category});
   }
 };
 
