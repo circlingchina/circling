@@ -9,7 +9,7 @@ const UserModel = require('../models/UserModel');
 
 const AUTH_CONSTANTS = {
   ISS: 'Circling China',
-  AUD: 'https://www.circlingchina.org',
+  AUD: 'https://www.circlingquanquan.com',
   JWT_SECRET,
   COOKIE_NAME: "circlingchina.token",
   JWT_SIGN_OPTIONS: {
@@ -36,7 +36,7 @@ const makeUserObj = function (jwt_token, user) {
 const makeJWTPayload =   function (user) {
   return {
     iss: 'Circling China',
-    aud: 'https://www.circlingchina.org',
+    aud: 'https://www.circlingquanquan.com',
     sub: user.id,
     app_metadata: {
       provider: "email"
