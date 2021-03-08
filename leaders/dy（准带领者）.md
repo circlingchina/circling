@@ -1,5 +1,5 @@
 ---
-title: DY（准带领者）
+title: DY（见习带领者）
 avatar: /images/uploads/img_2180.jpg
 ---
 我是DY
