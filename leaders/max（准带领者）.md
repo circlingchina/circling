@@ -1,5 +1,5 @@
 ---
-title: Max（准带领者）
+title: Max（见习带领者）
 avatar: /images/uploads/img_2173.jpg
 ---
 我是Max…一个UI/UX设计师? Dirty backpacker? 世界公民? 城市修行人? Queer? 社恐? 环保女权？生命体察者？
