@@ -1,5 +1,5 @@
 ---
-title: talala（准带领者）
+title: talala（见习带领者）
 avatar: /images/uploads/img_2171.jpg
 ---
 我是talala，互联网从业者、脱口秀演员、swing dancer、自由潜水员。我喜欢“简单”也爱“复杂”，习惯“理性”也沉浸“灵性”。
