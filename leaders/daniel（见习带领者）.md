@@ -1,5 +1,5 @@
 ---
-title: Daniel（见习带领者）
+title: Daniel
 avatar: /images/uploads/9bf82e11-ffc8-4fce-8f45-34bc65b6fb7f.jpeg
 ---
 我是Daniel，喜欢吃吃喝喝，到处闲逛
