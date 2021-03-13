@@ -35,9 +35,9 @@ Deploy steps:
 1. 服务没有防挂的保障
 
 TODO:
-1. data migration
-2. pingxx
-3. forestadmin 
-4. test cms function
-5. amazon email 看看阿里云中有没有替代方案 （yiliang）
+- [ ] data migration
+- [ ] pingxx
+- [ ] forestadmin 
+- [ ] test cms function
+- [ ] amazon email 看看阿里云中有没有替代方案 （yiliang）
 
