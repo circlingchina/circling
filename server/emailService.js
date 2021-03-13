@@ -53,7 +53,7 @@ const sendPasswordResetEmail = (toEmail, passwordResetId) => {
   const subject = "Circling China 密码重置";
   const compiledFunction = pug.compileFile('./emails/passwordReset.pug');
 
-  const link = `https://www.circlingchina.org/#recovery_token=${passwordResetId}`;
+  const link = `https://www.circlingquanquan.com/#recovery_token=${passwordResetId}`;
 
   const body_html = compiledFunction({ link });
 
@@ -66,7 +66,7 @@ const sendVerificationEmail = (toEmail, precreateUserId) => {
 
   const compiledFunction = pug.compileFile('./emails/verification.pug');
 
-  const link = `https://www.circlingchina.org/#confirmation_token=${precreateUserId}`;
+  const link = `https://www.circlingquanquan.com/#confirmation_token=${precreateUserId}`;
 
   const body_html = compiledFunction({ link });
 
