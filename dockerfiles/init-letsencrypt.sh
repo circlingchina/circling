@@ -5,11 +5,11 @@ if ! [ -x "$(command -v docker-compose)" ]; then
   exit 1
 fi
 
-domains=(alpha.circlingquanquan.com api.circlingquanquan.com www.circlingquanquan.com)
+domains=(api.circlingquanquan.com www.circlingquanquan.com)
 rsa_key_size=4096
 data_path="/root/circling_deploy/data/certbot"
 email="circlingchina@163.com"
-staging=1 # Set to 1 if you're testing your setup to avoid hitting request limits
+staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
 if [ -d "$data_path" ]; then
   read -p "Existing data found for $domains. Continue and replace existing certificate? (y/N) " decision
@@ -17,7 +17,6 @@ if [ -d "$data_path" ]; then
     exit
   fi
 fi
-
 
 if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/ssl-dhparams.pem" ]; then
   echo "### Downloading recommended TLS parameters ..."
@@ -40,7 +39,6 @@ for domain in "${domains[@]}"; do
       -subj '/CN=localhost'" certbot
   echo
 done
-
 
 echo "### Starting backendserver ..."
 docker-compose up --force-recreate -d server

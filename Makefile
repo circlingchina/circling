@@ -1,4 +1,5 @@
 SERVER_DOCKERFILE = dockerfiles/Dockerfile.server
+
 REGISTRY = gcr.io
 NAME := ${REGISTRY}/circling-deploy/circling-server
 COMMIT ?= $$(git rev-parse --short HEAD)
