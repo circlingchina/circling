@@ -38,5 +38,6 @@ TODO:
 1. data migration
 2. pingxx
 3. forestadmin 
-4. amazon email 看看阿里云中有没有替代方案 （yiliang）
+4. test cms function
+5. amazon email 看看阿里云中有没有替代方案 （yiliang）
 
