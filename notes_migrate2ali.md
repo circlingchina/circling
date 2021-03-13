@@ -40,4 +40,5 @@ TODO:
 - [ ] forestadmin 
 - [ ] test cms function
 - [ ] amazon email 看看阿里云中有没有替代方案 （yiliang）
+- [ ] non-root
 
