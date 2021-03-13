@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   nginx:
-    image: "registry-vpc.cn-beijing.aliyuncs.com/circlingchina/circling_aliyun_fe"
+    image: "registry-vpc.cn-beijing.aliyuncs.com/circlingchina/circling_aliyun_fe:latest"
     ports:
       - "80:80"
       - "443:443"
