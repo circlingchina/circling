@@ -7,38 +7,36 @@
 - 前端 一个docker image = nginx + staic files
 - 后端 一个docker image = server
 
-由于缺乏CD服务器(本地充当CD服务器)，本地直接部署至ali ECS, .env文件在本地部署前需要准备好，然后build进docker image
+由于缺乏CD服务器(本地充当CD服务器)，本地直接部署至ali ECS, .env文件在本地部署前需要准备好，然后 build 进 docker image
 
-流程：
+
+Deploy steps:
 
 1. 本地git提交
-2. 构建镜像（需要用1中的git commit hash）
-3. push镜像
-4. 登录阿里云ECS
-5. 更新镜像
-6. 重新运行容器
+2. build/push images `make aliyun_server`, `make aliyun_fe`
+3. 登录阿里云ECS
+4. docker pull images：
+    ``` shell
+    docker pull registry-vpc.cn-beijing.aliyuncs.com/circlingchina/circling_aliyun_fe:latest
+    docker pull registry-vpc.cn-beijing.aliyuncs.com/circlingchina/circling_aliyun:latest
+    ```
+5. `cd /root/circling_deploy/ && docker-compose restart`
+
+** 首次部署时:
+1. Copy `dockerfiles/docker-compose.yml` 和 `init-letsencrypt.sh` 到 `/root/circling_deploy` 下
+    ``` shell
+    scp dockerfiles/docker-compose.yml root@47.95.8.171:/root/circling_deploy/
+    scp dockerfiles/init-letsencrypt.sh root@47.95.8.171:/root/circling_deploy/
+    ```
+2. Follow deploy steps.
+3. If the certbot container is not running, run `docker-compose restart`
 
 问题：
+1. 服务没有防挂的保障
 
-1. AWS InvalidClientToken - 注册时触发
-2. 服务没有防挂的保障
+TODO:
+1. data migration
+2. pingxx
+3. forestadmin 
+4. amazon email 看看阿里云中有没有替代方案 （yiliang）
 
-其他备注：
-
-1. ECS root密码修改了
-2. 代码库中，PG连接信息硬编码至代码中（被我修改成了阿里云的）
-
-TODO：
-1. CD server
-2. CDN(any free CDN?) -> ali cdn
-3. Let's encrypt cert (2/16 继续) -> done
-4. PG 数据迁移 
-5. amazon email 看看阿里云中有没有替代方案 （yiliang）
-
-
-```
-psql -d circling_db -U circling -p 1921
-
-docker stop circling_deploy_nginx_1 circling_deploy_server_1
-docker rm circling_deploy_nginx_1 circling_deploy_server_1
-```
