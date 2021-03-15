@@ -1,6 +1,9 @@
 backend:
   name: github
   repo: circlingchina/circling
+  branch: master
+  api_root: https://api.github.com
+  site_domain: circlingquanquan.com
 
 media_folder: "/images/uploads"
 
