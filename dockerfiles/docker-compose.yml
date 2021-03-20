@@ -11,6 +11,8 @@ services:
     networks:
       - circling-network
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    restart: on-failure
+    pull_policy: always
 
   certbot:
     image: certbot/certbot
@@ -18,12 +20,24 @@ services:
       - /root/circling_deploy/data/certbot/conf:/etc/letsencrypt
       - /root/circling_deploy/data/certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    restart: on-failure
+
   server:
     image: "registry-vpc.cn-beijing.aliyuncs.com/circlingchina/circling_aliyun:latest"
     ports:
       - "4567:4567"
     networks:
       - circling-network
+    restart: on-failure
+    pull_policy: always
+
+  forestadmin:
+    image: "forestadmin"
+    ports:
+      - "3310:3310"
+    networks:
+      - circling-network
+    restart: on-failure
   
 networks:
   circling-network:

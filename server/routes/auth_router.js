@@ -21,7 +21,7 @@ const authToken = async (req, res) => {
   let user = await UserModel.findByEmail(email);
   if (!user) {
     return res.status(401)
-      .json({message: "No user found with this email"})
+      .json({ message: "No user found with this email" })
       .end();
   }
 
@@ -29,14 +29,14 @@ const authToken = async (req, res) => {
     // check for registered user before migration
     // Ask user to reset the password
     return res.status(401)
-      .json({message: "Password reset request for migrated users"})
+      .json({ message: "Password reset request for migrated users" })
       .end();
   }
 
   let match = UserModel.verifyPassword(user, password);
   if (!match) {
     return res.status(401)
-      .json({message: "Email not confirmed"})
+      .json({ message: "Email not confirmed" })
       .end();
   }
 
@@ -65,7 +65,7 @@ const authRefresh = async (req, res) => {
     }
     return res.status(400).end();
   }
-  debug({payload});
+  debug({ payload });
 
   const user = await UserModel.find(payload.sub);
   if (!user) {
@@ -89,7 +89,7 @@ const authRefresh = async (req, res) => {
   // Now, create a new token for the current user, with a renewed expiration time
   const new_jwt_token = makeJWTtokenFromUser(user);
 
-  debug({new_jwt_token});
+  debug({ new_jwt_token });
 
   res.cookie(COOKIE_NAME, new_jwt_token, { maxAge: JWT_EXPIRY_SECONDS * 1000 });
   res.json(makeUserObj(new_jwt_token, user));
@@ -108,6 +108,7 @@ const signup = async (req, res) => {
   if (!precreateUserId) {
     res.sendStatus(400);
     res.end();
+    return
   }
 
   // send email
@@ -149,7 +150,7 @@ const confirm = async (req, res) => {
 const passwordRecovery = async (req, res) => {
   const { email } = req.body;
 
-  if (!validator.isEmail(email)){
+  if (!validator.isEmail(email)) {
     res.status(400).type('json').send(JSON.stringify({}));
     return;
   }
@@ -167,13 +168,13 @@ const passwordRecovery = async (req, res) => {
     debug(`User not found by email ${email}`);
   }
 
-  res.status(200).type('json').send(JSON.stringify({id: passwordResetId}));
+  res.status(200).type('json').send(JSON.stringify({ id: passwordResetId }));
 };
 
-const passwordRecoveryConfirm = async(req, res) => {
+const passwordRecoveryConfirm = async (req, res) => {
   const { token: passwordResetId } = req.body;
 
-  if (!validator.isUUID(passwordResetId)){
+  if (!validator.isUUID(passwordResetId)) {
     res.status(400).type('json').send(JSON.stringify({}));
     return;
   }
@@ -198,9 +199,9 @@ const passwordRecoveryConfirm = async(req, res) => {
 
 const doResetPassword = async (req, res) => {
 
-  const {userId, password} = req.body;
+  const { userId, password } = req.body;
 
-  if (!validator.isUUID(userId)){
+  if (!validator.isUUID(userId)) {
     res.status(400).type('json').send(JSON.stringify({}));
     return;
   }
