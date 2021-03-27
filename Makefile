@@ -48,8 +48,11 @@ build_ali:
 
 build_ali_fe:
 	@echo building $(ALI_FE_FULL_TAG)
+	@mv .env /tmp/.env.fe.tmp
+	@cp .env.prod .env
 	@docker build -t $(ALI_FE_FULL_TAG) -f $(FE_DOCKERFILE) .
 	@docker tag ${ALI_FE_FULL_TAG} ${ALI_FE_LATEST_TAG}
+	@mv /tmp/.env.fe.tmp .env
 
 push_ali:
 	@docker login --username=dev@1370088337995916 registry.cn-beijing.aliyuncs.com -p=abcd1234
