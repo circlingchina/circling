@@ -1,5 +1,5 @@
 ---
-title: " Erin（准带领者）"
+title: Erin
 avatar: /images/uploads/img_2166.jpg
 ---
 我是Erin，一名教育工作者，也是一名瑜伽和冥想习练者。

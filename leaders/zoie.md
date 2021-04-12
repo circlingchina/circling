@@ -1,5 +1,5 @@
 ---
-title: Zoie（准带领者）
+title: Zoie
 avatar: /images/uploads/img_2167.jpg
 ---
 我是Zoie，相信所有真实的力量。 
