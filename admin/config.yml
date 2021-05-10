@@ -22,6 +22,9 @@ collections:
       - { label: "Thumbnail", name: "thumbnail", widget: "image" }
       - { label: "Event URL", name: "event_url", widget: "string" }
       - { label: "Tags", name: "tags", widget: "list", default: ["event"] }
+    sortable_fields: 
+      type: "desc"
+      fields: "date"
   # Our blog posts
   - name: "blog" # Used in routes, e.g., /admin/collections/blog
     label: "Post" # Used in the UI
