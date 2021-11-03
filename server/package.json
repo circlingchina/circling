@@ -32,7 +32,7 @@
     "pg": "^8.2.1",
     "pingpp": "^2.1.5",
     "pug": "^3.0.1",
-    "validator": "^13.1.17",
+    "validator": "^13.7.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {
