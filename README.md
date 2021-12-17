@@ -62,4 +62,29 @@ dbname for testing: circling_test_db
 ## 发布
 
 1. 保证本地服务器端测试没有问题
+2. git commit
+3. 发布前端
+    ``` sh
+    npm run build
+    make aliyun_fe
+    ``` 
+4. 发布后端
+    ``` sh
+    cd ./server && npm run build && cd ..
+    make aliyun_server
+    ```
+5. 登陆服务器，发布
+    ``` sh
+    ssh root@47.95.8.171
+    cd circling_deploy
+    # pull 前端
+    docker pull registry-vpc.cn-beijing.aliyuncs.com/circlingchina/circling_aliyun_fe
+    # pull 后端
+    docker pull registry-vpc.cn-beijing.aliyuncs.com/circlingchina/circling_aliyun
+
+    # 重启 docker composer
+    docker-compose stop
+    docker-compose up -d
+    ```
+
 
