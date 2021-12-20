@@ -122,7 +122,7 @@ This is a step-by-step operation for initialize the pg database locally.
     ❯
     ```
 
-- run db migration scripts *in the order of timestamps* for both *circling_db* and *circling_test_db*
+- run db migration scripts **in the order of timestamps for both circling_db and circling_test_db**
 
     ``` 
     # example command and output
