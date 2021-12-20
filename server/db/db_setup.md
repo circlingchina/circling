@@ -122,10 +122,10 @@ This is a step-by-step operation for initialize the pg database locally.
     ❯
     ```
 
-- run db migrations per timestamps for both circling_db and circling_test_db
+- run db migration scripts *in the order of timestamps* for both *circling_db* and *circling_test_db*
 
     ``` 
-    # this is the example for running the *first script to circling_db only*
+    # example command and output
     psql -W circling -U circling -d circling_db -f ./db/migrations/20200625_add_end_time_to_events.sql
     psql: warning: extra command-line argument "circling" ignored
     Password:
