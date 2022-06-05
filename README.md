@@ -70,7 +70,7 @@ dbname for testing: circling_test_db
     ``` 
 4. 发布后端
     ``` sh
-    cd ./server && npm run build && cd ..
+    cd ./server && npm run test && cd ..
     make aliyun_server
     ```
 5. 登陆服务器，发布
