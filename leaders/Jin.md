@@ -1,5 +1,5 @@
 ---
-title: Jin（见习带领者）
+title: Jin
 avatar: /images/uploads/Jin.jpg
 ---
 
