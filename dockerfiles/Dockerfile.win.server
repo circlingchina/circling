@@ -1,0 +1,19 @@
+FROM node:alpine
+# RUN apk add --no-cache --virtual .gyp python make g++ 
+RUN apk add --no-cache --virtual python make g++
+
+ENV PORT=4567
+
+# WORKDIR /app
+# COPY package*.json /app/
+# RUN npm install
+
+WORKDIR /app/server
+COPY server/package*.json /app/server/
+RUN npm install
+
+COPY src /app/src/
+COPY server /app/server/
+
+ENTRYPOINT [ "npm", "start" ]
+EXPOSE $PORT

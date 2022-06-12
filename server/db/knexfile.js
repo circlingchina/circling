@@ -6,7 +6,7 @@ module.exports = {
       host : '127.0.0.1',
       user : 'circling',
       password : 'circling',
-      database : 'circling_db'
+      database : 'circling_db_test'
     }
   },
 
@@ -20,7 +20,7 @@ module.exports = {
       port: '1921',
       user : 'circling',
       password : 'circling',
-      database : 'circling_db',
+      database : 'circling_db_test',
       ssl: false,
       // ssl: {
       //   rejectUnauthorized: false
