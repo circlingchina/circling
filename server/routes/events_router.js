@@ -3,6 +3,7 @@ const passport = require('passport');
 const debug = require("debug")("server-debug");
 const Event = require('../models/Event');
 const UserModel = require('../models/UserModel');
+const moment = require('moment');
 
 require('dotenv').config();
 
@@ -133,10 +134,133 @@ const unjoin = async (req, res) => {
     }));
 };
 
+const statistics = async (req, res) => {
+  res
+    .status(200)
+    .type('json')
+    .send(JSON.stringify({
+      event_num:23,
+      circling_num:21,
+      companions: 67
+    }));
+};
+
+const history = async (req, res) => {
+  res
+    .status(200)
+    .type('json')
+    .send(JSON.stringify({
+      is_last_page: true,
+      events: [
+        {
+          id: "916304e0-11a2-4c96-9155-e253c56b0c07",
+          name: "测试活动01",
+          max_attendees: 3,
+          category: "Circling",
+          host: "测试带领",
+          event_link: "https://meeting.zhumu.me/j/135811509",
+          start_time: moment(new Date()).add(-11, 'h').toDate(),
+          end_time: moment(new Date()).add(-10, 'h').toDate(),
+          details: "",
+          fields: {},
+          attendees: [
+            {
+              id: "12b6ee97-d0a7-4759-a2de-3d66a5ee152a",
+              name: "circling-test-01"
+            },
+            {
+              id: "3584d160-4d2a-4b40-a00f-e509cd4b4a0c",
+              name: "circling-test-02"
+            },
+          ]
+        },
+        {
+          id: "916304e0-11a2-4c96-9155-e253c56b0c06",
+          name: "测试活动02",
+          max_attendees: 3,
+          category: "社群活动",
+          host: "测试带领",
+          event_link: "https://meeting.zhumu.me/j/135811509",
+          start_time: moment(new Date()).add(-21, 'h').toDate(),
+          end_time: moment(new Date()).add(-20, 'h').toDate(),
+          details: "",
+          fields: {},
+          attendees: [
+            {
+              id: "12b6ee97-d0a7-4759-a2de-3d66a5ee152a",
+              name: "circling-test-01"
+            },
+            {
+              id: "3584d160-4d2a-4b40-a00f-e509cd4b4a0c",
+              name: "circling-test-02"
+            },
+          ]
+        }
+      ]
+    }));
+};
+
+const attended = async (req, res) => {
+  res
+    .status(200)
+    .type('json')
+    .send(JSON.stringify({
+      events: [
+        {
+          id: "473ca989-6f96-40ba-84d3-0a01ec56730a",
+          name: "测试活动03",
+          max_attendees: 3,
+          category: "Circling",
+          host: "测试带领",
+          event_link: "https://meeting.zhumu.me/j/135811509",
+          start_time: moment(new Date()).add(15, 'h').toDate(),
+          end_time: moment(new Date()).add(16, 'h').toDate(),
+          details: "",
+          fields: {},
+          attendees: [
+            {
+              id: "12b6ee97-d0a7-4759-a2de-3d66a5ee152a",
+              name: "circling-test-01"
+            },
+            {
+              id: "3584d160-4d2a-4b40-a00f-e509cd4b4a0c",
+              name: "circling-test-02"
+            },
+          ]
+        },
+        {
+          id: "473ca989-6f96-40ba-84d3-0a01ec56730b",
+          name: "测试活动04",
+          max_attendees: 3,
+          category: "社群活动",
+          host: "测试带领",
+          event_link: "https://meeting.zhumu.me/j/135811509",
+          start_time: moment(new Date()).add(5, 'h').toDate(),
+          end_time: moment(new Date()).add(6, 'h').toDate(),
+          details: "",
+          fields: {},
+          attendees: [
+            {
+              id: "12b6ee97-d0a7-4759-a2de-3d66a5ee152a",
+              name: "circling-test-01"
+            },
+            {
+              id: "3584d160-4d2a-4b40-a00f-e509cd4b4a0c",
+              name: "circling-test-02"
+            },
+          ]
+        }
+      ]
+    }));
+};
+
 
 module.exports = (app) => {
   app.get('/events/:id/join', passport.authenticate('jwt', { session: false }), join);
   app.get('/events/:id/unjoin', passport.authenticate('jwt', { session: false }), unjoin);
   app.get('/events', upcoming);
   app.get('/events/nextTrail', nextTrail);
+  app.get('/events/statistics', passport.authenticate('jwt', { session: false }), statistics);
+  app.get('/events/history', passport.authenticate('jwt', { session: false }), history);
+  app.get('/events/attended', passport.authenticate('jwt', { session: false }), attended);
 };

@@ -1,3 +1,4 @@
+const passport = require("passport");
 const debug = require("debug")("server");
 const db = require("../db");
 const _ = require("lodash");
@@ -59,9 +60,22 @@ const create = async(req, res) => {
     }));
 };
 
+// todo: mock
+const premiumInfo = async(req, res) => {
+  res
+    .status(200)
+    .type('json')
+    .send(JSON.stringify({
+      premium_level:"2",
+      premium_expired_at: new Date(),
+      premium_days: 231,
+      event_credit: 0
+    }));
+};
+
 module.exports = (app) => {
   app.get('/users/find', find);
   app.post('/users', create);
   app.put('/users/:userId', update);
-
+  app.get('/users/premiumInfo', passport.authenticate('jwt', { session: false }), premiumInfo);
 };

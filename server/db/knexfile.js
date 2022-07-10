@@ -3,7 +3,7 @@ module.exports = {
   development: {
     client: 'pg',
     connection: {
-      host : '127.0.0.1',
+      host : 'localhost',
       user : 'circling',
       password : 'circling',
       database : 'circling_db_test'
@@ -31,10 +31,10 @@ module.exports = {
   test: {
     client: 'pg',
     connection: {
-      host : '127.0.0.1',
+      host : 'localhost',
       user : 'circling',
       password : 'circling',
-      database : 'circling_test_db'
+      database : 'circling_db_test'
     }
   },
 };

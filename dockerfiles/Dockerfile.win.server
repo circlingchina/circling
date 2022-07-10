@@ -1,5 +1,6 @@
 FROM node:alpine
 # RUN apk add --no-cache --virtual .gyp python make g++ 
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache --virtual python make g++
 
 ENV PORT=4567
