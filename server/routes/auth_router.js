@@ -20,23 +20,33 @@ const authToken = async (req, res) => {
 
   let user = await UserModel.findByEmail(email);
   if (!user) {
+    let pre_user = await UserModel.findPrecreateUserByEmail(email);
+    if (pre_user) {
+      // 用户未完成邮箱确认
+      return res.status(401)
+        .json({ error_code: 4003, message: "Email not confirmed" })
+        .end();
+    }
+    // 账号不存在
     return res.status(401)
-      .json({ message: "No user found with this email" })
+      .json({ error_code: 4000, message: "User not found" })
       .end();
   }
 
+  // 账号需要重置密码
   if (user.salt.length == 0) {
     // check for registered user before migration
     // Ask user to reset the password
     return res.status(401)
-      .json({ message: "Password reset request for migrated users" })
+      .json({ error_code: 4002, message: "Password reseting" })
       .end();
   }
 
   let match = UserModel.verifyPassword(user, password);
   if (!match) {
+    // 密码错误
     return res.status(401)
-      .json({ message: "Email not confirmed" })
+      .json({ error_code: 4001, message: "Password error" })
       .end();
   }
 
@@ -102,13 +112,20 @@ const signup = async (req, res) => {
 
   await UserModel.deletePrecreateUserByEmail(email);
 
+  const user = await UserModel.findByEmail(email);
+  if (user) {
+    return res.status(400)
+      .json({ error_code: 4000, message: "Email exists" })
+      .end();
+  }
+
   // create precreate_user;
   const precreateUserId = await UserModel.createPrecreateUser(name, email, password);
   // If the email already registered or somehow not able to create a precreate user, return 400
   if (!precreateUserId) {
-    res.sendStatus(400);
-    res.end();
-    return
+    return res.status(400)
+      .json({ error_code: 4001, message: "Fail to create user" })
+      .end();
   }
 
   // send email

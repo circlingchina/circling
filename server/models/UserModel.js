@@ -249,6 +249,14 @@ async function findPrecreateUser(id) {
   return null;
 }
 
+async function findPrecreateUserByEmail(email) {
+  const records = await db("precreate_users").where({email});
+  if (records && records.length > 0) {
+    return records[0];
+  }
+  return null;
+}
+
 async function deletePrecreateUserByEmail(email) {
   const deleted = await db("precreate_users").where({email}).del();
   return deleted;
@@ -302,6 +310,7 @@ module.exports = {
   createPasswordReset,
 
   findPrecreateUser,
+  findPrecreateUserByEmail,
   deletePrecreateUserByEmail,
   deletePrecreateUser,
   createPrecreateUser,
