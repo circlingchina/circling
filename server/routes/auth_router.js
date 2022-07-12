@@ -11,6 +11,10 @@ const { AUTH_CONSTANTS, makeUserObj, makeJWTtokenFromUser } = require("../auth")
 const JWT_EXPIRY_SECONDS = AUTH_CONSTANTS.JWT_SIGN_OPTIONS.EXPIRESIN;
 const COOKIE_NAME = AUTH_CONSTANTS.COOKIE_NAME;
 
+const pingpp = require('pingpp')(process.env.PINGXX_SECRET_KEY);
+// TODO: place the cert on server and remove it from the repo
+pingpp.setPrivateKeyPath(__dirname + '/../certs/pingpp_merchant_pri.pem');
+
 // Issue JWT token
 const authToken = async (req, res) => {
   const { email, password } = req.body;
@@ -239,6 +243,22 @@ const doResetPassword = async (req, res) => {
   res.end();
 };
 
+const getWXOpenId = async (req, res) => {
+  const code = req.query.code;
+  pingpp.wxOAuth.getWxLiteOpenid(process.env.WX_LITE_APP_ID, process.env.WX_LITE_APP_SECRET, code, 
+    function(err, wx_res) {
+      if (err) {
+        return res.status(400)
+          .json({ error_code: 4000, message: err.message })
+          .end();
+      } else {
+        return res.status(200).type('json')
+          .send(JSON.stringify({
+            wx_res
+          }))
+      }
+    })
+};
 
 module.exports = (app) => {
   app.post('/auth/token', authToken);
@@ -249,4 +269,6 @@ module.exports = (app) => {
   app.post('/auth/passwordRecovery', passwordRecovery);
   app.post('/auth/passwordRecoveryConfirm', passwordRecoveryConfirm);
   app.post('/auth/passwordRecoveryPerform', doResetPassword);
+
+  app.get('/auth/openId', getWXOpenId);
 };
