@@ -25,6 +25,11 @@ const CHANNEL = {
 };
 
 const CHARGE_TYPE_INFO = {
+  TINY_TEST: {
+    subject: "内部测试",
+    body: "内部测试",
+    amount: 1,
+  },
   SINGLE_EVENT: {
     subject: "单次活动",
     body: "单次活动",
@@ -52,6 +57,8 @@ const createCharge = async(req, res) => {
   const body = req.body;
   const chargeType = body.charge_type;
   const user_id = body.user_id;
+  const req_channel = body.channel
+  const open_id = body.open_id
 
   debug(body);
   if (
@@ -64,12 +71,23 @@ const createCharge = async(req, res) => {
     return;
   }
 
-  const channel = req.useragent.isDesktop ? CHANNEL.desktop : CHANNEL.mobile;
+  const channel = req_channel ? req_channel : (req.useragent.isDesktop ? CHANNEL.desktop : CHANNEL.mobile);
 
   // current date + 12 random numberic chars
   // TODO: check collision
 
   const order_no = moment(new Date()).format('YYYYMMDD') + cryptoRandomString({length: 12, type: 'numeric'});
+
+  const extra = {}
+
+  switch (channel) {
+    case 'wx_lite':
+      extra.open_id = open_id;
+      break;
+    default:
+      extra.success_url = "https://www.test.circlingquanquan.com"
+      break;
+  }
 
   const params = {
     subject: CHARGE_TYPE_INFO[chargeType]['subject'],
@@ -80,9 +98,7 @@ const createCharge = async(req, res) => {
     currency: "cny",
     client_ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
     app: {id: process.env.PINGXX_APP_ID},
-    extra: {
-      success_url: "https://www.circlingquanquan.com"
-    }
+    extra: extra
   };
 
   logger.info('create new charge with param', {params});
@@ -209,7 +225,8 @@ const pingppWebhookTest = async (req, res) => {
 
 module.exports = (app) => {
   // TODO: use POST, called by client with credential
-  app.post('/payment/charges', passport.authenticate('jwt', { session: false }), createCharge);
+  // app.post('/payment/charges', passport.authenticate('jwt', { session: false }), createCharge);
+  app.post('/payment/charges', createCharge);
   app.post('/payment/pingppwebhook', pingppWebhook);
   app.post('/payment/pingppwebhook_test', pingppWebhookTest);
 };
