@@ -60,13 +60,13 @@ const sendPasswordResetEmail = (toEmail, passwordResetId) => {
   return sendMail(sender, toEmail, subject, body_html);
 };
 
-const sendVerificationEmail = (toEmail, precreateUserId) => {
+const sendVerificationEmail = (toEmail, precreateUserId, comfirmLink) => {
   const sender = "Jess <jess@circlingchina.org>"; // This address must be verified with Amazon SES.
   const subject = "欢迎加入Circling中国社群";
 
   const compiledFunction = pug.compileFile('./emails/verification.pug');
 
-  const link = `https://www.test.circlingquanquan.com/#confirmation_token=${precreateUserId}`;
+  const link = comfirmLink ? comfirmLink : `https://www.circlingquanquan.com/#confirmation_token=${precreateUserId}`;
 
   const body_html = compiledFunction({ link });
 

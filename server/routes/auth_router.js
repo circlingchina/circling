@@ -133,7 +133,11 @@ const signup = async (req, res) => {
   }
 
   // send email
-  await EmailService.sendVerificationEmail(email, precreateUserId);
+  if (process.env.ENV == 'test') {
+    await EmailService.sendVerificationEmail(email, precreateUserId, `https://apitest.circlingquanquan.com/auth/confirm_test?token=${precreateUserId}`);
+  } else {
+    await EmailService.sendVerificationEmail(email, precreateUserId);
+  }
 
   debug(`verification mail sent with token: ${precreateUserId}`);
   res.sendStatus(200);
@@ -142,6 +146,42 @@ const signup = async (req, res) => {
 
 const confirm = async (req, res) => {
   const { token: precreateUserId } = req.body;
+
+  const precreateUser = await UserModel.findPrecreateUser(precreateUserId);
+  if (!precreateUser) {
+    res.statusCode(400);
+    res.end();
+  }
+
+  const userId = await UserModel.createPwdDigest(
+    precreateUser.name,
+    precreateUser.email,
+    precreateUser.salt,
+    precreateUser.password_hexdigest,
+  );
+
+  // Now the real user record has been created, so we can safely delete the precreate_user record
+  await UserModel.deletePrecreateUser(precreateUserId);
+
+  const user = await UserModel.find(userId);
+
+  const jwt_token = makeJWTtokenFromUser(user);
+
+  res.cookie(COOKIE_NAME, jwt_token, { maxAge: JWT_EXPIRY_SECONDS * 1000 });
+  res.json(makeUserObj(jwt_token, user));
+  res.end();
+};
+
+const confirmTest = async (req, res) => {
+  const precreateUserId = req.query.token;
+
+  if (!precreateUserId) {
+    res.status(400).type('json').send(JSON.stringify({
+      error_code: 4000,
+      message: 'Token is required'
+    }));
+    return;
+  }
 
   const precreateUser = await UserModel.findPrecreateUser(precreateUserId);
   if (!precreateUser) {
@@ -265,6 +305,7 @@ module.exports = (app) => {
   app.post('/auth/refresh', authRefresh);
   app.post('/auth/signup', signup);
   app.post('/auth/confirm', confirm);
+  app.get('/auth/confirm_test', confirmTest);
 
   app.post('/auth/passwordRecovery', passwordRecovery);
   app.post('/auth/passwordRecoveryConfirm', passwordRecoveryConfirm);
