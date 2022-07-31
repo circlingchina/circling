@@ -85,7 +85,7 @@ const createCharge = async(req, res) => {
       extra.open_id = open_id;
       break;
     default:
-      extra.success_url = "https://www.test.circlingquanquan.com"
+      extra.success_url = "https://www.circlingquanquan.com"
       break;
   }
 
@@ -100,6 +100,10 @@ const createCharge = async(req, res) => {
     app: {id: process.env.PINGXX_APP_ID},
     extra: extra
   };
+
+  if (process.env.ENV == 'test') {
+    params.amount = 2
+  }
 
   logger.info('create new charge with param', {params});
 
@@ -124,8 +128,6 @@ const createCharge = async(req, res) => {
 };
 
 const pingppWebhook = async (req, res) => {
-  res.status(200).send('pingxx pong');
-
   const event = req.body;
   logger.info('incoming event', {event});
   // event example:
@@ -211,7 +213,11 @@ const pingppWebhook = async (req, res) => {
 
     await UserModel.enablePremium(userId, category);
     logger.info("User premium status updated", {userId, category});
+
+    res.status(200).send('pingxx success, ' + process.env.ENV);
+    return
   }
+  res.status(200).send('pingxx fail, ' + process.env.ENV);
 };
 
 const pingppWebhookTest = async (req, res) => {
@@ -219,7 +225,6 @@ const pingppWebhookTest = async (req, res) => {
 
   const event = req.body;
   logger.info('incoming event test', {event});
-
 };
 
 
