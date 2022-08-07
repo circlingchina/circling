@@ -48,6 +48,21 @@ const sentFirstEventEmail = (userName, toEmail, eventName, eventStartTime) => {
   return sendMail(sender, toEmail, subject, body_html);
 };
 
+const sentFirstPaidEmail = (userName, toEmail) => {
+
+  const sender = "Jess <jess@circlingchina.org>"; // This address must be verified with Amazon SES.
+  const subject = "从这里开启你的Circling之旅吧";
+
+  //compile body from template
+  const compiledFunction = pug.compileFile('./emails/firstPaid.pug');
+  // Render a set of data
+  const body_html = compiledFunction({
+    name: userName,
+  });
+
+  return sendMail(sender, toEmail, subject, body_html);
+};
+
 const sendPasswordResetEmail = (toEmail, passwordResetId) => {
   const sender = "Jess <jess@circlingchina.org>"; // This address must be verified with Amazon SES.
   const subject = "Circling China 密码重置";
@@ -148,3 +163,4 @@ exports.sentTrailEventEmail = sentTrailEventEmail;
 exports.sendCampain202009 = sendCampain202009;
 exports.sendPasswordResetEmail = sendPasswordResetEmail;
 exports.sendVerificationEmail = sendVerificationEmail;
+exports.sentFirstPaidEmail = sentFirstPaidEmail;
