@@ -9,4 +9,5 @@ module.exports = {
   JWT_SECRET: process.env.JWT_SECRET,
   WX_LITE_APP_ID: process.env.WX_LITE_APP_ID,
   WX_LITE_APP_SECRET: process.env.WX_LITE_APP_SECRET,
+  NODE_ENV: process.env.NODE_ENV,
 };

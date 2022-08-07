@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "console": "NODE_ENV=development node console.js",
-    "start": "PGUSER=circling PGPASSWORD=circling PGDATABASE=circling_db_test NODE_ENV=production DEBUG=* node index.js",
+    "start": "node index.js",
     "test": "PGUSER=circling PGHOST=localhost PGPASSWORD=circling PGDATABASE=circling_test_db NODE_ENV=test DEBUG=test jest --env node --maxWorkers=1 --detectOpenHandles --coverage",
     "migrate": "DEBUG=* node db/migrate_airtable.js"
   },

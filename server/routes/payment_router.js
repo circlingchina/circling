@@ -102,7 +102,7 @@ const createCharge = async(req, res) => {
     extra: extra
   };
 
-  if (process.env.ENV == 'test') {
+  if (process.env.NODE_ENV == 'development') {
     params.amount = 2
   }
 
@@ -232,10 +232,10 @@ const pingppWebhook = async (req, res) => {
       logger.info('fail to send First Paid email', {user});
     }
 
-    res.status(200).send('pingxx success, ' + process.env.ENV);
+    res.status(200).send('pingxx success, ' + process.env.NODE_ENV);
     return
   }
-  res.status(200).send('pingxx fail, ' + process.env.ENV);
+  res.status(200).send('pingxx fail, ' + process.env.NODE_ENV);
 };
 
 const pingppWebhookTest = async (req, res) => {

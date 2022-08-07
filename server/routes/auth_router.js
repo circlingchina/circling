@@ -140,7 +140,7 @@ const signup = async (req, res) => {
   logger.info("precreate user", {precreateUserId, email, data});
 
   // send email
-  if (process.env.ENV == 'test') {
+  if (process.env.NODE_ENV == 'development') {
     const sendRet = await EmailService.sendVerificationEmail(email, precreateUserId, `https://apitest.circlingquanquan.com/auth/confirm_test?token=${precreateUserId}`);
     logger.info("sign up send mail", {sendRet, email, data});
   } else {
