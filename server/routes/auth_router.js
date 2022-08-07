@@ -142,10 +142,10 @@ const signup = async (req, res) => {
   // send email
   if (process.env.ENV == 'test') {
     const sendRet = await EmailService.sendVerificationEmail(email, precreateUserId, `https://apitest.circlingquanquan.com/auth/confirm_test?token=${precreateUserId}`);
-    logger.info("send mail", {sendRet, email, data});
+    logger.info("sign up send mail", {sendRet, email, data});
   } else {
     const sendRet = await EmailService.sendVerificationEmail(email, precreateUserId);
-    logger.info("send mail", {sendRet, email, data});
+    logger.info("sign up send mail", {sendRet, email, data});
   }
 
   debug(`verification mail sent with token: ${precreateUserId}`);

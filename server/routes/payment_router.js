@@ -226,7 +226,7 @@ const pingppWebhook = async (req, res) => {
     try {
       if (user && moment(user.premium_expired_at).isBefore('1980-01-01')) {
         const sendRet = await EmailService.sentFirstPaidEmail(user.name, user.email);
-        logger.info("first paid send mail", {sendRet, email, data});
+        logger.info("first paid send mail", {sendRet, email});
       }
     } catch {
       logger.info('fail to send First Paid email', {user});

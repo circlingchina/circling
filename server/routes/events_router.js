@@ -89,7 +89,22 @@ const join = async (req, res) => {
     return;
   }
 
-  if (event && event.attendees.length >= event.max_attendees) {
+  if (event.attendees && event.attendees.length > 0) {
+    event.attendees(e => {
+      if (e.id == userId) {
+        res
+          .status(400)
+          .type('json')
+          .send(JSON.stringify({
+            error_code: 40030,
+            message: 'Already participated'
+          }));
+        return
+      }
+    });
+  }
+
+  if (event.attendees.length >= event.max_attendees) {
     res
       .status(400)
       .type('json')
