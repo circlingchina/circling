@@ -1,7 +1,12 @@
+const NAME = 'routes.auth_router';
+
 const debug = require("debug")("server");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
 const validator = require('validator');
+
+const mainLogger = require("../logger");
+const logger = mainLogger.child({ label: NAME });
 
 const { JWT_SECRET } = require("../enviornment");
 const UserModel = require("../models/UserModel");
@@ -28,12 +33,12 @@ const authToken = async (req, res) => {
     if (pre_user) {
       // 用户未完成邮箱确认
       return res.status(401)
-        .json({ error_code: 4003, message: "Email not confirmed" })
+        .json({ error_code: 40013, message: "Email not confirmed" })
         .end();
     }
     // 账号不存在
     return res.status(401)
-      .json({ error_code: 4000, message: "User not found" })
+      .json({ error_code: 40010, message: "User not found" })
       .end();
   }
 
@@ -42,7 +47,7 @@ const authToken = async (req, res) => {
     // check for registered user before migration
     // Ask user to reset the password
     return res.status(401)
-      .json({ error_code: 4002, message: "Password reseting" })
+      .json({ error_code: 40012, message: "Password reseting" })
       .end();
   }
 
@@ -50,7 +55,7 @@ const authToken = async (req, res) => {
   if (!match) {
     // 密码错误
     return res.status(401)
-      .json({ error_code: 4001, message: "Password error" })
+      .json({ error_code: 40011, message: "Password error" })
       .end();
   }
 
@@ -119,7 +124,7 @@ const signup = async (req, res) => {
   const user = await UserModel.findByEmail(email);
   if (user) {
     return res.status(400)
-      .json({ error_code: 4000, message: "Email exists" })
+      .json({ error_code: 40020, message: "Email exists" })
       .end();
   }
 
@@ -128,15 +133,19 @@ const signup = async (req, res) => {
   // If the email already registered or somehow not able to create a precreate user, return 400
   if (!precreateUserId) {
     return res.status(400)
-      .json({ error_code: 4001, message: "Fail to create user" })
+      .json({ error_code: 40021, message: "Fail to create user" })
       .end();
   }
 
+  logger.info("precreate user", {precreateUserId, email, data});
+
   // send email
   if (process.env.ENV == 'test') {
-    await EmailService.sendVerificationEmail(email, precreateUserId, `https://apitest.circlingquanquan.com/auth/confirm_test?token=${precreateUserId}`);
+    const sendRet = await EmailService.sendVerificationEmail(email, precreateUserId, `https://apitest.circlingquanquan.com/auth/confirm_test?token=${precreateUserId}`);
+    logger.info("send mail", {sendRet, email, data});
   } else {
-    await EmailService.sendVerificationEmail(email, precreateUserId);
+    const sendRet = await EmailService.sendVerificationEmail(email, precreateUserId);
+    logger.info("send mail", {sendRet, email, data});
   }
 
   debug(`verification mail sent with token: ${precreateUserId}`);

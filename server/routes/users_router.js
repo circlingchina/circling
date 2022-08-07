@@ -2,6 +2,7 @@ const passport = require("passport");
 const debug = require("debug")("server");
 const db = require("../db");
 const _ = require("lodash");
+const moment = require("moment");
 
 const update = async(req, res) => {
 
@@ -62,14 +63,15 @@ const create = async(req, res) => {
 
 // todo: mock
 const premiumInfo = async(req, res) => {
+  const user = req.user;
   res
     .status(200)
     .type('json')
     .send(JSON.stringify({
-      premium_level:"2",
-      premium_expired_at: new Date(),
-      premium_days: 231,
-      event_credit: 0
+      premium_level: user.premium_level,
+      premium_expired_at: user.premium_expired_at,
+      premium_days: moment(new Date()).diff(moment(user.created_at), 'days'),
+      event_credit: user.event_credit
     }));
 };
 

@@ -76,13 +76,28 @@ const join = async (req, res) => {
   //   return;
   // }
 
+  if (!event) {
+    res
+      .status(400)
+      .type('json')
+      .send(JSON.stringify({
+        result: false,
+        err: 'Event not found',
+        error_code: 40030,
+        message: 'Event not found'
+      }));
+    return;
+  }
+
   if (event && event.attendees.length >= event.max_attendees) {
     res
       .status(400)
       .type('json')
       .send(JSON.stringify({
         result: false,
-        err: 'event is full'
+        err: 'event is full',
+        error_code: 40031,
+        message: 'Event is full'
       }));
     return;
   }
@@ -94,7 +109,9 @@ const join = async (req, res) => {
       .type('json')
       .send(JSON.stringify({
         result: false,
-        err: 'invalid user id'
+        err: 'invalid user id',
+        error_code: 40032,
+        message: 'Insufficient privileges'
       }));
     return;
   }
