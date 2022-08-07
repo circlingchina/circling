@@ -13,6 +13,7 @@ const debug = require("debug")(NAME);
 
 const ChargeModel = require('../models/Charge');
 const UserModel = require('../models/UserModel');
+const EmailService = require("../emailService");
 
 const pingpp = require('pingpp')(process.env.PINGXX_SECRET_KEY);
 // TODO: place the cert on server and remove it from the repo
@@ -211,8 +212,25 @@ const pingppWebhook = async (req, res) => {
     const userId = charge.user_id;
     const category = charge.category;
 
+    const user = await UserModel.find(userId);
+    if (!user) {
+      res.status(400).type('json').send(JSON.stringify({err: "user not found"}));
+      return;
+    }
+
+    logger.info("first paid user", {user});
+
     await UserModel.enablePremium(userId, category);
     logger.info("User premium status updated", {userId, category});
+
+    try {
+      if (user && moment(user.premium_expired_at).isBefore('1980-01-01')) {
+        const sendRet = await EmailService.sentFirstPaidEmail(user.name, user.email);
+        logger.info("first paid send mail", {sendRet, email, data});
+      }
+    } catch {
+      logger.info('fail to send First Paid email', {user});
+    }
 
     res.status(200).send('pingxx success, ' + process.env.ENV);
     return
