@@ -3,6 +3,11 @@ const debug = require("debug")("server");
 const db = require("../db");
 const _ = require("lodash");
 const moment = require("moment");
+const UserModel = require('../models/UserModel');
+
+const mainLogger = require("../logger");
+const NAME = 'router.users';
+const logger = mainLogger.child({ label: NAME });
 
 const update = async(req, res) => {
 
@@ -28,7 +33,6 @@ const find = async(req, res) => {
   for (let user of users) {
     user = _.pick(user, ['id', 'email', 'premium_level', 'email', 'premium_expired_at']);
   }
-
   res
     .status(200)
     .type('json')
@@ -63,16 +67,30 @@ const create = async(req, res) => {
 
 // todo: mock
 const premiumInfo = async(req, res) => {
-  const user = req.user;
-  res
+  const jwt_user = req.user;
+  const user_id = jwt_user.id;
+  const user = await UserModel.find(user_id);
+  if (user) {
+    return res
     .status(200)
     .type('json')
     .send(JSON.stringify({
+      email: user.name,
       premium_level: user.premium_level,
       premium_expired_at: user.premium_expired_at,
       premium_days: moment(new Date()).diff(moment(user.created_at), 'days'),
       event_credit: user.event_credit
     }));
+  } else {
+    return res
+    .status(400)
+    .type('json')
+    .send(JSON.stringify({
+      error_code: 40050,
+      message: 'User not found'
+    }));
+  }
+  
 };
 
 module.exports = (app) => {
