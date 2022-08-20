@@ -4,6 +4,7 @@ if(result.error) {
 }
 
 const express = require('express');
+require('express-async-errors')
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -15,6 +16,10 @@ const passport = require('passport');
 const { setupPassport } = require('./auth');
 const mountRoutes = require('./routes');
 const db = require('./db');
+
+const mainLogger = require("./logger");
+const NAME = 'app';
+const logger = mainLogger.child({ label: NAME });
 
 const app = express();
 
@@ -35,6 +40,17 @@ app.use(useragent.express());
 
 // auth
 app.use(passport.initialize());
+
+app.use((err, req, res, next) => {
+  logger.info('error', {err});
+  if (req.xhr) {
+    return res.json({
+      state: false,
+      msg: err.message
+    });
+  }
+  next(err);
+});
 
 setupPassport(passport);
 mountRoutes(app);
