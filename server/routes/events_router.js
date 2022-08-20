@@ -5,6 +5,10 @@ const Event = require('../models/Event');
 const UserModel = require('../models/UserModel');
 const moment = require('moment');
 
+const mainLogger = require("../logger");
+const NAME = 'router.events';
+const logger = mainLogger.child({ label: NAME });
+
 require('dotenv').config();
 
 const eventWithExtraFields = async(event) => {
@@ -90,7 +94,7 @@ const join = async (req, res) => {
   }
 
   if (event.attendees && event.attendees.length > 0) {
-    event.attendees(e => {
+    event.attendees.forEach(e => {
       if (e.id == userId) {
         res
           .status(400)
@@ -119,16 +123,28 @@ const join = async (req, res) => {
 
   const canJoin = await UserModel.canJoin(userId, eventId);
   if (!canJoin) {
-    res
-      .status(400)
-      .type('json')
-      .send(JSON.stringify({
-        result: false,
-        err: 'invalid user id',
-        error_code: 40032,
-        message: 'Insufficient privileges'
-      }));
-    return;
+    const isTicketUsedUp = await UserModel.isTicketUsedUp(userId, eventId);
+    if (isTicketUsedUp) {
+      res
+        .status(400)
+        .type('json')
+        .send(JSON.stringify({
+          error_code: 40034,
+          message: 'No ticket'
+        }));
+        return
+    } else {
+      res
+        .status(400)
+        .type('json')
+        .send(JSON.stringify({
+          result: false,
+          err: 'invalid user id',
+          error_code: 40032,
+          message: 'Insufficient privileges'
+        }));
+        return
+    }
   }
 
   const queryRes = await Event.join(eventId, userId);

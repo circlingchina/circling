@@ -9,6 +9,10 @@ const {sha512, saltHashPassword} = require('../utils/cryptoUtils');
 
 const { DataSync } = require("aws-sdk");
 
+const mainLogger = require("../logger");
+const NAME = 'model.user';
+const logger = mainLogger.child({ label: NAME });
+
 
 const PAYMENT_PRODUCTS = {
   SINGLE_EVENT: {
@@ -142,11 +146,32 @@ async function canJoin(user_id, event_id) {
     if (!_checkExpired(user)) {
       return false;
     }
-
-    return moment(user.premium_expired_at).isAfter(event.start_time);
+    return moment(user.premium_expired_at).isAfter(moment());
   }
 
   // safe guard
+  return false;
+}
+
+// 是否是单次活动使用券用完
+async function isTicketUsedUp(user_id, event_id) {
+  const event = await EventModel.find(event_id);
+  if (!event) {
+    return false;
+  }
+  const user = await find(user_id);
+  if (!user || user.premium_level > 0 || user.event_credit > 0 || event.category != 'Circling') {
+    return false;
+  }
+  logger.info('isTicketUsedUp', {event, user});
+  const eventsAttended = await EventModel.eventsLatestAttended(user_id);
+  logger.info('isTicketUsedUp', {eventsAttended});
+  if (eventsAttended && eventsAttended.length > 0) {
+    const latestEvent = eventsAttended[0];
+    if (moment(latestEvent.create_at).isAfter(user.premium_expired_at)) {
+      return true;
+    }
+  }
   return false;
 }
 
@@ -300,6 +325,7 @@ module.exports = {
   changePassword,
   verifyPassword,
   canJoin,
+  isTicketUsedUp,
   enablePremium,
   afterJoin,
   afterUnjoin,

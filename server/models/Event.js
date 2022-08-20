@@ -90,6 +90,18 @@ async function find(event_id, params = {}) {
   return null;
 }
 
+async function eventsLatestAttended(user_id) {
+  return db
+    .select()
+    .from('user_event')
+    .leftJoin('events', 'events.id', '=', 'user_event.event_id')
+    .where({
+      user_id
+    })
+    .orderBy('create_at', 'desc')
+    .limit(1);
+}
+
 async function attendees(event_id) {
   return db
     .select('id','email','name')
@@ -106,6 +118,7 @@ module.exports = {
   join,
   unjoin,
   find,
+  eventsLatestAttended,
   attendees,
   nextTrail,
 
