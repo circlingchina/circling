@@ -309,6 +309,11 @@ const getWXOpenId = async (req, res) => {
     })
 };
 
+const wxAccess = async (req, res) => {
+  const echostr = req.query.echostr;
+  return res.send(echostr);
+}
+
 module.exports = (app) => {
   app.post('/auth/token', authToken);
   app.post('/auth/refresh', authRefresh);
@@ -321,4 +326,5 @@ module.exports = (app) => {
   app.post('/auth/passwordRecoveryPerform', doResetPassword);
 
   app.get('/auth/openId', getWXOpenId);
+  app.get('/auth/wxAccess', wxAccess);
 };
