@@ -112,6 +112,32 @@ async function attendees(event_id) {
     });
 }
 
+async function attendedEventsByUserId(user_id) {
+  const now = new Date();
+  return db
+    .select()
+    .from('user_event')
+    .leftJoin('events', 'events.id', '=', 'user_event.event_id')
+    .where({
+      user_id
+    })
+    .where('events.start_time', '>', moment(now))
+    .orderBy('events.start_time', 'desc')
+}
+
+async function historyByUserId(user_id, count, offset) {
+  return db
+  .select()
+  .from('user_event')
+  .leftJoin('events', 'events.id', '=', 'user_event.event_id')
+  .where({
+    user_id
+  })
+  .orderBy('events.start_time', 'desc')
+  .offset(offset)
+  .limit(count+1)
+}
+
 module.exports = {
   all,
   upcoming,
@@ -121,6 +147,9 @@ module.exports = {
   eventsLatestAttended,
   attendees,
   nextTrail,
+
+  attendedEventsByUserId,
+  historyByUserId,
 
   // utility functions
   isInJoinableTimeFrame,

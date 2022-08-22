@@ -29,18 +29,42 @@ const eventWithExtraFields = async(event) => {
   return event;
 };
 
-const upcoming = async (req, res) => {
-  try {
-    const events = await Event.upcoming();
-
+const eventAttendedStatus = async(events, user_id) => {
+  if (events && events.length > 0) {
     for (const event of events) {
-
       const attendees = await Event.attendees(event.id);
       Object.assign(event, {attendees});
 
-      // Convert fields to properties
+      let event_status = 0;
+      if (attendees && attendees.length >= event.max_attendees) {
+        event_status = 1;
+      }
+      Object.assign(event, {event_status});
       await eventWithExtraFields(event);
+
+      let attend_status = -1
+      if (user_id) {
+        const user = await UserModel.find(user_id)
+        if (user) {
+          attend_status = 0;
+          console.log(user)
+          console.log(attendees)
+          if (attendees && attendees.some(attendee => attendee.id == user.id)) {
+            attend_status = 1;
+          }
+        }
+      }
+      Object.assign(event, {attend_status});
     }
+  }
+  return events;
+}
+
+const upcoming = async (req, res) => {
+  try {
+    const user_id = req.query.token;
+    const events = await Event.upcoming();
+    await eventAttendedStatus(events, user_id);
 
     res
       .type('json')
@@ -194,114 +218,41 @@ const statistics = async (req, res) => {
 };
 
 const history = async (req, res) => {
-  res
-    .status(200)
-    .type('json')
-    .send(JSON.stringify({
-      is_last_page: true,
-      events: [
-        {
-          id: "916304e0-11a2-4c96-9155-e253c56b0c07",
-          name: "测试活动01",
-          max_attendees: 3,
-          category: "Circling",
-          host: "测试带领",
-          event_link: "https://meeting.zhumu.me/j/135811509",
-          start_time: moment(new Date()).add(-11, 'h').toDate(),
-          end_time: moment(new Date()).add(-10, 'h').toDate(),
-          details: "",
-          fields: {},
-          attendees: [
-            {
-              id: "12b6ee97-d0a7-4759-a2de-3d66a5ee152a",
-              name: "circling-test-01"
-            },
-            {
-              id: "3584d160-4d2a-4b40-a00f-e509cd4b4a0c",
-              name: "circling-test-02"
-            },
-          ]
-        },
-        {
-          id: "916304e0-11a2-4c96-9155-e253c56b0c06",
-          name: "测试活动02",
-          max_attendees: 3,
-          category: "社群活动",
-          host: "测试带领",
-          event_link: "https://meeting.zhumu.me/j/135811509",
-          start_time: moment(new Date()).add(-21, 'h').toDate(),
-          end_time: moment(new Date()).add(-20, 'h').toDate(),
-          details: "",
-          fields: {},
-          attendees: [
-            {
-              id: "12b6ee97-d0a7-4759-a2de-3d66a5ee152a",
-              name: "circling-test-01"
-            },
-            {
-              id: "3584d160-4d2a-4b40-a00f-e509cd4b4a0c",
-              name: "circling-test-02"
-            },
-          ]
-        }
-      ]
+  const count = req.count || 10;
+  const offset = req.offset || 0
+  const jwt_user = req.user;
+  const user_id = jwt_user.id;
+  const events = await Event.historyByUserId(user_id, count, offset);
+  let is_last_page = true
+  if (!events) {
+    return res.status(200).type('json').send(JSON.stringify({
+      events: []
     }));
+  }
+  if (events.length > count) {
+    is_last_page = false
+    events.pop()
+  }
+  await eventAttendedStatus(events, user_id);
+  return res.status(200).type('json').send(JSON.stringify({
+    events: events
+  }));
 };
 
 const attended = async (req, res) => {
-  res
-    .status(200)
-    .type('json')
-    .send(JSON.stringify({
-      events: [
-        {
-          id: "473ca989-6f96-40ba-84d3-0a01ec56730a",
-          name: "测试活动03",
-          max_attendees: 3,
-          category: "Circling",
-          host: "测试带领",
-          event_link: "https://meeting.zhumu.me/j/135811509",
-          start_time: moment(new Date()).add(15, 'h').toDate(),
-          end_time: moment(new Date()).add(16, 'h').toDate(),
-          details: "",
-          fields: {},
-          attendees: [
-            {
-              id: "12b6ee97-d0a7-4759-a2de-3d66a5ee152a",
-              name: "circling-test-01"
-            },
-            {
-              id: "3584d160-4d2a-4b40-a00f-e509cd4b4a0c",
-              name: "circling-test-02"
-            },
-          ]
-        },
-        {
-          id: "473ca989-6f96-40ba-84d3-0a01ec56730b",
-          name: "测试活动04",
-          max_attendees: 3,
-          category: "社群活动",
-          host: "测试带领",
-          event_link: "https://meeting.zhumu.me/j/135811509",
-          start_time: moment(new Date()).add(5, 'h').toDate(),
-          end_time: moment(new Date()).add(6, 'h').toDate(),
-          details: "",
-          fields: {},
-          attendees: [
-            {
-              id: "12b6ee97-d0a7-4759-a2de-3d66a5ee152a",
-              name: "circling-test-01"
-            },
-            {
-              id: "3584d160-4d2a-4b40-a00f-e509cd4b4a0c",
-              name: "circling-test-02"
-            },
-          ]
-        }
-      ]
+  const jwt_user = req.user;
+  const user_id = jwt_user.id;
+  const events = await Event.attendedEventsByUserId(user_id);
+  if (!events) {
+    return res.status(200).type('json').send(JSON.stringify({
+      events: []
     }));
+  }
+  await eventAttendedStatus(events, user_id);
+  return res.status(200).type('json').send(JSON.stringify({
+    events: events ? events : []
+  }));
 };
-
 
 module.exports = (app) => {
   app.get('/events/:id/join', passport.authenticate('jwt', { session: false }), join);
