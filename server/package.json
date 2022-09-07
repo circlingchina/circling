@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.664.0",
+    "axios": "^0.27.2",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
@@ -27,6 +28,7 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.1",
     "lodash": "^4.17.19",
+    "lru-cache": "^7.14.0",
     "moment": "^2.27.0",
     "moment-timezone": "^0.5.31",
     "passport": "^0.4.1",

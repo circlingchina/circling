@@ -4,6 +4,7 @@ const debug = require("debug")("server");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
 const validator = require('validator');
+const moment = require('moment');
 
 const mainLogger = require("../logger");
 const logger = mainLogger.child({ label: NAME });
@@ -11,6 +12,7 @@ const logger = mainLogger.child({ label: NAME });
 const { JWT_SECRET } = require("../enviornment");
 const UserModel = require("../models/UserModel");
 const EmailService = require("../emailService");
+const Event = require('../models/Event');
 const { AUTH_CONSTANTS, makeUserObj, makeJWTtokenFromUser } = require("../auth");
 
 const JWT_EXPIRY_SECONDS = AUTH_CONSTANTS.JWT_SIGN_OPTIONS.EXPIRESIN;
@@ -61,8 +63,10 @@ const authToken = async (req, res) => {
 
   const jwt_token = makeJWTtokenFromUser(user);
 
+  const event_stats = await Event.getStatistics(user.id, moment().add(-1, 'M').toDate(), new Date());
+
   res.cookie(COOKIE_NAME, jwt_token, { maxAge: JWT_EXPIRY_SECONDS * 1000 });
-  res.json(makeUserObj(jwt_token, user));
+  res.json(makeUserObj(jwt_token, user, event_stats));
   res.end();
 };
 

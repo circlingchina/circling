@@ -4,8 +4,10 @@ const debug = require("debug")("server-debug");
 const Event = require('../models/Event');
 const UserModel = require('../models/UserModel');
 const moment = require('moment');
+const axios = require('axios');
 
 const mainLogger = require("../logger");
+const { Console } = require('winston/lib/winston/transports');
 const NAME = 'router.events';
 const logger = mainLogger.child({ label: NAME });
 
@@ -47,10 +49,11 @@ const eventAttendedStatus = async(events, user_id) => {
         const user = await UserModel.find(user_id)
         if (user) {
           attend_status = 0;
-          console.log(user)
-          console.log(attendees)
           if (attendees && attendees.some(attendee => attendee.id == user.id)) {
-            attend_status = 1;
+            attend_status += 1;
+          }
+          if (await Event.isSubscribed(event.id, user_id)) {
+            attend_status += 2;
           }
         }
       }
@@ -149,16 +152,15 @@ const join = async (req, res) => {
   if (!canJoin) {
     const isTicketUsedUp = await UserModel.isTicketUsedUp(userId, eventId);
     if (isTicketUsedUp) {
-      res
+      return res
         .status(400)
         .type('json')
         .send(JSON.stringify({
           error_code: 40034,
           message: 'No ticket'
         }));
-        return
     } else {
-      res
+      return res
         .status(400)
         .type('json')
         .send(JSON.stringify({
@@ -167,7 +169,6 @@ const join = async (req, res) => {
           error_code: 40032,
           message: 'Insufficient privileges'
         }));
-        return
     }
   }
 
@@ -188,7 +189,6 @@ const join = async (req, res) => {
 };
 
 const unjoin = async (req, res) => {
-
   const eventId = req.params.id;
   const userId = req.query.user_id;
   debug({userId, eventId});
@@ -197,6 +197,7 @@ const unjoin = async (req, res) => {
   await UserModel.afterUnjoin(userId);
   const updatedEvent = await Event.find(eventId, {includeAttendees: true});
   await eventWithExtraFields(updatedEvent);
+  await notifyEvent(eventId);
   res
     .status(200)
     .type('json')
@@ -206,14 +207,109 @@ const unjoin = async (req, res) => {
     }));
 };
 
+const subscribe = async (req, res) => {
+  // 判断user_id是否正确
+  const jwt_user_id = req.user.id;
+  const user_id = req.query.user_id;
+  if (!user_id || user_id != jwt_user_id) {
+    return res.status(400).type('json').send(JSON.stringify({
+      error_code: 40051,
+      message: 'UserID error'
+    }));
+  }
+  // 判断open_id
+  const open_id = req.query.open_id;
+  if (!open_id) {
+    return res.status(400).type('json').send(JSON.stringify({
+      error_code: 40054,
+      message: 'Openid is null'
+    }));
+  }
+  // 判断event是否为空
+  const event_id = req.params.id;
+  const event = await Event.find(event_id, {includeAttendees: true});
+  if (!event) {
+    return res.status(400).type('json').send(JSON.stringify({
+      error_code: 40050,
+      message: 'Event not found'
+    }));
+  }
+  // 判断活动是否可以订阅，开始前两小时内无法订阅
+  if (moment().isAfter(moment(event.start_time).add(-2, 'hours'))) {
+    return res.status(400).type('json').send(JSON.stringify({
+      error_code: 40052,
+      message: 'Event is not subscribeable'
+    }));
+  }
+  // 判断活动是否未满员
+  let attendNum = 0;
+  if (event.attendees) {
+    attendNum = event.attendees.length;
+  }
+  if (attendNum < event.max_attendees) {
+    return res.status(400).type('json').send(JSON.stringify({
+      error_code: 40053,
+      message: 'Event is not full'
+    }));
+  }
+  // 判断是否已经订阅
+  if (await Event.isSubscribed(event_id, user_id)) {
+    return res.status(400).type('json').send(JSON.stringify({
+      error_code: 40055,
+      message: 'Event is subscribed'
+    }));
+  }
+  // 保存用户open_id
+  await UserModel.updateOpenId(user_id, open_id);
+  // 插入订阅表
+  // todo: 判断订阅是否成功
+  await Event.subscribe(event_id, user_id, open_id);
+
+  return res.status(200).type('json').send(JSON.stringify({
+    event
+  }));
+}
+
+const unsubscribe = async (req, res) => {
+  // 判断user_id是否正确
+  const jwt_user_id = req.user.id;
+  const user_id = req.query.user_id;
+  if (!user_id || user_id != jwt_user_id) {
+    return res.status(400).type('json').send(JSON.stringify({
+      error_code: 40061,
+      message: 'UserID error'
+    }));
+  }
+  // 判断event是否为空
+  const event_id = req.params.id;
+  const event = await Event.find(event_id, {includeAttendees: true});
+  if (!event) {
+    return res.status(400).type('json').send(JSON.stringify({
+      error_code: 40060,
+      message: 'Event not found'
+    }));
+  }
+  await Event.unsubscribe(event_id, user_id);
+  return res.status(200).type('json').send(JSON.stringify({
+    event
+  }));
+}
+
 const statistics = async (req, res) => {
+  const user_id = req.user.id;
+  const start_at = req.query.start_at || 1577808000000;
+  const end_at = req.query.end_at || (new Date()).getTime();
+  const start = new Date(start_at);
+  const end = new Date(end_at);
+
+  const stats = await Event.getStatistics(user_id, start, end);
   res
     .status(200)
     .type('json')
     .send(JSON.stringify({
-      event_num:23,
-      circling_num:21,
-      companions: 67
+      event_num: stats.event_num,
+      circling_num: stats.circling_num,
+      companions: stats.companions
     }));
 };
 
@@ -254,10 +350,83 @@ const attended = async (req, res) => {
   }));
 };
 
+const notifyEvent = async(event_id) => {
+  const event = await Event.find(event_id);
+  const sub_users = await Event.getSubscribeUsers(event.id);
+  if (sub_users && sub_users.length > 0) {
+    for (const sub_user of sub_users) {
+      await notify(event, sub_user.open_id);
+    }
+  }
+}
+
+const notify = async(event, open_id) => {
+  const access_token = await getWxAccessToken();
+  if (access_token) {
+    const template_data = {
+      thing1: { // 活动名称
+        value: event.name
+      },
+      thing5: { // 类型
+        value: event.category
+      },
+      time2: { // 活动时间
+        value: moment(event.start_time).format('YYYY年M月D日 HH:mm') + '~' + moment(event.end_time).format('YYYY年M月D日 HH:mm')
+      },
+      short_thing3: { // 活动状态
+        value: "可报名"
+      },
+      thing4: { // 温馨提示
+        value: ""
+      },
+    };
+    const data = {
+      url: 'https://api.weixin.qq.com/cgi-bin/message/subscribe/send',
+      method: 'post',
+      params: {
+        access_token: access_token
+      },
+      data: {
+        access_token: access_token,
+        touser: open_id,
+        template_id: process.env.WX_LITE_APP_PUSH_CANJOIN_TEMPLATEID,
+        page: 'index',
+        lang:"zh_CN",
+        miniprogram_state: process.env.WX_LITE_APP_PUSH_STATE,
+        data: template_data
+      }
+    };
+    logger.info("notify request", {data});
+    console.log("notify request", data);
+    const res = await axios(data);
+    logger.info("notify response", {res: res.data});
+    console.log("notify response", res.data);
+    return res;
+  }
+}
+
+// todo: 后面微信相关的可以放到一个文件中
+const getWxAccessToken = async() => {
+  const res = await axios({
+    url: 'https://api.weixin.qq.com/cgi-bin/token',
+    method: 'get',
+    params: {
+      grant_type: 'client_credential',
+      appid: process.env.WX_LITE_APP_ID,
+      secret: process.env.WX_LITE_APP_SECRET
+    }
+  })
+  if (res.status == 200 && !!res.data) {
+    return res.data.access_token;
+  }
+}
+
 module.exports = (app) => {
+  app.get('/events', upcoming);
   app.get('/events/:id/join', passport.authenticate('jwt', { session: false }), join);
   app.get('/events/:id/unjoin', passport.authenticate('jwt', { session: false }), unjoin);
-  app.get('/events', upcoming);
+  app.get('/events/:id/subscribe', passport.authenticate('jwt', { session: false }), subscribe);
+  app.get('/events/:id/unsubscribe', passport.authenticate('jwt', { session: false }), unsubscribe);
   app.get('/events/nextTrail', nextTrail);
   app.get('/events/statistics', passport.authenticate('jwt', { session: false }), statistics);
   app.get('/events/history', passport.authenticate('jwt', { session: false }), history);

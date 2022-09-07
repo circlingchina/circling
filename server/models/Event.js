@@ -76,6 +76,43 @@ async function unjoin(event_id, user_id) {
     .del();
 }
 
+async function subscribe(event_id, user_id, open_id) {
+  const insertQuery = db("user_event_subscribe")
+  .insert({
+    user_id,
+    event_id,
+    open_id,
+    status: 0
+  });
+return db.raw(`? ON CONFLICT DO NOTHING`, insertQuery);
+}
+
+async function unsubscribe(event_id, user_id) {
+  return db("user_event_subscribe")
+    .where({
+      user_id,
+      event_id
+    })
+    .del();
+}
+
+async function isSubscribed(event_id, user_id) {
+  const subscribes = await db("user_event_subscribe").where({
+    user_id,
+    event_id
+  });
+  if (subscribes && subscribes.length > 0) {
+    return subscribes.some(sub => sub.status == 0);
+  }
+  return false;
+}
+
+async function getSubscribeUsers(event_id) {
+  return await db("user_event_subscribe")
+  .where({event_id})
+  .andWhere('status', '=', 0);
+}
+
 async function find(event_id, params = {}) {
   const events = await db("events").where({id: event_id});
 
@@ -138,11 +175,54 @@ async function historyByUserId(user_id, count, offset) {
   .limit(count+1)
 }
 
+async function historyByUserIdAndTime(user_id, start, end) {
+  return db
+  .select()
+  .from('user_event')
+  .innerJoin('events', 'user_event.event_id', '=', 'events.id')
+  .where({
+    user_id
+  })
+  .andWhere('events.start_time', '>', start)
+  .andWhere('events.end_time', '>', end)
+}
+
+async function eventCountByUserIdAndTime(user_id, start, end) {
+  const events = await historyByUserIdAndTime(user, start, end);
+  if (!events || !events.length) return 0;
+  return events.length;
+}
+
+async function companionCountByUserIdAndTime(user_id, start, end) {
+  return 0;
+}
+
+async function getStatistics(user_id, start, end) {
+  let event_num = 0;
+  let circling_num = 0;
+  let companions = 0;
+
+  const events = await historyByUserIdAndTime(user_id, start, end);
+  if (events && events.length) {
+    event_num = events.length;
+    circling_num = events.filter(x => x.category == 'Circling').length;
+  }
+  return {
+    event_num,
+    circling_num,
+    companions
+  }
+}
+
 module.exports = {
   all,
   upcoming,
   join,
   unjoin,
+  subscribe,
+  unsubscribe,
+  isSubscribed,
+  getSubscribeUsers,
   find,
   eventsLatestAttended,
   attendees,
@@ -150,6 +230,11 @@ module.exports = {
 
   attendedEventsByUserId,
   historyByUserId,
+
+  historyByUserIdAndTime,
+  eventCountByUserIdAndTime,
+  companionCountByUserIdAndTime,
+  getStatistics,
 
   // utility functions
   isInJoinableTimeFrame,

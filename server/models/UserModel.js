@@ -231,6 +231,15 @@ async function afterUnjoin(userId) {
   }
 }
 
+async function updateOpenId(userId, openId) {
+  const operation = db("users")
+    .where({ id: userId })
+    .update({
+      open_id: openId
+    });
+    return operation;
+}
+
 async function findPasswordResetByUserId(userId) {
   const records = await db("password_reset").where({user_id: userId});
   if (records && records.length > 0) {
@@ -329,6 +338,8 @@ module.exports = {
   enablePremium,
   afterJoin,
   afterUnjoin,
+
+  updateOpenId,
 
   findPasswordReset,
   findPasswordResetByUserId,

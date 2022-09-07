@@ -7,6 +7,8 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require('../enviornment');
 const UserModel = require('../models/UserModel');
 
+const moment = require('moment');
+
 const AUTH_CONSTANTS = {
   ISS: 'Circling China',
   AUD: 'https://www.circlingquanquan.com',
@@ -19,7 +21,7 @@ const AUTH_CONSTANTS = {
   JWT_REFRESH_THREASHOLD: 600, // 10 min
 };
 
-const makeUserObj = function (jwt_token, user) {
+const makeUserObj = function (jwt_token, user, event_stats) {
   const userObj = _.pick(user, ['id', 'email', 'created_at', 'premium_level', 'premium_expired_at', 'event_credit']);
   userObj.user_metadata = {
     full_name: user.name,
@@ -30,6 +32,11 @@ const makeUserObj = function (jwt_token, user) {
     expires_in: AUTH_CONSTANTS.JWT_SIGN_OPTIONS.EXPIRESIN,
     token_type: 'bearer',
   };
+  userObj.premium_days = moment(new Date()).diff(moment(user.created_at), 'days');
+  userObj.event_num = event_stats.event_num;
+  userObj.circling_num = event_stats.circling_num;
+  userObj.companions = event_stats.companions;
+
   return userObj;
 };
 
