@@ -96,17 +96,6 @@ const join = async (req, res) => {
 
   const event = await Event.find(eventId, {includeAttendees: true});
 
-  // if (!Event.isInJoinableTimeFrame(event)) {
-  //   res
-  //     .status(400)
-  //     .type('json')
-  //     .send(JSON.stringify({
-  //       result: false,
-  //       err: 'event is unjoinable'
-  //     }));
-  //   return;
-  // }
-
   if (!event) {
     res
       .status(400)
@@ -170,6 +159,17 @@ const join = async (req, res) => {
           message: 'Insufficient privileges'
         }));
     }
+  }
+
+  const attendedEvents = await Event.attendedEventsByUserId(userId);
+  if (attendedEvents && attendedEvents.length >= 2) {
+    return res
+      .status(400)
+      .type('json')
+      .send(JSON.stringify({
+        error_code: 40035,
+        message: 'Attend too many'
+      }));
   }
 
   const queryRes = await Event.join(eventId, userId);
@@ -327,10 +327,11 @@ const history = async (req, res) => {
   }
   if (events.length > count) {
     is_last_page = false
-    events.pop()
+    events.pop();
   }
   await eventAttendedStatus(events, user_id);
   return res.status(200).type('json').send(JSON.stringify({
+    is_last_page: is_last_page,
     events: events
   }));
 };
@@ -355,12 +356,17 @@ const notifyEvent = async(event_id) => {
   const sub_users = await Event.getSubscribeUsers(event.id);
   if (sub_users && sub_users.length > 0) {
     for (const sub_user of sub_users) {
-      await notify(event, sub_user.open_id);
+      const notifyResult = await notify(event, sub_user.open_id);
+      const content = JSON.stringify(notifyResult.data);
+      const result = JSON.stringify(notifyResult.res);
+      logger.info("notify log", {event_id:sub_user.event_id, user_id:sub_user.user_id, status:1, content, result});
+      await Event.updateSubscribe(sub_user.event_id, sub_user.user_id, 1, content, result);
     }
   }
 }
 
 const notify = async(event, open_id) => {
+  let notifyResult = {}
   const access_token = await getWxAccessToken();
   if (access_token) {
     const template_data = {
@@ -377,7 +383,7 @@ const notify = async(event, open_id) => {
         value: "可报名"
       },
       thing4: { // 温馨提示
-        value: ""
+        value: "测试"
       },
     };
     const data = {
@@ -390,19 +396,18 @@ const notify = async(event, open_id) => {
         access_token: access_token,
         touser: open_id,
         template_id: process.env.WX_LITE_APP_PUSH_CANJOIN_TEMPLATEID,
-        page: 'index',
+        page: 'pages/home/index',
         lang:"zh_CN",
         miniprogram_state: process.env.WX_LITE_APP_PUSH_STATE,
         data: template_data
       }
     };
-    logger.info("notify request", {data});
-    console.log("notify request", data);
+    notifyResult.data = data;
     const res = await axios(data);
-    logger.info("notify response", {res: res.data});
-    console.log("notify response", res.data);
-    return res;
+    notifyResult.res = res.data;
+    return notifyResult;
   }
+  return notifyResult;
 }
 
 // todo: 后面微信相关的可以放到一个文件中

@@ -91,8 +91,11 @@ async function unsubscribe(event_id, user_id) {
   return db("user_event_subscribe")
     .where({
       user_id,
-      event_id
+      event_id,
+      status: 0
     })
+    .orderBy('create_at', 'desc')
+    .limit(1)
     .del();
 }
 
@@ -184,7 +187,7 @@ async function historyByUserIdAndTime(user_id, start, end) {
     user_id
   })
   .andWhere('events.start_time', '>', start)
-  .andWhere('events.end_time', '>', end)
+  .andWhere('events.end_time', '<', end)
 }
 
 async function eventCountByUserIdAndTime(user_id, start, end) {
@@ -214,6 +217,19 @@ async function getStatistics(user_id, start, end) {
   }
 }
 
+async function updateSubscribe(event_id, user_id, status, content, result) {
+  return db("user_event_subscribe")
+    .where({ event_id: event_id })
+    .andWhere({ user_id: user_id })
+    .andWhere({ status: 0 })
+    .update({
+      status: status,
+      content: content,
+      result: result,
+      update_at: moment(new Date()).toDate()
+    });
+}
+
 module.exports = {
   all,
   upcoming,
@@ -235,6 +251,8 @@ module.exports = {
   eventCountByUserIdAndTime,
   companionCountByUserIdAndTime,
   getStatistics,
+
+  updateSubscribe,
 
   // utility functions
   isInJoinableTimeFrame,
