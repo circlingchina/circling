@@ -32,6 +32,10 @@ const PAYMENT_PRODUCTS = {
     premiumLevel: '4',
     daysDelta: 365 * 5 + 1,
   },
+  YEARLY: {
+    premiumLevel: '5',
+    daysDelta: 366,
+  },
 };
 
 async function handleFirstJoinEmail(id, event_id) {
@@ -181,10 +185,7 @@ async function enablePremium(userId, category) {
   const premiumLevel = _.get(PAYMENT_PRODUCTS, category + '.premiumLevel', '0');
   const daysDelta = _.get(PAYMENT_PRODUCTS, category + '.daysDelta', 0);
 
-  const premiumLevelToUpdate = Math.max(
-    parseInt(premiumLevel),
-    parseInt(user.premium_level)
-  ).toString();
+  const premiumLevelToUpdate = calPremiumLevel(premiumLevel, user.premium_level).toString();
 
   let momentToUpdate = moment.max(
     moment(),
@@ -203,6 +204,15 @@ async function enablePremium(userId, category) {
   }
 
   await operation;
+}
+
+// 计算更新后的会员等级
+function calPremiumLevel(originLv, newLv) {
+  const oLv = parseInt(originLv);
+  const nLv = parseInt(newLv);
+  // 五年VIP会员等级级最高
+  if (oLv == 5 || nLv == 5) return 5;
+  return Math.max(oLv, nLv);
 }
 
 /**

@@ -36,22 +36,27 @@ const CHARGE_TYPE_INFO = {
     body: "单次活动",
     amount: 9900
   },
-  MONTHLY: {
-    subject: "月度会员",
-    body: "月度会员",
-    amount: 26900
-  },
   // have changed this to SEASON -> 3 months
   HALF_YEAR: {
     subject: "季度会员",
     body: "季度会员",
     amount: 52000
   },
+  YEARLY: {
+    subject: "年度会员",
+    body: "年度会员",
+    amount: 159900
+  },
   VIP: {
     subject: "亲密朋友",
     body: "特别会员",
     amount: 500000
-  }
+  },
+  MONTHLY: {
+    subject: "月度会员",
+    body: "月度会员",
+    amount: 26900
+  },
 };
 
 const createCharge = async(req, res) => {

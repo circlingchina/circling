@@ -1,0 +1,1 @@
+ALTER TYPE product_category ADD VALUE 'YEARLY';
