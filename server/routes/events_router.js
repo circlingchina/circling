@@ -299,8 +299,8 @@ const statistics = async (req, res) => {
   const user_id = req.user.id;
   const start_at = req.query.start_at || 1577808000000;
   const end_at = req.query.end_at || (new Date()).getTime();
-  const start = new Date(start_at);
-  const end = new Date(end_at);
+  const start = new Date(Number(start_at));
+  const end = new Date(Number(end_at));
 
   const stats = await Event.getStatistics(user_id, start, end);
   res
