@@ -296,11 +296,17 @@ const unsubscribe = async (req, res) => {
 }
 
 const statistics = async (req, res) => {
+  const nowTimeStamp = (new Date()).getTime();
   const user_id = req.user.id;
   const start_at = req.query.start_at || 1577808000000;
-  const end_at = req.query.end_at || (new Date()).getTime();
+  const end_at = Math.min((req.query.end_at || nowTimeStamp), nowTimeStamp);
   const start = new Date(Number(start_at));
   const end = new Date(Number(end_at));
+
+  console.log(req.query.end_at);
+  console.log(nowTimeStamp);
+  console.log(end_at);
+  console.log(end);
 
   const stats = await Event.getStatistics(user_id, start, end);
   res
@@ -385,7 +391,7 @@ const notify = async(event, open_id) => {
         value: "可报名"
       },
       thing4: { // 温馨提示
-        value: "测试"
+        value: "您订阅的Circling活动已空出名额，可点击跳转报名"
       },
     };
     const data = {
