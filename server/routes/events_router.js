@@ -318,7 +318,7 @@ const history = async (req, res) => {
   const offset = req.offset || 0
   const jwt_user = req.user;
   const user_id = jwt_user.id;
-  const events = await Event.historyByUserId(user_id, count, offset);
+  const events = await Event.historyByUserId(user_id, count + 1, offset);
   let is_last_page = true
   if (!events) {
     return res.status(200).type('json').send(JSON.stringify({
@@ -330,9 +330,11 @@ const history = async (req, res) => {
     events.pop();
   }
   await eventAttendedStatus(events, user_id);
+  const now = new Date();
+  console.log(events[0].start_time, now)
   return res.status(200).type('json').send(JSON.stringify({
     is_last_page: is_last_page,
-    events: events
+    events: events.filter(x => x.start_time <= now)
   }));
 };
 

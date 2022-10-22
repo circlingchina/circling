@@ -175,7 +175,7 @@ async function historyByUserId(user_id, count, offset) {
   })
   .orderBy('events.start_time', 'desc')
   .offset(offset)
-  .limit(count+1)
+  .limit(count)
 }
 
 async function historyByUserIdAndTime(user_id, start, end) {
@@ -186,18 +186,29 @@ async function historyByUserIdAndTime(user_id, start, end) {
   .where({
     user_id
   })
-  .andWhere('events.start_time', '>', start)
-  .andWhere('events.end_time', '<', end)
+  .andWhere('events.start_time', '>=', start)
+  .andWhere('events.start_time', '<', end)
 }
 
-async function eventCountByUserIdAndTime(user_id, start, end) {
-  const events = await historyByUserIdAndTime(user, start, end);
-  if (!events || !events.length) return 0;
-  return events.length;
-}
-
-async function companionCountByUserIdAndTime(user_id, start, end) {
-  return 0;
+async function getCompanions(user_id, start, end) {
+  const res = await db(db.raw(`(select u.id, u.name, count(1) count from user_event ue
+  inner join (
+  select e.id as id, e.name as name, e.host as host
+    from user_event ue
+    inner join events e on ue.event_id= e.id
+   where ue.user_id= :user_id
+   and e.start_time >= :start and e.start_time < :end
+   and e.category = 'Circling'
+  ) t on ue.event_id = t.id
+  inner join users u on ue.user_id = u.id
+  where u.id <> :user_id
+  group by u.id
+  order by count(1) desc) ot`, {
+    user_id: user_id,
+    start: start,
+    end: end
+  }))
+  return res
 }
 
 async function getStatistics(user_id, start, end) {
@@ -210,6 +221,11 @@ async function getStatistics(user_id, start, end) {
     event_num = events.length;
     circling_num = events.filter(x => x.category == 'Circling').length;
   }
+  const companionList = await getCompanions(user_id, start, end);
+  if (companionList && companionList.length > 0) {
+    companions = companionList.length
+  }
+
   return {
     event_num,
     circling_num,
@@ -248,8 +264,6 @@ module.exports = {
   historyByUserId,
 
   historyByUserIdAndTime,
-  eventCountByUserIdAndTime,
-  companionCountByUserIdAndTime,
   getStatistics,
 
   updateSubscribe,

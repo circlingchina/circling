@@ -7,6 +7,7 @@ CREATE TABLE "public"."qa_post"
  "title" varchar ,
  "content" text ,
  "update_at" timestamp with time zone DEFAULT now() ,
+ "sort" smallint NOT NULL DEFAULT 99 ,
 CONSTRAINT "pk_public_qa_post" PRIMARY KEY ("id") 
 )
 WITH (
