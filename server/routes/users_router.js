@@ -69,7 +69,13 @@ const create = async(req, res) => {
 const premiumInfo = async(req, res) => {
   const jwt_user = req.user;
   const user_id = jwt_user.id;
-  const user = await UserModel.find(user_id);
+  let user = await UserModel.find(user_id);
+
+  // 更新过期会员状态
+  if (!await UserModel._checkExpired(user)) {
+    user = await UserModel.find(user_id);
+  }
+  
   if (user) {
     return res
     .status(200)
