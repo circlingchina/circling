@@ -6,7 +6,7 @@ module.exports = {
       host : 'localhost',
       user : 'circling',
       password : 'circling',
-      database : 'circling_db_test'
+      database : 'circling_db_prod'
     }
   },
 
