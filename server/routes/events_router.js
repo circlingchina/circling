@@ -234,6 +234,14 @@ const subscribe = async (req, res) => {
       message: 'Event not found'
     }));
   }
+  // 判断用户是否可以订阅（只有会员、有单次活动体验次数的用户才能订阅）
+  const canSubscribe = await UserModel.canSubscribe(user_id, event_id);
+  if (!canSubscribe) {
+    return res.status(400).type('json').send(JSON.stringify({
+      error_code: 40056,
+      message: 'Insufficient privileges'
+    }));
+  }
   // 判断活动是否可以订阅，开始前两小时内无法订阅
   if (moment().isAfter(moment(event.start_time).add(-2, 'hours'))) {
     return res.status(400).type('json').send(JSON.stringify({
@@ -320,8 +328,8 @@ const statistics = async (req, res) => {
 };
 
 const history = async (req, res) => {
-  const count = req.count || 10;
-  const offset = req.offset || 0
+  const count = parseInt(req.query.count || 10);
+  const offset = parseInt(req.query.offset || 0);
   const jwt_user = req.user;
   const user_id = jwt_user.id;
   const events = await Event.historyByUserId(user_id, count + 1, offset);
@@ -340,6 +348,8 @@ const history = async (req, res) => {
   console.log(events[0].start_time, now)
   return res.status(200).type('json').send(JSON.stringify({
     is_last_page: is_last_page,
+    count,
+    offset,
     events: events.filter(x => x.start_time <= now)
   }));
 };
@@ -391,7 +401,7 @@ const notify = async(event, open_id) => {
         value: "可报名"
       },
       thing4: { // 温馨提示
-        value: "您订阅的Circling活动已空出名额，可点击跳转报名"
+        value: "您订阅的活动已空出名额，可点击跳转报名"
       },
     };
     const data = {

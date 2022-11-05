@@ -210,13 +210,16 @@ const pingppWebhook = async (req, res) => {
   if (eventType === 'charge.succeeded') {
     const chargeId = event.data.object.id;
 
+    // 更新数据库支付记录状态
     await ChargeModel.handleChargeSucceededEvent(event);
 
+    // 重新获取支付记录
     const charge = await ChargeModel.findByChargeId(chargeId);
     logger.info("Charge updated", {charge});
     const userId = charge.user_id;
     const category = charge.category;
 
+    // 获取用户信息
     const user = await UserModel.find(userId);
     if (!user) {
       res.status(400).type('json').send(JSON.stringify({err: "user not found"}));

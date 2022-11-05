@@ -157,6 +157,24 @@ async function canJoin(user_id, event_id) {
   return false;
 }
 
+async function canSubscribe(user_id, event_id) {
+  const user = await find(user_id);
+  if (!user) return false;
+  const event = await EventModel.find(event_id);
+  // 如果是非会员
+  if (user.premium_level === '0') {
+    return user.event_credit > 0 && event.category === 'Circling';
+  }
+  // 如果是会员
+  if (parseInt(user.premium_level, 10) > 1) {
+    if (!_checkExpired(user)) {
+      return false;
+    }
+    return moment(user.premium_expired_at).isAfter(moment());
+  }
+  return false;
+}
+
 // 是否是单次活动使用券用完
 async function isTicketUsedUp(user_id, event_id) {
   const event = await EventModel.find(event_id);
@@ -344,6 +362,7 @@ module.exports = {
   changePassword,
   verifyPassword,
   canJoin,
+  canSubscribe,
   isTicketUsedUp,
   enablePremium,
   afterJoin,
@@ -361,4 +380,6 @@ module.exports = {
   deletePrecreateUserByEmail,
   deletePrecreateUser,
   createPrecreateUser,
+
+  _checkExpired,
 };

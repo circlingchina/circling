@@ -169,7 +169,7 @@ async function historyByUserId(user_id, count, offset) {
   return db
   .select()
   .from('user_event')
-  .leftJoin('events', 'events.id', '=', 'user_event.event_id')
+  .innerJoin('events', 'events.id', '=', 'user_event.event_id')
   .where({
     user_id
   })
