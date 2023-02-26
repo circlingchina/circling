@@ -33,9 +33,11 @@ const makeUserObj = function (jwt_token, user, event_stats) {
     token_type: 'bearer',
   };
   userObj.premium_days = moment(new Date()).diff(moment(user.created_at), 'days');
-  userObj.event_num = event_stats.event_num;
-  userObj.circling_num = event_stats.circling_num;
-  userObj.companions = event_stats.companions;
+  if (event_stats) {
+    userObj.event_num = event_stats.event_num;
+    userObj.circling_num = event_stats.circling_num;
+    userObj.companions = event_stats.companions;
+  }
 
   return userObj;
 };

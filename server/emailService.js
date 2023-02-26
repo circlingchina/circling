@@ -68,7 +68,7 @@ const sendPasswordResetEmail = (toEmail, passwordResetId) => {
   const subject = "Circling China 密码重置";
   const compiledFunction = pug.compileFile('./emails/passwordReset.pug');
 
-  const link = `https://www.test.circlingquanquan.com/#recovery_token=${passwordResetId}`;
+  const link = `https://www.circlingquanquan.com/#recovery_token=${passwordResetId}`;
 
   const body_html = compiledFunction({ link });
 

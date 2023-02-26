@@ -162,7 +162,7 @@ const confirm = async (req, res) => {
 
   const precreateUser = await UserModel.findPrecreateUser(precreateUserId);
   if (!precreateUser) {
-    res.statusCode(400);
+    res.status(400);
     res.end();
   }
 
@@ -198,7 +198,7 @@ const confirmTest = async (req, res) => {
 
   const precreateUser = await UserModel.findPrecreateUser(precreateUserId);
   if (!precreateUser) {
-    res.statusCode(400);
+    res.status(400);
     res.end();
   }
 
@@ -255,8 +255,9 @@ const passwordRecoveryConfirm = async (req, res) => {
 
   const passwordReset = await UserModel.findPasswordReset(passwordResetId);
   if (!passwordReset) {
-    res.statusCode(400);
+    res.status(400);
     res.end();
+    return;
   }
   const userId = passwordReset.user_id;
 

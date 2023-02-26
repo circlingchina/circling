@@ -395,7 +395,7 @@ const notify = async(event, open_id) => {
         value: event.category
       },
       time2: { // 活动时间
-        value: moment(event.start_time).format('YYYY年M月D日 HH:mm') + '~' + moment(event.end_time).format('YYYY年M月D日 HH:mm')
+        value: moment(event.start_time).utcOffset(8).format('YYYY年M月D日 HH:mm') + '~' + moment(event.end_time).utcOffset(8).format('YYYY年M月D日 HH:mm')
       },
       short_thing3: { // 活动状态
         value: "可报名"
