@@ -17,6 +17,7 @@ async function upcoming() {
   const offsetMins = -30;
 
   return db.select().from("events").where('start_time', '>=', moment(now).add(offsetMins, 'm').toDate())
+    .andWhereNot('category', '内部活动')
     .orderBy("start_time");
 }
 
@@ -246,6 +247,39 @@ async function updateSubscribe(event_id, user_id, status, content, result) {
     });
 }
 
+async function getEventByTime(start, end) {
+  return db.select().from("events")
+  .where('start_time', '<', moment(end))
+  .where('end_time', '>', moment(start))
+  .orderBy("start_time");
+}
+
+async function uploadEvent(name, max_attendees, category, host, event_link, event_account, start, end, leader_id, supervisor) {
+  const id = await db("events")
+  .insert({
+    name,
+    max_attendees,
+    category,
+    host,
+    event_link,
+    event_account,
+    start_time: start,
+    end_time: end,
+    leader_id,
+    supervisor
+  })
+  .returning("id");
+  return id;
+}
+
+async function getEventByLeaderId(leader_id, start, end) {
+  return db.select().from("events")
+  .where('start_time', '<', moment(end))
+  .andWhere('end_time', '>', moment(start))
+  .andWhere({ leader_id: leader_id })
+  .orderBy("start_time");
+}
+
 module.exports = {
   all,
   upcoming,
@@ -260,6 +294,8 @@ module.exports = {
   attendees,
   nextTrail,
 
+  getEventByTime,
+
   attendedEventsByUserId,
   historyByUserId,
 
@@ -270,4 +306,7 @@ module.exports = {
 
   // utility functions
   isInJoinableTimeFrame,
+
+  uploadEvent,
+  getEventByLeaderId,
 };

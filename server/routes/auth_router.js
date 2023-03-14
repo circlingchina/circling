@@ -24,7 +24,7 @@ pingpp.setPrivateKeyPath(__dirname + '/../certs/pingpp_merchant_pri.pem');
 
 // Issue JWT token
 const authToken = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, sys } = req.body;
   if (!email || !password) {
     return res.status(401).end();
   }
@@ -50,6 +50,13 @@ const authToken = async (req, res) => {
     // Ask user to reset the password
     return res.status(401)
       .json({ error_code: 40012, message: "Password reseting" })
+      .end();
+  }
+
+  // 判断是否是带领者登录带领者后台
+  if (sys == 1 && !user.is_leader) {
+    return res.status(401)
+      .json({ error_code: 40014, message: "No permission" })
       .end();
   }
 
