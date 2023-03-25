@@ -137,6 +137,34 @@ const join = async (req, res) => {
     return;
   }
 
+  // 下周活动限于每周日18:00后，可点击报名
+  let now = moment().utcOffset("+08:00");
+  let day = now.day();
+  let hour = now.hour();
+  
+  // 获取本周结束时间
+  let end_of_week = moment().utcOffset("+08:00").day('Monday').hour(23).minutes(59).seconds(59).milliseconds(0);
+  if (end_of_week.isBefore(now)) {
+    end_of_week.add(1, 'w');
+  }
+  // 若当前时间是非周日18点至24点，则能报名本周结束前的所有活动
+  let open_date = end_of_week;
+  // 若当前时间是周日18点至24点，则能报名下周结束前的所有活动
+  if (day == 6 && hour >= 18) {
+    open_date.add(1, 'w');
+  }
+
+  if (moment(event.start_time).isAfter(open_date)) {
+    return res
+      .status(400)
+      .type('json')
+      .send(JSON.stringify({
+        error_code: 40036,
+        message: 'Event not open',
+        open_date: open_date
+      }));
+  }
+
   const canJoin = await UserModel.canJoin(userId, eventId);
   if (!canJoin) {
     const isTicketUsedUp = await UserModel.isTicketUsedUp(userId, eventId);
