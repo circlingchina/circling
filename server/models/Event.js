@@ -254,7 +254,7 @@ async function getEventByTime(start, end) {
   .orderBy("start_time");
 }
 
-async function uploadEvent(name, max_attendees, category, host, event_link, event_account, start, end, leader_id, supervisor) {
+async function uploadEvent(name, max_attendees, category, host, event_link, event_account, start, end, leader_id, supervisor, open_time) {
   const id = await db("events")
   .insert({
     name,
@@ -266,7 +266,8 @@ async function uploadEvent(name, max_attendees, category, host, event_link, even
     start_time: start,
     end_time: end,
     leader_id,
-    supervisor
+    supervisor,
+    open_time
   })
   .returning("id");
   return id;

@@ -70,26 +70,45 @@ const uploadEvent = async(req, res) => {
   }
 
   // 判断活动是否预定满
-  const events = await Event.getEventByTime(start, end);
+  // 分为三个时段03:00-12:00、12:00-18:00、18:00-03:00，分别最多能存在2、2、3场活动
   const start_hour = moment(start).utcOffset(8).hour();
-  const end_hour = moment(end).utcOffset(8).hour();
-  const span_hour = (end-start)/(1000*60*60)
-  logger.info('分配账号', {start_hour, end_hour, span_hour});
-  // 03:00至18:00最多2场，其余时间最多3场
-  if (span_hour > 9 || (start_hour > 3 && start_hour < 18) || (end_hour > 3 && end_hour < 18)) {
-    if (events && events.length >= 2) {
-      return res.status(400).type('json').send(JSON.stringify({
-        error_code: 40074,
-        message: '当前时段已约满2场，请选择其他时间'
-      }));
-    }
+  let period_start = moment(start).utcOffset(8).minutes(0).seconds(0).milliseconds(0);
+  let period_end = moment(period_start).utcOffset(8);
+  let max_events = 0;
+  if (start_hour >= 3 && start_hour < 12) {
+    period_start.hour(3);
+    period_end.hour(12);
+    max_events = 2;
+  } else if (start_hour >= 12 && start_hour < 18) {
+    period_start.hour(12);
+    period_end.hour(18);
+    max_events = 2;
+  } else if (start_hour >= 0 && start_hour < 3) {
+    period_start.add(-1, 'd').hour(18);
+    period_end.hour(3);
+    max_events = 3;
   } else {
-    if (events && events.length >= 3) {
-      return res.status(400).type('json').send(JSON.stringify({
-        error_code: 40074,
-        message: '当前时段已约满3场，请选择其他时间'
-      }));
-    }
+    period_start.hour(18);
+    period_end.add(1, 'd').hour(3);
+    max_events = 3;
+  }
+
+  const events = await Event.getEventByTime(period_start, period_end);
+
+  logger.info('分配账号', {
+    start: moment(start).utcOffset(8).format('YYYY-MM-DD HH:mm:ss'),
+    start_hour,
+    period_start: moment(period_start).utcOffset(8).format('YYYY-MM-DD HH:mm:ss'),
+    period_end : moment(period_end).utcOffset(8).format('YYYY-MM-DD HH:mm:ss'),
+    max_events,
+    events
+  });
+
+  if (events.length >= max_events) {
+    return res.status(400).type('json').send(JSON.stringify({
+             error_code: 40074,
+             message: '当前时段已约满' + max_events + '场，请选择其他时段'
+           }))
   }
 
   // 获取活动链接
@@ -101,8 +120,22 @@ const uploadEvent = async(req, res) => {
       break;
     }
   }
+
+  // 计算开放时间
+  // 获取本周开始时间
+  let start_of_week = moment(start).utcOffset(8).day(1);
+  if (start_of_week.isAfter(moment(start))) {
+    start_of_week.add(-1, 'w');
+  }
+  let open_time = moment(start_of_week).hour(0).minute(0).second(0).millisecond(0).add(-6, 'h');
+
+  logger.info('计算开放时间', {
+    start_of_week,
+    open_time
+  });
+
   // 插入数据库
-  await Event.uploadEvent(name, max_attendees, category, host, account.link, account.name, start, end, user_id, supervisor)
+  await Event.uploadEvent(name, max_attendees, category, host, account.link, account.name, start, end, user_id, supervisor, open_time)
 
   // 返回结果
   const obj = {
@@ -115,6 +148,7 @@ const uploadEvent = async(req, res) => {
     supervisor: supervisor,
     event_account: account.name,
     event_link: account.link,
+    open_time
   };
   return res
   .type('json')

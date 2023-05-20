@@ -14,3 +14,12 @@ COMMENT ON COLUMN "public"."users"."is_manager" IS '是否是管理员';
 
 # 增加内部活动类型
 ALTER TYPE event_category ADD VALUE '内部活动';
+
+ALTER TABLE "public"."events" ADD COLUMN  "create_at" timestamp with time zone;
+COMMENT ON COLUMN "public"."events"."create_at" IS '创建时间';
+
+ALTER TABLE "public"."events" ALTER COLUMN "create_at" SET DEFAULT now();
+
+# 增加开放时间
+ALTER TABLE "public"."events" ADD COLUMN  "open_time" timestamp with time zone NOT NULL DEFAULT now();
+COMMENT ON COLUMN "public"."events"."open_time" IS '开放时间';
