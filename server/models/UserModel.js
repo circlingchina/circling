@@ -49,12 +49,13 @@ async function handleFirstJoinEmail(id, event_id) {
 
   if (user && event && user.sent_first_event_email < 1) {
     const data = await sentFirstEventEmail(user.name, user.email, event.name, readableTimeString(event.start_time));
-    sentMessageId = data.MessageId;
-    debug({data, sentMessageId});
+    // sentMessageId = data.MessageId;
+    // debug({data, sentMessageId});
   }
 
   // update sent_first_event_email state
-  if(sentMessageId) {
+  // if(sentMessageId)
+  {
     await db("users").where({id}).update({sent_first_event_email: user.sent_first_event_email+1});
   }
 }
