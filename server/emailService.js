@@ -13,13 +13,15 @@ var transporter = nodemailer.createTransport({
 });
 
 const email_from = `${process.env.EMAIL_NICKNAME} <${process.env.EMAIL_USER}>`
+const subject_prefix = process.env.NODE_ENV == 'production' ? '' : `[${process.env.NODE_ENV}]`
 
 const sendVerificationEmail = (toEmail, precreateUserId, comfirmLink) => {
     const link = comfirmLink ? comfirmLink : `https://www.circlingquanquan.com/#confirmation_token=${precreateUserId}`;
     const mailOptions = {
         from: email_from, // sender address mailfrom must be same with the user
         to: toEmail, // list of receivers
-        subject: '欢迎加入CirclingChina', // Subject line
+        bcc: email_from,
+        subject: subject_prefix + '欢迎加入CirclingChina', // Subject line
         // text: 'Hello world', // plaintext body
         html:`<p>您好，感谢你对CirclingChina的关注!</p>
         <p>您的账号已经创建成功，请在三天内点击以下链接完成验证邮箱:</p>
@@ -35,7 +37,8 @@ const sendPasswordResetEmail = (toEmail, passwordResetId) => {
     const mailOptions = {
         from: email_from, // sender address mailfrom must be same with the user
         to: toEmail, // list of receivers
-        subject: 'Circling China 密码重置', // Subject line
+        bcc: email_from,
+        subject: subject_prefix + 'Circling China 密码重置', // Subject line
         // text: 'Hello world', // plaintext body
         html:`<p>您正在通过邮箱重置 Circling China 的密码</p>
         <p>请在5分钟内点击下面链接完成密码重置:</p>
@@ -50,7 +53,8 @@ const sentFirstPaidEmail = (userName, toEmail, eventName, eventStartTime) => {
     const mailOptions = {
         from: email_from, // sender address mailfrom must be same with the user
         to: toEmail, // list of receivers
-        subject: '从这里开启你的Circling之旅吧', // Subject line
+        bcc: email_from,
+        subject: subject_prefix + '从这里开启你的Circling之旅吧', // Subject line
         // text: 'Hello world', // plaintext body
         html:`<p>亲爱的 ${userName}</p>
         <p>您好！</p>
@@ -89,7 +93,8 @@ const sentFirstEventEmail = (userName, toEmail, eventName, eventStartTime) => {
     const mailOptions = {
         from: email_from, // sender address mailfrom must be same with the user
         to: toEmail, // list of receivers
-        subject: '请查收你的第一次Circling参与指南', // Subject line
+        bcc: email_from,
+        subject: subject_prefix + '请查收你的第一次Circling参与指南', // Subject line
         // text: 'Hello world', // plaintext body
         html:`<p>亲爱的 ${userName}：</p>
         <p>您好！</p>
